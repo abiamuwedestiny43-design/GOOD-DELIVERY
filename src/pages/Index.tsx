@@ -26,17 +26,17 @@ const Index = () => {
     return <Navigate to="/auth" replace />;
   }
 
-  if (!isAdmin) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Access Denied</h1>
-          <p className="text-muted-foreground mb-4">You need admin privileges to access this page.</p>
-          <Button onClick={signOut} variant="outline">Sign Out</Button>
-        </div>
-      </div>
-    );
-  }
+  // if (!isAdmin) {
+  //   return (
+  //     <div className="min-h-screen flex items-center justify-center bg-background">
+  //       <div className="text-center">
+  //         <h1 className="text-2xl font-bold mb-4">Access Denied</h1>
+  //         <p className="text-muted-foreground mb-4">You need admin privileges to access this page.</p>
+  //         <Button onClick={signOut} variant="outline">Sign Out</Button>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="min-h-screen bg-background">

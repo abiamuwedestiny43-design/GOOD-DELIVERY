@@ -32,7 +32,26 @@ export const AddTrackingForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) return;
+    
+    if (!user) {
+      toast({
+        title: "Authentication required",
+        description: "Please sign in to create a shipment",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate required fields
+    if (!formData.senderName || !formData.senderAddress || 
+        !formData.receiverName || !formData.receiverAddress) {
+      toast({
+        title: "Missing required fields",
+        description: "Please fill in all required fields",
+        variant: "destructive",
+      });
+      return;
+    }
 
     setLoading(true);
 
@@ -41,7 +60,10 @@ export const AddTrackingForm = () => {
       const { data: trackingData, error: trackingError } = await supabase
         .rpc('generate_tracking_number');
 
-      if (trackingError) throw trackingError;
+      if (trackingError) {
+        console.error('Error generating tracking number:', trackingError);
+        throw new Error(`Failed to generate tracking number: ${trackingError.message}`);
+      }
 
       // Create shipment
       const { data: shipment, error: shipmentError } = await supabase
@@ -62,7 +84,16 @@ export const AddTrackingForm = () => {
         .select()
         .single();
 
-      if (shipmentError) throw shipmentError;
+      if (shipmentError) {
+        console.error('Shipment creation error:', shipmentError);
+        
+        // Check if it's an RLS error
+        if (shipmentError.code === '42501') {
+          throw new Error("Permission denied. Please check your Row Level Security policies.");
+        }
+        
+        throw new Error(`Failed to create shipment: ${shipmentError.message}`);
+      }
 
       // Create initial tracking event
       const { error: eventError } = await supabase
@@ -74,7 +105,11 @@ export const AddTrackingForm = () => {
           location: formData.senderAddress
         });
 
-      if (eventError) throw eventError;
+      if (eventError) {
+        console.error('Tracking event creation error:', eventError);
+        // We don't throw here as the shipment was created successfully
+        // We can still show success but log the tracking event issue
+      }
 
       toast({
         title: "Shipment created successfully",
