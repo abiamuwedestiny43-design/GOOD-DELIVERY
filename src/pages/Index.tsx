@@ -3,6 +3,7 @@ import { Navigate } from "react-router-dom";
 import { AddTrackingForm } from "@/components/AddTrackingForm";
 import { Button } from "@/components/ui/button";
 import speedyLogo from "@/assets/speedy-logistics-logo.png";
+import AdminDashboard from "@/components/dashboardheader";
 
 const Index = () => {
   const { user, loading, signOut, isAdmin } = useAuth();
@@ -57,7 +58,7 @@ const Index = () => {
       </header>
       
       <main className="container mx-auto px-4 py-8">
-        <AddTrackingForm />
+        <AdminDashboard />
       </main>
     </div>
   );
