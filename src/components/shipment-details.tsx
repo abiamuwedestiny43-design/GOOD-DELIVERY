@@ -60,7 +60,41 @@ export default function ShipmentDetails() {
         throw error;
       }
 
-      setShipments(data || []);
+      // Transform database fields to match Shipment type with defaults
+      const transformedShipments = (data || []).map(shipment => ({
+        id: shipment.id,
+        tracking_number: shipment.tracking_number,
+        sender_name: shipment.sender_name,
+        sender_email: shipment.sender_email,
+        sender_phone: shipment.sender_phone,
+        sender_address: shipment.sender_address,
+        receiver_name: shipment.receiver_name,
+        receiver_email: shipment.receiver_email,
+        receiver_phone: shipment.receiver_phone,
+        receiver_address: shipment.receiver_address,
+        package_description: shipment.package_description,
+        weight: shipment.weight,
+        status: shipment.status,
+        created_at: shipment.created_at,
+        updated_at: shipment.updated_at,
+        // Fields that exist in the interface but not necessarily in DB
+        package_value: null,
+        dimensions: null,
+        quantity: null,
+        service_type: null,
+        sending_date: shipment.sending_date,
+        delivery_date: shipment.delivery_date,
+        shipping_fee: shipment.shipping_fee,
+        fragile: null,
+        signature_required: null,
+        insurance: null,
+        insurance_amount: null,
+        special_instructions: null,
+        payment_method: null,
+        payment_status: null,
+      }));
+      
+      setShipments(transformedShipments);
     } catch (error: any) {
       toast({
         title: 'Error fetching shipments',
@@ -115,6 +149,10 @@ export default function ShipmentDetails() {
     e.preventDefault();
     if (!editingShipment) return;
 
+    // Store the original status to check if it changed
+    const originalStatus = shipments.find(s => s.id === editingShipment.id)?.status;
+    const statusChanged = originalStatus !== editingShipment.status;
+
     try {
       const { error } = await supabase
         .from('shipments')
@@ -144,9 +182,28 @@ export default function ShipmentDetails() {
         throw error;
       }
 
+      // If status changed and we have a receiver email, send status update email
+      if (statusChanged && editingShipment.receiver_email && editingShipment.status) {
+        try {
+          await supabase.functions.invoke('send-status-update', {
+            body: {
+              to: editingShipment.receiver_email,
+              shipmentData: editingShipment,
+              newStatus: editingShipment.status
+            }
+          });
+          console.log("Status update email sent successfully");
+        } catch (emailError) {
+          console.error("Failed to send status update email:", emailError);
+          // Don't fail the entire operation if email fails
+        }
+      }
+
       toast({
         title: 'Shipment updated',
-        description: 'Shipment details have been updated successfully.',
+        description: statusChanged 
+          ? 'Shipment updated and status update email sent to receiver.'
+          : 'Shipment details have been updated successfully.',
       });
 
       setIsEditDialogOpen(false);
@@ -224,7 +281,7 @@ export default function ShipmentDetails() {
   const getStatusBadgeVariant = (status: string) => {
     switch (status) {
       case 'delivered':
-        return 'success';
+        return 'secondary'; // Use secondary instead of success
       case 'in_transit':
         return 'secondary';
       case 'processing':

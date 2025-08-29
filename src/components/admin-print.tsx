@@ -42,7 +42,41 @@ export const PrintReceiptSection = () => {
         throw new Error('No shipment found with this tracking number.');
       }
 
-      setShipment(shipmentData);
+      // Transform database fields to match Shipment type with defaults for missing fields
+      const transformedShipment: Shipment = {
+        id: shipmentData.id,
+        tracking_number: shipmentData.tracking_number,
+        sender_name: shipmentData.sender_name,
+        sender_email: shipmentData.sender_email,
+        sender_phone: shipmentData.sender_phone,
+        sender_address: shipmentData.sender_address,
+        receiver_name: shipmentData.receiver_name,
+        receiver_email: shipmentData.receiver_email,
+        receiver_phone: shipmentData.receiver_phone,
+        receiver_address: shipmentData.receiver_address,
+        package_description: shipmentData.package_description,
+        weight: shipmentData.weight,
+        status: shipmentData.status,
+        created_at: shipmentData.created_at,
+        updated_at: shipmentData.updated_at,
+        // Fields that exist in the interface but not necessarily in DB
+        package_value: null,
+        dimensions: null,
+        quantity: null,
+        service_type: null,
+        sending_date: shipmentData.sending_date,
+        delivery_date: shipmentData.delivery_date,
+        shipping_fee: shipmentData.shipping_fee,
+        fragile: null,
+        signature_required: null,
+        insurance: null,
+        insurance_amount: null,
+        special_instructions: null,
+        payment_method: null,
+        payment_status: null,
+      };
+
+      setShipment(transformedShipment);
       toast({
         title: 'Shipment found',
         description: 'Ready to print receipt',
