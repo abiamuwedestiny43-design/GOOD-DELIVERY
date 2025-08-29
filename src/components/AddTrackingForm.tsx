@@ -1,283 +1,638 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
+import { useRef, useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
+import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
+import { ShipmentReceipt, type Shipment } from '@/components/ShipmentReceipt';
+import { downloadNodeAsPDF } from '@/lib/pdf';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import AdminDashboard from './dashboardheader';
 
 export const AddTrackingForm = () => {
   const [loading, setLoading] = useState(false);
+  const [lastShipment, setLastShipment] = useState<Shipment | null>(null);
+  const [activeTab, setActiveTab] = useState('sender');
+  const receiptRef = useRef<HTMLDivElement>(null);
+
   const [formData, setFormData] = useState({
-    senderName: "",
-    senderPhone: "",
-    senderAddress: "",
-    receiverName: "",
-    receiverPhone: "",
-    receiverAddress: "",
-    packageDescription: "",
-    weight: "",
-    status: "pending"
+    // Sender Information
+    sender_name: '',
+    sender_email: '',
+    sender_phone: '',
+    sender_address: '',
+    
+    // Receiver Information
+    receiver_name: '',
+    receiver_email: '',
+    receiver_phone: '',
+    receiver_address: '',
+    
+    // Package Information
+    package_description: '',
+    package_value: '',
+    weight: '',
+    dimensions: '',
+    quantity: '1',
+    
+    // Shipping Details
+    service_type: 'standard',
+    sending_date: '',
+    delivery_date: '',
+    status: 'pending',
+    
+    // Insurance & Additional Services
+    insurance: false,
+    insurance_amount: '',
+    special_instructions: '',
+    fragile: false,
+    signature_required: false,
+    
+    // Payment Information
+    payment_method: 'credit_card',
+    payment_status: 'pending'
   });
-  
+
   const { toast } = useToast();
   const { user } = useAuth();
 
-  const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+  const handleInputChange = (field: string, value: string | boolean | number) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const calculateInsuranceAmount = () => {
+    if (formData.insurance && formData.package_value) {
+      const packageValue = parseFloat(formData.package_value);
+      return Math.min(packageValue * 0.01, 100); // 1% of value, max $100
+    }
+    return 0;
+  };
+
+  const calculateShippingFee = () => {
+    const baseFee = 15;
+    const weightFee = formData.weight ? parseFloat(formData.weight) * 2 : 0;
+    const serviceMultiplier = {
+      'standard': 1,
+      'express': 1.5,
+      'priority': 2,
+      'overnight': 3
+    }[formData.service_type] || 1;
+    
+    return (baseFee + weightFee) * serviceMultiplier;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!user) {
       toast({
-        title: "Authentication required",
-        description: "Please sign in to create a shipment",
-        variant: "destructive",
+        title: 'Authentication required',
+        description: 'Please sign in to create a shipment',
+        variant: 'destructive',
       });
       return;
     }
 
     // Validate required fields
-    if (!formData.senderName || !formData.senderAddress || 
-        !formData.receiverName || !formData.receiverAddress) {
+    const requiredFields = [
+      'sender_name', 'sender_email', 'sender_address',
+      'receiver_name', 'receiver_email', 'receiver_address',
+      'package_description', 'weight'
+    ];
+    
+    const missingFields = requiredFields.filter(field => !formData[field as keyof typeof formData]);
+    
+    if (missingFields.length > 0) {
       toast({
-        title: "Missing required fields",
-        description: "Please fill in all required fields",
-        variant: "destructive",
+        title: 'Missing required fields',
+        description: `Please fill in: ${missingFields.join(', ').replace(/_/g, ' ')}`,
+        variant: 'destructive',
       });
       return;
     }
 
     setLoading(true);
-
     try {
       // Generate tracking number
-      const { data: trackingData, error: trackingError } = await supabase
-        .rpc('generate_tracking_number');
+      const trackingNumber = 'SL' + new Date().toISOString().replace(/-/g, '').slice(0, 8) + Math.floor(1000 + Math.random() * 9000);
+      
+      // Calculate fees
+      const shippingFee = calculateShippingFee();
+      const insuranceAmount = formData.insurance ? calculateInsuranceAmount() : 0;
+      const totalAmount = shippingFee + insuranceAmount;
 
-      if (trackingError) {
-        console.error('Error generating tracking number:', trackingError);
-        throw new Error(`Failed to generate tracking number: ${trackingError.message}`);
-      }
-
-      // Create shipment
       const { data: shipment, error: shipmentError } = await supabase
         .from('shipments')
         .insert({
-          tracking_number: trackingData,
-          sender_name: formData.senderName,
-          sender_phone: formData.senderPhone,
-          sender_address: formData.senderAddress,
-          receiver_name: formData.receiverName,
-          receiver_phone: formData.receiverPhone,
-          receiver_address: formData.receiverAddress,
-          package_description: formData.packageDescription,
-          weight: formData.weight ? parseFloat(formData.weight) : null,
+          tracking_number: trackingNumber,
+          
+          // Sender information
+          sender_name: formData.sender_name,
+          sender_email: formData.sender_email,
+          sender_phone: formData.sender_phone || null,
+          sender_address: formData.sender_address,
+          
+          // Receiver information
+          receiver_name: formData.receiver_name,
+          receiver_email: formData.receiver_email,
+          receiver_phone: formData.receiver_phone || null,
+          receiver_address: formData.receiver_address,
+          
+          // Package information
+          package_description: formData.package_description,
+          package_value: formData.package_value ? parseFloat(formData.package_value) : null,
+          weight: parseFloat(formData.weight),
+          dimensions: formData.dimensions || null,
+          quantity: parseInt(formData.quantity) || 1,
+          fragile: formData.fragile,
+          
+          // Shipping details
+          shipping_fee: totalAmount,
+          service_type: formData.service_type,
+          sending_date: formData.sending_date || null,
+          delivery_date: formData.delivery_date || null,
           status: formData.status,
-          created_by: user.id
+          signature_required: formData.signature_required,
+          
+          // Insurance & additional services
+          insurance: formData.insurance,
+          insurance_amount: insuranceAmount,
+          special_instructions: formData.special_instructions || null,
+          
+          // Payment information
+          payment_method: formData.payment_method,
+          payment_status: formData.payment_status,
+          
+          created_by: user.id,
         })
         .select()
         .single();
 
       if (shipmentError) {
-        console.error('Shipment creation error:', shipmentError);
-        
-        // Check if it's an RLS error
-        if (shipmentError.code === '42501') {
-          throw new Error("Permission denied. Please check your Row Level Security policies.");
-        }
-        
+        console.error('Supabase error details:', shipmentError);
         throw new Error(`Failed to create shipment: ${shipmentError.message}`);
       }
 
       // Create initial tracking event
-      const { error: eventError } = await supabase
-        .from('tracking_events')
-        .insert({
-          shipment_id: shipment.id,
-          status: formData.status,
-          description: `Package ${formData.status}`,
-          location: formData.senderAddress
-        });
-
-      if (eventError) {
-        console.error('Tracking event creation error:', eventError);
-        // We don't throw here as the shipment was created successfully
-        // We can still show success but log the tracking event issue
-      }
-
-      toast({
-        title: "Shipment created successfully",
-        description: `Tracking number: ${trackingData}`,
+      await supabase.from('tracking_events').insert({
+        shipment_id: shipment.id,
+        status: formData.status,
+        description: `Shipment created and is ${formData.status}`,
+        location: formData.sender_address,
       });
 
-      // Reset form
-      setFormData({
-        senderName: "",
-        senderPhone: "",
-        senderAddress: "",
-        receiverName: "",
-        receiverPhone: "",
-        receiverAddress: "",
-        packageDescription: "",
-        weight: "",
-        status: "pending"
-      });
+      setLastShipment(shipment as any);
 
-    } catch (error: any) {
-      console.error('Error creating shipment:', error);
-      toast({
-        title: "Error creating shipment",
-        description: error.message,
-        variant: "destructive",
+      toast({ 
+        title: 'Shipment created successfully!', 
+        description: `Tracking number: ${trackingNumber} - Total: $${totalAmount.toFixed(2)}` 
+      });
+      
+    } catch (err: any) {
+      console.error('Full error:', err);
+      toast({ 
+        title: 'Error creating shipment', 
+        description: err.message, 
+        variant: 'destructive' 
       });
     } finally {
       setLoading(false);
     }
   };
 
+  const handleDownloadPDF = async () => {
+    if (!lastShipment || !receiptRef.current) return;
+    await downloadNodeAsPDF(receiptRef.current, `shipment_${lastShipment.tracking_number}.pdf`);
+  };
+
   return (
-    <Card className="w-full max-w-4xl mx-auto">
-      <CardHeader>
-        <CardTitle className="text-2xl font-semibold">Add New Tracking</CardTitle>
+    <Card className="w-full max-w-6xl mx-auto rounded-2xl shadow-xl border border-gray-200">
+      {/* <AdminDashboard /> */}
+      <CardHeader className="bg-gradient-to-r from-indigo-600 to-blue-500 text-white rounded-t-2xl">
+        <CardTitle className="text-2xl font-semibold">Create New Shipment</CardTitle>
+        <CardDescription className="text-blue-100">
+          Complete all sections to create a new shipment with tracking
+        </CardDescription>
       </CardHeader>
-      
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+      <CardContent className="pt-6">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid grid-cols-5 mb-6">
+            <TabsTrigger value="sender">Sender</TabsTrigger>
+            <TabsTrigger value="receiver">Receiver</TabsTrigger>
+            <TabsTrigger value="package">Package</TabsTrigger>
+            <TabsTrigger value="shipping">Shipping</TabsTrigger>
+            <TabsTrigger value="payment">Payment</TabsTrigger>
+          </TabsList>
+
+          <form onSubmit={handleSubmit} className="space-y-8">
             {/* Sender Information */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-medium">Sender Information</h3>
+            <TabsContent value="sender" className="space-y-6">
+              <h3 className="text-lg font-semibold">Sender Information</h3>
               
-              <div className="space-y-2">
-                <Label htmlFor="senderName">Sender Name *</Label>
-                <Input
-                  id="senderName"
-                  value={formData.senderName}
-                  onChange={(e) => handleInputChange("senderName", e.target.value)}
-                  placeholder="Enter sender name"
-                  required
-                />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="sender_name">Full Name *</Label>
+                  <Input
+                    id="sender_name"
+                    value={formData.sender_name}
+                    onChange={(e) => handleInputChange('sender_name', e.target.value)}
+                    required
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="sender_email">Email *</Label>
+                  <Input
+                    id="sender_email"
+                    type="email"
+                    value={formData.sender_email}
+                    onChange={(e) => handleInputChange('sender_email', e.target.value)}
+                    required
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="sender_phone">Phone</Label>
+                  <Input
+                    id="sender_phone"
+                    type="tel"
+                    value={formData.sender_phone}
+                    onChange={(e) => handleInputChange('sender_phone', e.target.value)}
+                  />
+                </div>
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="senderPhone">Sender Phone</Label>
-                <Input
-                  id="senderPhone"
-                  value={formData.senderPhone}
-                  onChange={(e) => handleInputChange("senderPhone", e.target.value)}
-                  placeholder="Enter sender phone"
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="senderAddress">Sender Address *</Label>
+                <Label htmlFor="sender_address">Full Address *</Label>
                 <Textarea
-                  id="senderAddress"
-                  value={formData.senderAddress}
-                  onChange={(e) => handleInputChange("senderAddress", e.target.value)}
-                  placeholder="Enter sender address"
+                  id="sender_address"
+                  value={formData.sender_address}
+                  onChange={(e) => handleInputChange('sender_address', e.target.value)}
+                  placeholder="Street, City, State, ZIP Code"
                   required
                 />
               </div>
-            </div>
+              
+              <Button type="button" onClick={() => setActiveTab('receiver')}>
+                Next: Receiver Information
+              </Button>
+            </TabsContent>
 
             {/* Receiver Information */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-medium">Receiver Information</h3>
+            <TabsContent value="receiver" className="space-y-6">
+              <h3 className="text-lg font-semibold">Receiver Information</h3>
               
-              <div className="space-y-2">
-                <Label htmlFor="receiverName">Receiver Name *</Label>
-                <Input
-                  id="receiverName"
-                  value={formData.receiverName}
-                  onChange={(e) => handleInputChange("receiverName", e.target.value)}
-                  placeholder="Enter receiver name"
-                  required
-                />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="receiver_name">Full Name *</Label>
+                  <Input
+                    id="receiver_name"
+                    value={formData.receiver_name}
+                    onChange={(e) => handleInputChange('receiver_name', e.target.value)}
+                    required
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="receiver_email">Email *</Label>
+                  <Input
+                    id="receiver_email"
+                    type="email"
+                    value={formData.receiver_email}
+                    onChange={(e) => handleInputChange('receiver_email', e.target.value)}
+                    required
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="receiver_phone">Phone</Label>
+                  <Input
+                    id="receiver_phone"
+                    type="tel"
+                    value={formData.receiver_phone}
+                    onChange={(e) => handleInputChange('receiver_phone', e.target.value)}
+                  />
+                </div>
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="receiverPhone">Receiver Phone</Label>
-                <Input
-                  id="receiverPhone"
-                  value={formData.receiverPhone}
-                  onChange={(e) => handleInputChange("receiverPhone", e.target.value)}
-                  placeholder="Enter receiver phone"
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="receiverAddress">Receiver Address *</Label>
+                <Label htmlFor="receiver_address">Full Address *</Label>
                 <Textarea
-                  id="receiverAddress"
-                  value={formData.receiverAddress}
-                  onChange={(e) => handleInputChange("receiverAddress", e.target.value)}
-                  placeholder="Enter receiver address"
+                  id="receiver_address"
+                  value={formData.receiver_address}
+                  onChange={(e) => handleInputChange('receiver_address', e.target.value)}
+                  placeholder="Street, City, State, ZIP Code"
                   required
                 />
               </div>
-            </div>
-          </div>
+              
+              <div className="flex gap-4">
+                <Button type="button" variant="outline" onClick={() => setActiveTab('sender')}>
+                  Back
+                </Button>
+                <Button type="button" onClick={() => setActiveTab('package')}>
+                  Next: Package Details
+                </Button>
+              </div>
+            </TabsContent>
 
-          {/* Package Information */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-medium">Package Information</h3>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Package Information */}
+            <TabsContent value="package" className="space-y-6">
+              <h3 className="text-lg font-semibold">Package Details</h3>
+              
               <div className="space-y-2">
-                <Label htmlFor="packageDescription">Package Description</Label>
-                <Input
-                  id="packageDescription"
-                  value={formData.packageDescription}
-                  onChange={(e) => handleInputChange("packageDescription", e.target.value)}
-                  placeholder="Describe the package"
+                <Label htmlFor="package_description">Package Description *</Label>
+                <Textarea
+                  id="package_description"
+                  value={formData.package_description}
+                  onChange={(e) => handleInputChange('package_description', e.target.value)}
+                  placeholder="Describe the contents of the package"
+                  required
                 />
               </div>
               
-              <div className="space-y-2">
-                <Label htmlFor="weight">Weight (kg)</Label>
-                <Input
-                  id="weight"
-                  type="number"
-                  step="0.1"
-                  value={formData.weight}
-                  onChange={(e) => handleInputChange("weight", e.target.value)}
-                  placeholder="0.0"
-                />
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="weight">Weight (kg) *</Label>
+                  <Input
+                    id="weight"
+                    type="number"
+                    step="0.1"
+                    min="0.1"
+                    value={formData.weight}
+                    onChange={(e) => handleInputChange('weight', e.target.value)}
+                    required
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="dimensions">Dimensions (LxWxH)</Label>
+                  <Input
+                    id="dimensions"
+                    value={formData.dimensions}
+                    onChange={(e) => handleInputChange('dimensions', e.target.value)}
+                    placeholder="10x5x3 in"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="quantity">Quantity</Label>
+                  <Input
+                    id="quantity"
+                    type="number"
+                    min="1"
+                    value={formData.quantity}
+                    onChange={(e) => handleInputChange('quantity', e.target.value)}
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="package_value">Value ($)</Label>
+                  <Input
+                    id="package_value"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={formData.package_value}
+                    onChange={(e) => handleInputChange('package_value', e.target.value)}
+                  />
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-4">
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="fragile"
+                    checked={formData.fragile}
+                    onCheckedChange={(checked) => handleInputChange('fragile', checked)}
+                  />
+                  <Label htmlFor="fragile">Fragile Item</Label>
+                </div>
+                
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="signature_required"
+                    checked={formData.signature_required}
+                    onCheckedChange={(checked) => handleInputChange('signature_required', checked)}
+                  />
+                  <Label htmlFor="signature_required">Signature Required</Label>
+                </div>
+              </div>
+              
+              <div className="flex gap-4">
+                <Button type="button" variant="outline" onClick={() => setActiveTab('receiver')}>
+                  Back
+                </Button>
+                <Button type="button" onClick={() => setActiveTab('shipping')}>
+                  Next: Shipping Options
+                </Button>
+              </div>
+            </TabsContent>
+
+            {/* Shipping Options */}
+            <TabsContent value="shipping" className="space-y-6">
+              <h3 className="text-lg font-semibold">Shipping Options</h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="service_type">Service Type</Label>
+                  <Select
+                    value={formData.service_type}
+                    onValueChange={(value) => handleInputChange('service_type', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select service type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="standard">Standard (3-5 days)</SelectItem>
+                      <SelectItem value="express">Express (2-3 days)</SelectItem>
+                      <SelectItem value="priority">Priority (1-2 days)</SelectItem>
+                      <SelectItem value="overnight">Overnight (Next day)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="status">Initial Status</Label>
+                  <Select
+                    value={formData.status}
+                    onValueChange={(value) => handleInputChange('status', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="pending">Pending</SelectItem>
+                      <SelectItem value="processing">Processing</SelectItem>
+                      <SelectItem value="in_transit">In Transit</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="sending_date">Sending Date</Label>
+                  <Input
+                    id="sending_date"
+                    type="date"
+                    value={formData.sending_date}
+                    onChange={(e) => handleInputChange('sending_date', e.target.value)}
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="delivery_date">Expected Delivery Date</Label>
+                  <Input
+                    id="delivery_date"
+                    type="date"
+                    value={formData.delivery_date}
+                    onChange={(e) => handleInputChange('delivery_date', e.target.value)}
+                  />
+                </div>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="insurance"
+                    checked={formData.insurance}
+                    onCheckedChange={(checked) => handleInputChange('insurance', checked)}
+                  />
+                  <Label htmlFor="insurance">Add Insurance</Label>
+                </div>
+                
+                {formData.insurance && (
+                  <div className="space-y-2">
+                    <Label htmlFor="insurance_amount">Insurance Amount</Label>
+                    <Input
+                      id="insurance_amount"
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      value={calculateInsuranceAmount()}
+                      disabled
+                    />
+                    <p className="text-sm text-gray-500">
+                      Insurance covers up to ${formData.package_value || '0'} at 1% of declared value
+                    </p>
+                  </div>
+                )}
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="status">Initial Status</Label>
-                <Select value={formData.status} onValueChange={(value) => handleInputChange("status", value)}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="pending">Pending</SelectItem>
-                    <SelectItem value="picked_up">Picked Up</SelectItem>
-                    <SelectItem value="in_transit">In Transit</SelectItem>
-                    <SelectItem value="out_for_delivery">Out for Delivery</SelectItem>
-                    <SelectItem value="delivered">Delivered</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Label htmlFor="special_instructions">Special Instructions</Label>
+                <Textarea
+                  id="special_instructions"
+                  value={formData.special_instructions}
+                  onChange={(e) => handleInputChange('special_instructions', e.target.value)}
+                  placeholder="Any special handling instructions..."
+                />
               </div>
-            </div>
-          </div>
+              
+              <div className="bg-blue-50 p-4 rounded-lg">
+                <h4 className="font-semibold text-blue-800">Estimated Costs</h4>
+                <p className="text-blue-600">
+                  Shipping: ${calculateShippingFee().toFixed(2)} | 
+                  Insurance: ${calculateInsuranceAmount().toFixed(2)} | 
+                  Total: ${(calculateShippingFee() + calculateInsuranceAmount()).toFixed(2)}
+                </p>
+              </div>
+              
+              <div className="flex gap-4">
+                <Button type="button" variant="outline" onClick={() => setActiveTab('package')}>
+                  Back
+                </Button>
+                <Button type="button" onClick={() => setActiveTab('payment')}>
+                  Next: Payment
+                </Button>
+              </div>
+            </TabsContent>
 
-          <Button 
-            type="submit" 
-            className="w-full"
-            disabled={loading}
-          >
-            {loading ? "Creating..." : "Create Shipment"}
-          </Button>
-        </form>
+            {/* Payment Information */}
+            <TabsContent value="payment" className="space-y-6">
+              <h3 className="text-lg font-semibold">Payment Information</h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="payment_method">Payment Method</Label>
+                  <Select
+                    value={formData.payment_method}
+                    onValueChange={(value) => handleInputChange('payment_method', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select payment method" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="credit_card">Credit Card</SelectItem>
+                      <SelectItem value="paypal">PayPal</SelectItem>
+                      <SelectItem value="bank_transfer">Bank Transfer</SelectItem>
+                      <SelectItem value="cash">Cash on Delivery</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="payment_status">Payment Status</Label>
+                  <Select
+                    value={formData.payment_status}
+                    onValueChange={(value) => handleInputChange('payment_status', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select payment status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="pending">Pending</SelectItem>
+                      <SelectItem value="paid">Paid</SelectItem>
+                      <SelectItem value="partial">Partial Payment</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              
+              <div className="bg-green-50 p-4 rounded-lg">
+                <h4 className="font-semibold text-green-800">Order Summary</h4>
+                <div className="text-green-600 space-y-1">
+                  <p>Shipping: ${calculateShippingFee().toFixed(2)}</p>
+                  <p>Insurance: ${calculateInsuranceAmount().toFixed(2)}</p>
+                  <p className="font-bold">Total: ${(calculateShippingFee() + calculateInsuranceAmount()).toFixed(2)}</p>
+                </div>
+              </div>
+              
+              <div className="flex gap-4">
+                <Button type="button" variant="outline" onClick={() => setActiveTab('shipping')}>
+                  Back
+                </Button>
+                <Button type="submit" disabled={loading} className="flex-1">
+                  {loading ? 'Creating Shipment...' : 'Create Shipment & Generate Tracking'}
+                </Button>
+              </div>
+            </TabsContent>
+          </form>
+        </Tabs>
+
+        {/* Hidden print area for PDF */}
+        <div className="sr-only print:block mt-8" aria-hidden>
+          {lastShipment && <ShipmentReceipt ref={receiptRef} shipment={lastShipment} />}
+        </div>
+
+        {lastShipment && (
+          <div className="mt-6 p-4 bg-green-50 rounded-lg">
+            <h3 className="font-semibold text-green-800">Shipment Created Successfully!</h3>
+            <p className="text-green-600">Tracking Number: {lastShipment.tracking_number}</p>
+            <Button 
+              onClick={handleDownloadPDF} 
+              variant="outline" 
+              className="mt-2"
+            >
+              Download Receipt
+            </Button>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
