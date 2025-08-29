@@ -4,7 +4,15 @@
   padding: 2rem;
   text-align: center;
 }
+:root {
+  --brand-start: #4f46e5;  /* indigo-600 */
+  --brand-end:   #3b82f6;  /* blue-500 */
+  --brand-accent: #059669; /* emerald-600 */
+}
 
+@media print {
+  body { background: white; }
+}
 .logo {
   height: 6em;
   padding: 1.5em;
