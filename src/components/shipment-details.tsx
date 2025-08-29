@@ -7,10 +7,29 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { Search, Filter, Eye, Download } from 'lucide-react';
+import { Search, Filter, Eye, Download, Edit, Trash2, Plus, Copy } from 'lucide-react';
 import { Shipment, ShipmentReceipt } from '@/components/ShipmentReceipt';
 import { downloadNodeAsPDF } from '@/lib/pdf';
 import { useRef } from 'react';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { Label } from '@/components/ui/label';
 
 export default function ShipmentDetails() {
   const [shipments, setShipments] = useState<Shipment[]>([]);
@@ -18,6 +37,11 @@ export default function ShipmentDetails() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedShipment, setSelectedShipment] = useState<Shipment | null>(null);
+  const [editingShipment, setEditingShipment] = useState<Shipment | null>(null);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [shipmentToDelete, setShipmentToDelete] = useState<string | null>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isGeneratingTracking, setIsGeneratingTracking] = useState(false);
   const receiptRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
@@ -48,13 +72,149 @@ export default function ShipmentDetails() {
     }
   };
 
+  const generateTrackingNumber = async () => {
+    setIsGeneratingTracking(true);
+    try {
+      const { data, error } = await supabase.rpc('generate_tracking_number');
+      
+      if (error) {
+        throw error;
+      }
+      
+      if (editingShipment) {
+        setEditingShipment({
+          ...editingShipment,
+          tracking_number: data
+        });
+      }
+      
+      toast({
+        title: 'Tracking number generated',
+        description: 'New tracking number has been created.',
+      });
+    } catch (error: any) {
+      toast({
+        title: 'Error generating tracking number',
+        description: error.message,
+        variant: 'destructive',
+      });
+    } finally {
+      setIsGeneratingTracking(false);
+    }
+  };
+
+  const copyTrackingNumber = (trackingNumber: string) => {
+    navigator.clipboard.writeText(trackingNumber);
+    toast({
+      title: 'Copied to clipboard',
+      description: 'Tracking number copied to clipboard.',
+    });
+  };
+
+  const handleUpdateShipment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingShipment) return;
+
+    try {
+      const { error } = await supabase
+        .from('shipments')
+        .update({
+          tracking_number: editingShipment.tracking_number,
+          sender_name: editingShipment.sender_name,
+          sender_email: editingShipment.sender_email,
+          sender_phone: editingShipment.sender_phone,
+          sender_address: editingShipment.sender_address,
+          receiver_name: editingShipment.receiver_name,
+          receiver_email: editingShipment.receiver_email,
+          receiver_phone: editingShipment.receiver_phone,
+          receiver_address: editingShipment.receiver_address,
+          package_description: editingShipment.package_description,
+          package_value: editingShipment.package_value,
+          weight: editingShipment.weight,
+          dimensions: editingShipment.dimensions,
+          status: editingShipment.status,
+          service_type: editingShipment.service_type,
+          shipping_fee: editingShipment.shipping_fee,
+          insurance_amount: editingShipment.insurance_amount,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', editingShipment.id);
+
+      if (error) {
+        throw error;
+      }
+
+      toast({
+        title: 'Shipment updated',
+        description: 'Shipment details have been updated successfully.',
+      });
+
+      setIsEditDialogOpen(false);
+      setEditingShipment(null);
+      fetchShipments();
+    } catch (error: any) {
+      toast({
+        title: 'Error updating shipment',
+        description: error.message,
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleDeleteShipment = async () => {
+    if (!shipmentToDelete) return;
+
+    try {
+      // First delete tracking events associated with the shipment
+      await supabase
+        .from('tracking_events')
+        .delete()
+        .eq('shipment_id', shipmentToDelete);
+
+      // Then delete the shipment
+      const { error } = await supabase
+        .from('shipments')
+        .delete()
+        .eq('id', shipmentToDelete);
+
+      if (error) {
+        throw error;
+      }
+
+      toast({
+        title: 'Shipment deleted',
+        description: 'Shipment has been deleted successfully.',
+      });
+
+      setDeleteConfirmOpen(false);
+      setShipmentToDelete(null);
+      fetchShipments();
+    } catch (error: any) {
+      toast({
+        title: 'Error deleting shipment',
+        description: error.message,
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const openDeleteConfirm = (shipmentId: string) => {
+    setShipmentToDelete(shipmentId);
+    setDeleteConfirmOpen(true);
+  };
+
+  const openEditDialog = (shipment: Shipment) => {
+    setEditingShipment({ ...shipment });
+    setIsEditDialogOpen(true);
+  };
+
   const filteredShipments = shipments.filter(shipment => {
     const matchesSearch = 
       shipment.tracking_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
       shipment.receiver_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       shipment.sender_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      shipment.receiver_email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      shipment.sender_email?.toLowerCase().includes(searchTerm.toLowerCase());
+      (shipment.receiver_email?.toLowerCase().includes(searchTerm.toLowerCase()) || false) ||
+      (shipment.sender_email?.toLowerCase().includes(searchTerm.toLowerCase()) || false);
 
     const matchesStatus = statusFilter === 'all' || shipment.status === statusFilter;
 
@@ -84,7 +244,6 @@ export default function ShipmentDetails() {
 
   const handleDownloadReceipt = async (shipment: Shipment) => {
     setSelectedShipment(shipment);
-    // Wait for the next render to ensure the receipt is rendered
     setTimeout(async () => {
       if (receiptRef.current) {
         await downloadNodeAsPDF(receiptRef.current, `shipment_${shipment.tracking_number}.pdf`);
@@ -107,11 +266,17 @@ export default function ShipmentDetails() {
   return (
     <div className="space-y-6">
       <Card>
-        <CardHeader>
-          <CardTitle>Tracked Shipments</CardTitle>
-          <CardDescription>
-            View and manage all shipments in the system. Total: {shipments.length} shipments
-          </CardDescription>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <div>
+            <CardTitle>Tracked Shipments</CardTitle>
+            <CardDescription>
+              View and manage all shipments in the system. Total: {shipments.length} shipments
+            </CardDescription>
+          </div>
+          <Button>
+            <Plus className="h-4 w-4 mr-2" />
+            New Shipment
+          </Button>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col sm:flex-row gap-4 mb-6">
@@ -150,7 +315,7 @@ export default function ShipmentDetails() {
                   <TableHead>Weight</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Created</TableHead>
-                  <TableHead>Actions</TableHead>
+                  <TableHead className="w-[150px]">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -164,7 +329,17 @@ export default function ShipmentDetails() {
                   filteredShipments.map((shipment) => (
                     <TableRow key={shipment.id}>
                       <TableCell className="font-mono font-medium">
-                        {shipment.tracking_number}
+                        <div className="flex items-center gap-2">
+                          {shipment.tracking_number}
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-4 w-4"
+                            onClick={() => copyTrackingNumber(shipment.tracking_number)}
+                          >
+                            <Copy className="h-3 w-3" />
+                          </Button>
+                        </div>
                       </TableCell>
                       <TableCell>
                         <div className="font-medium">{shipment.sender_name}</div>
@@ -190,15 +365,28 @@ export default function ShipmentDetails() {
                             size="sm"
                             onClick={() => handleViewDetails(shipment)}
                           >
-                            <Eye className="h-4 w-4 mr-1" />
-                            View
+                            <Eye className="h-4 w-4" />
                           </Button>
                           <Button
-                            variant="ghost"
+                            variant="outline"
                             size="sm"
                             onClick={() => handleDownloadReceipt(shipment)}
                           >
                             <Download className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => openEditDialog(shipment)}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => openDeleteConfirm(shipment.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>
                       </TableCell>
@@ -211,12 +399,203 @@ export default function ShipmentDetails() {
         </CardContent>
       </Card>
 
+      {/* Edit Shipment Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit Shipment</DialogTitle>
+            <DialogDescription>
+              Update the shipment details below.
+            </DialogDescription>
+          </DialogHeader>
+          {editingShipment && (
+            <form onSubmit={handleUpdateShipment} className="space-y-4">
+              {/* Tracking Number Section */}
+              <div className="space-y-2">
+                <Label htmlFor="tracking_number">Tracking Number</Label>
+                <div className="flex gap-2">
+                  <Input
+                    id="tracking_number"
+                    value={editingShipment.tracking_number}
+                    onChange={(e) => setEditingShipment({
+                      ...editingShipment,
+                      tracking_number: e.target.value
+                    })}
+                    required
+                    className="font-mono"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => copyTrackingNumber(editingShipment.tracking_number)}
+                  >
+                    <Copy className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    onClick={generateTrackingNumber}
+                    disabled={isGeneratingTracking}
+                  >
+                    {isGeneratingTracking ? 'Generating...' : 'Generate New'}
+                  </Button>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Current tracking number: {editingShipment.tracking_number}
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="sender_name">Sender Name</Label>
+                  <Input
+                    id="sender_name"
+                    value={editingShipment.sender_name}
+                    onChange={(e) => setEditingShipment({
+                      ...editingShipment,
+                      sender_name: e.target.value
+                    })}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="receiver_name">Receiver Name</Label>
+                  <Input
+                    id="receiver_name"
+                    value={editingShipment.receiver_name}
+                    onChange={(e) => setEditingShipment({
+                      ...editingShipment,
+                      receiver_name: e.target.value
+                    })}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="sender_email">Sender Email</Label>
+                  <Input
+                    id="sender_email"
+                    type="email"
+                    value={editingShipment.sender_email || ''}
+                    onChange={(e) => setEditingShipment({
+                      ...editingShipment,
+                      sender_email: e.target.value
+                    })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="receiver_email">Receiver Email</Label>
+                  <Input
+                    id="receiver_email"
+                    type="email"
+                    value={editingShipment.receiver_email || ''}
+                    onChange={(e) => setEditingShipment({
+                      ...editingShipment,
+                      receiver_email: e.target.value
+                    })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="package_description">Package Description</Label>
+                  <Input
+                    id="package_description"
+                    value={editingShipment.package_description || ''}
+                    onChange={(e) => setEditingShipment({
+                      ...editingShipment,
+                      package_description: e.target.value
+                    })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="weight">Weight (kg)</Label>
+                  <Input
+                    id="weight"
+                    type="number"
+                    step="0.1"
+                    value={editingShipment.weight || ''}
+                    onChange={(e) => setEditingShipment({
+                      ...editingShipment,
+                      weight: parseFloat(e.target.value) || null
+                    })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="status">Status</Label>
+                  <Select
+                    value={editingShipment.status || 'pending'}
+                    onValueChange={(value) => setEditingShipment({
+                      ...editingShipment,
+                      status: value
+                    })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="pending">Pending</SelectItem>
+                      <SelectItem value="processing">Processing</SelectItem>
+                      <SelectItem value="in_transit">In Transit</SelectItem>
+                      <SelectItem value="delivered">Delivered</SelectItem>
+                      <SelectItem value="cancelled">Cancelled</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="shipping_fee">Shipping Fee</Label>
+                  <Input
+                    id="shipping_fee"
+                    type="number"
+                    step="0.01"
+                    value={editingShipment.shipping_fee || ''}
+                    onChange={(e) => setEditingShipment({
+                      ...editingShipment,
+                      shipping_fee: parseFloat(e.target.value) || null
+                    })}
+                  />
+                </div>
+              </div>
+              <div className="flex justify-end gap-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsEditDialogOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit">Update Shipment</Button>
+              </div>
+            </form>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the shipment
+              and remove all associated tracking events from our servers.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteShipment}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       {/* Hidden print area for PDF */}
       <div className="sr-only print:block" aria-hidden>
         {selectedShipment && <ShipmentReceipt ref={receiptRef} shipment={selectedShipment} />}
       </div>
 
-      {/* Modal for detailed view would go here */}
+      {/* Detailed view */}
       {selectedShipment && (
         <Card className="mt-6">
           <CardHeader>
