@@ -8,6 +8,12 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import TrackPage from "./pages/Track";
+import AdminPage from "./pages/Admin";
+import About from "./pages/About";
+import Services from "./pages/Services";
+import Contact from "./pages/Contact";
+import Layout from "./components/Layout";
+import Home from "./pages/Home";
 
 const queryClient = new QueryClient();
 
@@ -18,13 +24,21 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
+        <Layout>
           <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/track" element={<TrackPage />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
+              <Route path="/" element={<Index />} />
+              <Route path="/auth" element={<Auth />} />
+              <Route path="/admin" element={<AdminPage />} />
+              <Route path="/" element={<Home />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/services" element={<Services />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/track" element={<TrackPage />} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            
           </Routes>
+      </Layout>
         </BrowserRouter>
       </AuthProvider>
     </TooltipProvider>
