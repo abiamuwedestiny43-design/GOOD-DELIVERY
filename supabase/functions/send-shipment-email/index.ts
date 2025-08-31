@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import { SmtpClient } from "https://deno.land/x/smtp@v0.7.0/mod.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -28,22 +29,13 @@ const handler = async (req: Request): Promise<Response> => {
     const smtpPort = parseInt(Deno.env.get("SMTP_PORT") || "587");
     const smtpUser = Deno.env.get("SMTP_USER");
     const smtpPass = Deno.env.get("SMTP_PASS");
+    const smtpFrom = Deno.env.get("SMTP_FROM") || smtpUser;
 
     if (!smtpHost || !smtpUser || !smtpPass) {
       throw new Error("SMTP configuration missing. Please check your environment variables.");
     }
 
-    // Create SMTP connection using basic fetch approach
-    const emailData = {
-      from: smtpUser,
-      to: to,
-      subject: subject,
-      html: html,
-    };
-
-    // For demonstration, we'll use a simple email service API
-    // In production, you'd want to use a more robust SMTP solution
-    console.log("Email configuration ready:", {
+    console.log("Email configuration:", {
       host: smtpHost,
       port: smtpPort,
       user: smtpUser,
@@ -51,9 +43,36 @@ const handler = async (req: Request): Promise<Response> => {
       subject: subject
     });
 
-    // Here we would normally send the email via SMTP
-    // For now, we'll simulate a successful send
-    console.log("Email sent successfully to:", to);
+    // Create SMTP client and send email
+    const client = new SmtpClient();
+
+    try {
+      // Connect to SMTP server
+      await client.connect({
+        hostname: smtpHost,
+        port: smtpPort,
+        username: smtpUser,
+        password: smtpPass,
+      });
+      console.log("SMTP connection successful");
+
+      // Send email
+      await client.send({
+        from: smtpFrom!,
+        to: to,
+        subject: subject,
+        content: "HTML content - please view in an HTML-enabled email client",
+        html: html,
+      });
+
+      await client.close();
+      console.log("Email sent successfully to:", to);
+
+    } catch (smtpError: any) {
+      console.error("SMTP error:", smtpError);
+      await client.close();
+      throw new Error(`Failed to send email: ${smtpError.message}`);
+    }
 
     return new Response(
       JSON.stringify({ 

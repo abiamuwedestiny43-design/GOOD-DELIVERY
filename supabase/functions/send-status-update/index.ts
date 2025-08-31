@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import { SmtpClient } from "https://deno.land/x/smtp@v0.7.0/mod.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -39,6 +40,8 @@ const generateStatusUpdateEmailHtml = (shipmentData: any, newStatus: string) => 
     'returned': '#ef4444'
   };
 
+  const siteUrl = Deno.env.get('SITE_URL') || 'http://localhost:3000';
+
   return `
     <!DOCTYPE html>
     <html>
@@ -75,7 +78,7 @@ const generateStatusUpdateEmailHtml = (shipmentData: any, newStatus: string) => 
             <div class="status-title">${newStatus.replace('_', ' ').toUpperCase()}</div>
             <div class="tracking-number">${shipmentData.tracking_number}</div>
             <p>${statusMessages[newStatus] || 'Your shipment status has been updated.'}</p>
-            <a href="${Deno.env.get('SITE_URL') || 'http://localhost:3000'}/track?number=${shipmentData.tracking_number}" class="btn">Track Your Package</a>
+            <a href="${siteUrl}/track?number=${shipmentData.tracking_number}" class="btn">Track Your Package</a>
           </div>
           
           <div class="details-grid">
@@ -131,12 +134,13 @@ const handler = async (req: Request): Promise<Response> => {
     const smtpPort = parseInt(Deno.env.get("SMTP_PORT") || "587");
     const smtpUser = Deno.env.get("SMTP_USER");
     const smtpPass = Deno.env.get("SMTP_PASS");
+    const smtpFrom = Deno.env.get("SMTP_FROM") || smtpUser;
 
     if (!smtpHost || !smtpUser || !smtpPass) {
       throw new Error("SMTP configuration missing. Please check your environment variables.");
     }
 
-    console.log("Status update email configuration ready:", {
+    console.log("Status update email configuration:", {
       host: smtpHost,
       port: smtpPort,
       user: smtpUser,
@@ -145,9 +149,36 @@ const handler = async (req: Request): Promise<Response> => {
       tracking: shipmentData.tracking_number
     });
 
-    // Here we would normally send the email via SMTP
-    // For now, we'll simulate a successful send
-    console.log("Status update email sent successfully to:", to);
+    // Create SMTP client and send email
+    const client = new SmtpClient();
+
+    try {
+      // Connect to SMTP server
+      await client.connect({
+        hostname: smtpHost,
+        port: smtpPort,
+        username: smtpUser,
+        password: smtpPass,
+      });
+      console.log("SMTP connection successful");
+
+      // Send status update email
+      await client.send({
+        from: smtpFrom!,
+        to: to,
+        subject: `Shipment Status Update: ${newStatus.replace('_', ' ').toUpperCase()} - ${shipmentData.tracking_number}`,
+        content: `Your shipment status has been updated to: ${newStatus}. Tracking number: ${shipmentData.tracking_number}`,
+        html: emailHtml,
+      });
+
+      await client.close();
+      console.log("Status update email sent successfully to:", to);
+
+    } catch (smtpError: any) {
+      console.error("SMTP error:", smtpError);
+      await client.close();
+      throw new Error(`Failed to send status update email: ${smtpError.message}`);
+    }
 
     return new Response(
       JSON.stringify({ 

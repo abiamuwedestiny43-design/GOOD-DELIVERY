@@ -12,7 +12,6 @@ import { useAuth } from '@/hooks/useAuth';
 import { ShipmentReceipt, type Shipment } from '@/components/ShipmentReceipt';
 import { downloadNodeAsPDF } from '@/lib/pdf';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import AdminDashboard from './dashboardheader';
 
 // Email template generator
 const generateShipmentEmailHtml = (shipmentData: any) => {
