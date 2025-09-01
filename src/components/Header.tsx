@@ -210,7 +210,7 @@ const Header = () => {
                 <a href="/track">Track Package</a>
               </Button>
               <Button className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white">
-                <a href="/contact">Get Started</a>
+                <a href="/admin">Get Started</a>
               </Button>
             </div>
 
