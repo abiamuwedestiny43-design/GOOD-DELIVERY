@@ -13,7 +13,7 @@ import About from "./pages/About";
 import Services from "./pages/Services";
 import Contact from "./pages/Contact";
 import Layout from "./components/Layout";
-import { UserTrackPage } from "./components/userTrack";
+import TrackingPage from "./pages/tracking";
 
 const queryClient = new QueryClient();
 
@@ -30,7 +30,7 @@ const App = () => (
               <Route path="/auth" element={<Auth />} />
               <Route path="/admin" element={<AdminPage />} />
               <Route path="/about" element={<About />} />
-              <Route path="/tracking" element={<UserTrackPage />} />
+              <Route path="/tracking" element={<TrackingPage />} />
               <Route path="/services" element={<Services />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/track" element={<TrackPage />} />
