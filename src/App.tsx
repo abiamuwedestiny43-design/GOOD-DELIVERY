@@ -14,6 +14,7 @@ import Services from "./pages/Services";
 import Contact from "./pages/Contact";
 import Layout from "./components/Layout";
 import Home from "./pages/Home";
+import { UserTrackPage } from "./components/userTrack";
 
 const queryClient = new QueryClient();
 
@@ -30,6 +31,7 @@ const App = () => (
               <Route path="/auth" element={<Auth />} />
               <Route path="/admin" element={<AdminPage />} />
               <Route path="/about" element={<About />} />
+              <Route path="/tracking" element={<UserTrackPage />} />
               <Route path="/services" element={<Services />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/track" element={<TrackPage />} />
