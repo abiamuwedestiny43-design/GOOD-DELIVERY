@@ -65,7 +65,7 @@ const Footer = () => {
             <div className="space-y-3">
               <div className="flex items-center space-x-3 text-slate-400">
                 <Phone className="w-4 h-4" />
-                <span>+1 (555) 123-4567</span>
+                <span>+447386762901</span>
               </div>
               <div className="flex items-center space-x-3 text-slate-400">
                 <Mail className="w-4 h-4" />
@@ -73,7 +73,7 @@ const Footer = () => {
               </div>
               <div className="flex items-center space-x-3 text-slate-400">
                 <MapPin className="w-4 h-4" />
-                <span>123 Logistics St, City, State 12345</span>
+                <span>19 Freeland Park, Wareham Road, Lytchett Matravers, Poole, BH16 6FH, UK</span>
               </div>
             </div>
           </div>

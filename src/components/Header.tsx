@@ -50,9 +50,9 @@ const Header = () => {
   ];
 
   const contactInfo = [
-    { icon: Phone, text: '+1 (555) 123-4567' },
+    { icon: Phone, text: '+447386762901' },
     { icon: Mail, text: 'support@santsport.example' },
-    { icon: MapPin, text: '123 Logistics St, City' },
+    { icon: MapPin, text: '19 Freeland Park, Wareham Road, Lytchett Matravers, Poole, BH16 6FH, UK' },
   ];
 
   return (
@@ -76,7 +76,7 @@ const Header = () => {
             <div className="flex items-center space-x-4">
               <span className="text-blue-200">24/7 Support</span>
               <Button variant="outline" size="sm" className="bg-blue-800 text-white border-blue-700 hover:bg-blue-700">
-                Get Quote
+               <a  href="/contact">Get Quote</a>
               </Button>
             </div>
           </div>
@@ -207,10 +207,10 @@ const Header = () => {
                     : "bg-white text-blue-600 hover:bg-blue-50"
                 )}
               >
-                Track Package
+                <a href="/track">Track Package</a>
               </Button>
               <Button className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white">
-                Get Started
+                <a href="/contact">Get Started</a>
               </Button>
             </div>
 
@@ -310,10 +310,10 @@ const Header = () => {
                 {/* Mobile CTA Buttons */}
                 <div className="mt-6 space-y-3">
                   <Button className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white">
-                    Track Package
+                    <a href="/track">Track Package</a>
                   </Button>
                   <Button variant="outline" className="w-full border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white">
-                    Get Started
+                    <a href="/contact">Get Started</a>
                   </Button>
                 </div>
               </div>
