@@ -29,9 +29,31 @@ interface Shipment {
   sender_address: string;
   receiver_name: string;
   receiver_address: string;
-  shipping_instructions: string;
-  current_location: string;
-  estimated_delivery: string;
+  shipping_instructions?: string; // Made optional
+  current_location?: string; // Made optional
+  estimated_delivery?: string; // Made optional
+  // Additional properties that might exist in your database
+  created_at?: string;
+  created_by?: string;
+  delivery_date?: string;
+  dimensions?: string;
+  fragile?: boolean;
+  insurance?: boolean;
+  insurance_amount?: number;
+  pickup_date?: string;
+  service_type?: string;
+  special_handling?: string;
+  priority?: string;
+  cost?: number;
+  payment_status?: string;
+  payment_method?: string;
+  tracking_url?: string;
+  recipient_phone?: string;
+  sender_phone?: string;
+  delivery_instructions?: string;
+  signature_required?: boolean;
+  delivery_confirmation?: string;
+  updated_at?: string;
 }
 
 interface TrackingEvent {
@@ -69,7 +91,11 @@ export const TrackParcel = () => {
   }, [shipment]);
 
   const handleTrack = async () => {
-    if (!trackingNumber) return;
+    if (!trackingNumber.trim()) {
+      setError("Please enter a tracking number.");
+      return;
+    }
+    
     setLoading(true);
     setError(null);
     setShipment(null);
@@ -77,13 +103,20 @@ export const TrackParcel = () => {
 
     try {
       // Find shipment by tracking number
+      const cleanTrackingNumber = trackingNumber.replace(/\s+/g, "").toUpperCase();
       const { data: shipmentData, error: shipmentError } = await supabase
         .from("shipments")
         .select("*")
-        .eq("tracking_number", trackingNumber)
+        .eq("tracking_number", cleanTrackingNumber)
         .single();
 
-      if (shipmentError || !shipmentData) {
+      if (shipmentError) {
+        console.error("Shipment query error:", shipmentError);
+        setError("No shipment found for this tracking number.");
+        return;
+      }
+
+      if (!shipmentData) {
         setError("No shipment found for this tracking number.");
         return;
       }
@@ -99,11 +132,13 @@ export const TrackParcel = () => {
 
       if (eventsError) {
         console.error("Error fetching tracking events:", eventsError);
+        // Don't set error here, just log it - events are optional
       } else {
         setEvents(eventsData || []);
       }
     } catch (err: any) {
-      setError(err.message);
+      console.error("Tracking error:", err);
+      setError(err.message || "An error occurred while tracking your package.");
     } finally {
       setLoading(false);
     }
@@ -129,9 +164,19 @@ export const TrackParcel = () => {
     return stage ? stage.color : 'bg-gray-500';
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const formatDate = (dateString: string | undefined) => {
+    if (!dateString) return "N/A";
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return "N/A";
+      return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    } catch {
+      return "N/A";
+    }
+  };
+
+  const formatStatus = (status: string) => {
+    return status?.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) || 'Unknown';
   };
 
   return (
@@ -170,8 +215,8 @@ export const TrackParcel = () => {
               </div>
               <Button
                 onClick={handleTrack}
-                disabled={loading}
-                className="h-12 px-6 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white"
+                disabled={loading || !trackingNumber.trim()}
+                className="h-12 px-6 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white disabled:opacity-50"
               >
                 {loading ? (
                   <div className="flex items-center gap-2">
@@ -220,7 +265,7 @@ export const TrackParcel = () => {
 
                     <div className="relative">
                       {/* Progress Line */}
-                      <div className="absolute left-4 top-4 h-2/3 w-1 bg-blue-200"></div>
+                      <div className="absolute left-4 top-4 h-2/3 w-1 bg-blue-200 hidden md:block"></div>
 
                       <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-6">
                         {statusStages.map((stage, index) => {
@@ -247,7 +292,7 @@ export const TrackParcel = () => {
 
                               <div>
                                 <p
-                                  className={`font-semibold ${isActive ? "text-slate-900" : "text-gray-500"
+                                  className={`font-semibold text-sm md:text-base ${isActive ? "text-slate-900" : "text-gray-500"
                                     }`}
                                 >
                                   {stage.label}
@@ -256,7 +301,7 @@ export const TrackParcel = () => {
                                   <motion.p
                                     initial={{ opacity: 0 }}
                                     animate={{ opacity: 1 }}
-                                    className="text-blue-600 text-sm font-medium"
+                                    className="text-blue-600 text-xs md:text-sm font-medium"
                                   >
                                     Current
                                   </motion.p>
@@ -266,7 +311,6 @@ export const TrackParcel = () => {
                           );
                         })}
                       </div>
-
                     </div>
                   </div>
 
@@ -280,28 +324,40 @@ export const TrackParcel = () => {
                         </CardTitle>
                       </CardHeader>
                       <CardContent className="p-6 space-y-3">
-                        <div className="flex justify-between">
+                        <div className="flex justify-between items-start">
                           <span className="text-slate-600">Tracking Number:</span>
-                          <span className="font-mono font-semibold">{shipment.tracking_number}</span>
+                          <span className="font-mono font-semibold text-right">{shipment.tracking_number}</span>
                         </div>
-                        <div className="flex justify-between">
+                        <div className="flex justify-between items-center">
                           <span className="text-slate-600">Status:</span>
                           <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(shipment.status)} text-white`}>
-                            {shipment.status?.replace('_', ' ').toUpperCase()}
+                            {formatStatus(shipment.status)}
                           </span>
                         </div>
-                        <div className="flex justify-between">
+                        <div className="flex justify-between items-start">
                           <span className="text-slate-600">Description:</span>
-                          <span className="font-medium">{shipment.package_description || "N/A"}</span>
+                          <span className="font-medium text-right max-w-[60%]">{shipment.package_description || "N/A"}</span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-slate-600">Weight:</span>
                           <span className="font-medium">{shipment.weight ? `${shipment.weight} kg` : "N/A"}</span>
                         </div>
-                        {shipment.estimated_delivery && (
+                        {shipment.dimensions && (
                           <div className="flex justify-between">
+                            <span className="text-slate-600">Dimensions:</span>
+                            <span className="font-medium">{shipment.dimensions}</span>
+                          </div>
+                        )}
+                        {shipment.estimated_delivery && (
+                          <div className="flex justify-between items-start">
                             <span className="text-slate-600">Est. Delivery:</span>
-                            <span className="font-medium">{formatDate(shipment.estimated_delivery)}</span>
+                            <span className="font-medium text-right">{formatDate(shipment.estimated_delivery)}</span>
+                          </div>
+                        )}
+                        {shipment.service_type && (
+                          <div className="flex justify-between">
+                            <span className="text-slate-600">Service Type:</span>
+                            <span className="font-medium">{shipment.service_type}</span>
                           </div>
                         )}
                       </CardContent>
@@ -319,20 +375,26 @@ export const TrackParcel = () => {
                           <Label className="text-slate-600 text-sm">Sender</Label>
                           <p className="font-medium">{shipment.sender_name}</p>
                           <p className="text-sm text-slate-500">{shipment.sender_address}</p>
+                          {shipment.sender_phone && (
+                            <p className="text-sm text-slate-500">{shipment.sender_phone}</p>
+                          )}
                         </div>
                         <div>
                           <Label className="text-slate-600 text-sm">Receiver</Label>
                           <p className="font-medium">{shipment.receiver_name}</p>
                           <p className="text-sm text-slate-500">{shipment.receiver_address}</p>
+                          {shipment.recipient_phone && (
+                            <p className="text-sm text-slate-500">{shipment.recipient_phone}</p>
+                          )}
                         </div>
-                        {shipment.shipping_instructions && (
+                        {(shipment.shipping_instructions || shipment.delivery_instructions) && (
                           <div className="pt-2 border-t">
                             <Label className="text-slate-600 text-sm flex items-center gap-1">
                               <Info className="w-4 h-4" />
                               Special Instructions
                             </Label>
                             <p className="text-sm text-slate-700 mt-1 bg-yellow-50 p-2 rounded-md">
-                              {shipment.shipping_instructions}
+                              {shipment.shipping_instructions || shipment.delivery_instructions}
                             </p>
                           </div>
                         )}
@@ -363,8 +425,8 @@ export const TrackParcel = () => {
                           <h4 className="font-medium text-slate-700">Current Status</h4>
                           <div className="flex items-center gap-2 p-3 bg-slate-50 rounded-md">
                             {getStatusIcon(shipment.status)}
-                            <span className="font-semibold capitalize">
-                              {shipment.status.replace('_', ' ')}
+                            <span className="font-semibold">
+                              {formatStatus(shipment.status)}
                             </span>
                           </div>
                         </div>
@@ -381,53 +443,48 @@ export const TrackParcel = () => {
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="p-6">
-                      {events.length === 0 && !shipment ? (
-                        <div className="text-center py-8 text-slate-500">
-                          <Clock className="w-12 h-12 mx-auto mb-4 text-slate-300" />
-                          <p>No tracking events yet. Check back later for updates.</p>
-                        </div>
-                      ) : (
-                        <div className="space-y-4">
-                          {/* Current shipment info as latest event */}
-                          {shipment && (
-                            <motion.div
-                              key="current-status"
-                              initial={{ opacity: 0, x: -20 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              className="flex gap-4 p-4 border rounded-lg bg-blue-50 shadow-sm"
-                            >
-                              <div className="flex-shrink-0">
-                                {getStatusIcon(shipment.status)}
+                      <div className="space-y-4">
+                        {/* Current shipment info as latest event */}
+                        {shipment && (
+                          <motion.div
+                            key="current-status"
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            className="flex gap-4 p-4 border rounded-lg bg-blue-50 shadow-sm"
+                          >
+                            <div className="flex-shrink-0">
+                              {getStatusIcon(shipment.status)}
+                            </div>
+                            <div className="flex-1">
+                              <div className="flex justify-between items-start mb-2">
+                                <span className="font-semibold">
+                                  {formatStatus(shipment.status)} (Current)
+                                </span>
+                                <span className="text-sm text-slate-500">
+                                  {formatDate(shipment.updated_at || shipment.created_at)}
+                                </span>
                               </div>
-                              <div className="flex-1">
-                                <div className="flex justify-between items-start mb-2">
-                                  <span className="font-semibold capitalize">
-                                    {shipment.status.replace('_', ' ')} (Current)
-                                  </span>
-                                  <span className="text-sm text-slate-500">
-                                    {formatDate(new Date().toISOString())}
-                                  </span>
+                              <p className="text-slate-700 mb-2">
+                                Latest update: Package is currently <strong>{formatStatus(shipment.status).toLowerCase()}</strong>.
+                              </p>
+                              {shipment.current_location && (
+                                <div className="flex items-center gap-2 text-sm text-slate-500">
+                                  <MapPin className="w-4 h-4" />
+                                  {shipment.current_location}
                                 </div>
-                                <p className="text-slate-700 mb-2">
-                                  Latest update: Package is currently <strong>{shipment.status.replace('_', ' ')}</strong>.
-                                </p>
-                                {shipment.current_location && (
-                                  <div className="flex items-center gap-2 text-sm text-slate-500">
-                                    <MapPin className="w-4 h-4" />
-                                    {shipment.current_location}
-                                  </div>
-                                )}
-                              </div>
-                            </motion.div>
-                          )}
+                              )}
+                            </div>
+                          </motion.div>
+                        )}
 
-                          {/* Historical events */}
-                          {events.map((event, index) => (
+                        {/* Historical events */}
+                        {events.length > 0 ? (
+                          events.map((event, index) => (
                             <motion.div
                               key={event.id}
                               initial={{ opacity: 0, x: -20 }}
                               animate={{ opacity: 1, x: 0 }}
-                              transition={{ delay: (index + 1) * 0.1 }} // offset since current status is first
+                              transition={{ delay: (index + 1) * 0.1 }}
                               className="flex gap-4 p-4 border rounded-lg hover:shadow-md transition-shadow"
                             >
                               <div className="flex-shrink-0">
@@ -435,8 +492,8 @@ export const TrackParcel = () => {
                               </div>
                               <div className="flex-1">
                                 <div className="flex justify-between items-start mb-2">
-                                  <span className="font-semibold capitalize">
-                                    {event.status.replace('_', ' ')}
+                                  <span className="font-semibold">
+                                    {formatStatus(event.status)}
                                   </span>
                                   <span className="text-sm text-slate-500">
                                     {formatDate(event.created_at)}
@@ -451,12 +508,17 @@ export const TrackParcel = () => {
                                 )}
                               </div>
                             </motion.div>
-                          ))}
-                        </div>
-                      )}
+                          ))
+                        ) : (
+                          <div className="text-center py-8 text-slate-500">
+                            <Clock className="w-12 h-12 mx-auto mb-4 text-slate-300" />
+                            <p>No additional tracking events available yet.</p>
+                            <p className="text-sm mt-2">Check back later for more updates.</p>
+                          </div>
+                        )}
+                      </div>
                     </CardContent>
                   </Card>
-
                 </motion.div>
               )}
             </AnimatePresence>
