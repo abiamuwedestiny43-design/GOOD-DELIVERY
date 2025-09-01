@@ -13,7 +13,7 @@ import About from "./pages/About";
 import Services from "./pages/Services";
 import Contact from "./pages/Contact";
 import Layout from "./components/Layout";
-import TrackingPage from "./pages/tracking";
+import TrackingPage from "./pages/Tracking";
 
 const queryClient = new QueryClient();
 
