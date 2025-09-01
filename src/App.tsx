@@ -13,7 +13,6 @@ import About from "./pages/About";
 import Services from "./pages/Services";
 import Contact from "./pages/Contact";
 import Layout from "./components/Layout";
-import Home from "./pages/Home";
 import { UserTrackPage } from "./components/userTrack";
 
 const queryClient = new QueryClient();
