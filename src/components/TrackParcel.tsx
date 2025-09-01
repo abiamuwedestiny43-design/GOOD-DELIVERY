@@ -124,11 +124,14 @@ export const TrackParcel = () => {
       const cleanTrackingNumber = trackingNumber.replace(/\s+/g, "").toUpperCase();
       console.log("Searching for tracking number:", cleanTrackingNumber);
       
-      const { data: shipmentData, error: shipmentError } = await supabase
+      // Use array query instead of single() to avoid 406 errors on mobile
+      const { data: shipmentArray, error: shipmentError } = await supabase
         .from("shipments")
         .select("*")
         .eq("tracking_number", cleanTrackingNumber)
-        .single();
+        .limit(1);
+      
+      const shipmentData = shipmentArray && shipmentArray.length > 0 ? shipmentArray[0] : null;
 
       if (shipmentError) {
         console.error("Shipment query error:", {
@@ -141,8 +144,6 @@ export const TrackParcel = () => {
         // Check if it's a network/connection error
         if (shipmentError.message?.includes('fetch') || shipmentError.message?.includes('network')) {
           setError("Network connection issue. Please check your internet connection and try again.");
-        } else if (shipmentError.code === 'PGRST116') {
-          setError("No shipment found for this tracking number.");
         } else {
           setError(`Database error: ${shipmentError.message}. Please try again.`);
         }
