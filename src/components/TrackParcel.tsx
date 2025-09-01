@@ -124,14 +124,40 @@ export const TrackParcel = () => {
       const cleanTrackingNumber = trackingNumber.replace(/\s+/g, "").toUpperCase();
       console.log("Searching for tracking number:", cleanTrackingNumber);
       
-      // Use array query instead of single() to avoid 406 errors on mobile
-      const { data: shipmentArray, error: shipmentError } = await supabase
-        .from("shipments")
-        .select("*")
-        .eq("tracking_number", cleanTrackingNumber)
-        .limit(1);
+      // Try multiple query methods for maximum mobile compatibility
+      let shipmentData = null;
+      let shipmentError = null;
       
-      const shipmentData = shipmentArray && shipmentArray.length > 0 ? shipmentArray[0] : null;
+      try {
+        // First try: Use array query (most compatible)
+        const { data: shipmentArray, error: arrayError } = await supabase
+          .from("shipments")
+          .select("*")
+          .eq("tracking_number", cleanTrackingNumber)
+          .limit(1);
+        
+        if (arrayError) throw arrayError;
+        shipmentData = shipmentArray && shipmentArray.length > 0 ? shipmentArray[0] : null;
+        
+      } catch (error1) {
+        console.log("Array query failed, trying alternative:", error1);
+        
+        // Fallback: Try with explicit JSON headers
+        try {
+          const { data: fallbackData, error: fallbackError } = await supabase
+            .from("shipments")
+            .select("*")
+            .eq("tracking_number", cleanTrackingNumber)
+            .maybeSingle(); // More forgiving than .single()
+          
+          if (fallbackError) throw fallbackError;
+          shipmentData = fallbackData;
+          
+        } catch (error2) {
+          console.error("All query methods failed:", error2);
+          shipmentError = error2;
+        }
+      }
 
       if (shipmentError) {
         console.error("Shipment query error:", {
