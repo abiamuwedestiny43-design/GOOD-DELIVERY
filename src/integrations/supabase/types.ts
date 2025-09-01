@@ -151,6 +151,7 @@ export type Database = {
           location: string | null
           shipment_id: string
           status: string
+          previous_location?: string | null;
         }
         Insert: {
           created_at?: string | null
@@ -159,6 +160,7 @@ export type Database = {
           location?: string | null
           shipment_id: string
           status: string
+          previous_location?: string | null
         }
         Update: {
           created_at?: string | null
@@ -167,6 +169,7 @@ export type Database = {
           location?: string | null
           shipment_id?: string
           status?: string
+          previous_location?: string | null
         }
         Relationships: [
           {
