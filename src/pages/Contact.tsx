@@ -12,7 +12,8 @@ import {
   Send,
   MessageCircle,
   User,
-  MailIcon
+  MailIcon,
+  Loader2
 } from 'lucide-react';
 
 const Contact = () => {
@@ -22,13 +23,46 @@ const Contact = () => {
     subject: '',
     message: ''
   });
+  const [isLoading, setIsLoading] = useState(false);
+  const [notification, setNotification] = useState({ show: false, message: '', type: '' });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Handle form submission
-    console.log('Form submitted:', formData);
+  // Use Vite's import.meta.env for environment variables
+  const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+
+  const showNotification = (message: string, type: 'success' | 'error') => {
+    setNotification({ show: true, message, type });
+    setTimeout(() => setNotification({ show: false, message: '', type: '' }), 5000);
   };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/send-email`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        showNotification('Message sent successfully!', 'success');
+        setFormData({ name: '', email: '', subject: '', message: '' });
+      } else {
+        const error = await response.json();
+        showNotification(error.message || 'Failed to send message', 'error');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      showNotification('An error occurred while sending your message', 'error');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // ... rest of your component remains the same
   const contactInfo = [
     {
       icon: Mail,
@@ -39,13 +73,13 @@ const Contact = () => {
     {
       icon: Phone,
       title: 'Phone',
-      content: '+1 (555) 123-4567',
+      content: '+447386762901',
       description: 'Mon-Fri from 8am to 6pm'
     },
     {
       icon: MapPin,
       title: 'Office',
-      content: '123 Logistics St, City',
+      content: '19 Freeland Park, Wareham Road, Lytchett Matravers, Poole, BH16 6FH, UK',
       description: 'Visit our headquarters'
     },
     {
@@ -58,6 +92,15 @@ const Contact = () => {
 
   return (
     <div className="min-h-screen pt-20">
+      {/* Notification */}
+      {notification.show && (
+        <div className={`fixed top-4 right-4 z-50 p-4 rounded-md shadow-lg ${
+          notification.type === 'success' ? 'bg-green-500' : 'bg-red-500'
+        } text-white`}>
+          {notification.message}
+        </div>
+      )}
+
       {/* Hero Section */}
       <section className="relative py-20 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
         <div className="absolute inset-0 bg-grid-white/10 [mask-image:linear-gradient(to_bottom,white,transparent)]" />
@@ -109,6 +152,7 @@ const Contact = () => {
                             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                             className="pl-10"
                             required
+                            disabled={isLoading}
                           />
                         </div>
                       </div>
@@ -123,6 +167,7 @@ const Contact = () => {
                             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                             className="pl-10"
                             required
+                            disabled={isLoading}
                           />
                         </div>
                       </div>
@@ -135,6 +180,7 @@ const Contact = () => {
                         value={formData.subject}
                         onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                         required
+                        disabled={isLoading}
                       />
                     </div>
 
@@ -147,12 +193,26 @@ const Contact = () => {
                         onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                         className="resize-none"
                         required
+                        disabled={isLoading}
                       />
                     </div>
 
-                    <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">
-                      <Send className="w-4 h-4 mr-2" />
-                      Send Message
+                    <Button 
+                      type="submit" 
+                      className="w-full bg-blue-600 hover:bg-blue-700"
+                      disabled={isLoading}
+                    >
+                      {isLoading ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          Sending...
+                        </>
+                      ) : (
+                        <>
+                          <Send className="w-4 h-4 mr-2" />
+                          Send Message
+                        </>
+                      )}
                     </Button>
                   </form>
                 </CardContent>
@@ -201,7 +261,7 @@ const Contact = () => {
                 </motion.div>
               ))}
 
-              {/* Map Placeholder */}
+              {/* Map */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -212,9 +272,16 @@ const Contact = () => {
                 <Card className="border-0 bg-white shadow-lg">
                   <CardContent className="p-6">
                     <h3 className="text-lg font-semibold text-slate-900 mb-4">Our Location</h3>
-                    <div className="bg-slate-200 rounded-lg h-48 flex items-center justify-center">
-                      <MapPin className="w-12 h-12 text-slate-400" />
-                      <span className="text-slate-600 ml-2">Interactive Map</span>
+                    <div className="rounded-lg overflow-hidden">
+                      <iframe 
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2523.907416360972!2d-2.0778401235436093!3d50.75875037165267!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4873af4738e42c67%3A0xd9959807005b40c5!2s19%20Freeland%20Pk%2C%20Lytchett%20Matravers%2C%20Poole%20BH16%206FH%2C%20UK!5e0!3m2!1sen!2sin!4v1756711049021!5m2!1sen!2sin" 
+                        width="100%" 
+                        height="300" 
+                        style={{ border: 0 }} 
+                        allowFullScreen 
+                        loading="lazy" 
+                        referrerPolicy="no-referrer-when-downgrade"
+                      ></iframe>
                     </div>
                   </CardContent>
                 </Card>
