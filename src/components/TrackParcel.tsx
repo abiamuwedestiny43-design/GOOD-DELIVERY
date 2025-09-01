@@ -163,7 +163,7 @@ export const TrackParcel = () => {
                 <Input
                   placeholder="Enter Tracking Number (e.g., SL202412310001)"
                   value={trackingNumber}
-                  onChange={(e) => setTrackingNumber(e.target.value)}
+                  onChange={(e) => setTrackingNumber(e.target.value.replace(/\s+/g, ""))}
                   onKeyPress={(e) => e.key === 'Enter' && handleTrack()}
                   className="h-12 text-lg border-2 border-blue-200 focus:border-blue-500"
                 />
