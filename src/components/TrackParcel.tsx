@@ -71,6 +71,15 @@ export const TrackParcel = () => {
   const [events, setEvents] = useState<TrackingEvent[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [currentStatusIndex, setCurrentStatusIndex] = useState(0);
+  const [networkInfo, setNetworkInfo] = useState<string>("");
+
+  // Network detection for mobile debugging
+  useEffect(() => {
+    const connection = (navigator as any).connection;
+    const networkType = connection ? connection.effectiveType || connection.type : 'unknown';
+    const isOnline = navigator.onLine ? 'online' : 'offline';
+    setNetworkInfo(`${networkType} - ${isOnline}`);
+  }, []);
 
   const statusStages = [
     { status: 'pending', label: 'Pending', color: 'bg-yellow-500' },
@@ -102,8 +111,19 @@ export const TrackParcel = () => {
     setEvents([]);
 
     try {
+      // Debug info for mobile issues
+      console.log("Device info:", {
+        userAgent: navigator.userAgent,
+        platform: navigator.platform,
+        connectionType: (navigator as any).connection?.effectiveType,
+        online: navigator.onLine,
+        trackingNumber: trackingNumber.trim()
+      });
+
       // Find shipment by tracking number
       const cleanTrackingNumber = trackingNumber.replace(/\s+/g, "").toUpperCase();
+      console.log("Searching for tracking number:", cleanTrackingNumber);
+      
       const { data: shipmentData, error: shipmentError } = await supabase
         .from("shipments")
         .select("*")
@@ -111,8 +131,21 @@ export const TrackParcel = () => {
         .single();
 
       if (shipmentError) {
-        console.error("Shipment query error:", shipmentError);
-        setError("No shipment found for this tracking number.");
+        console.error("Shipment query error:", {
+          error: shipmentError,
+          code: shipmentError.code,
+          message: shipmentError.message,
+          details: shipmentError.details
+        });
+        
+        // Check if it's a network/connection error
+        if (shipmentError.message?.includes('fetch') || shipmentError.message?.includes('network')) {
+          setError("Network connection issue. Please check your internet connection and try again.");
+        } else if (shipmentError.code === 'PGRST116') {
+          setError("No shipment found for this tracking number.");
+        } else {
+          setError(`Database error: ${shipmentError.message}. Please try again.`);
+        }
         return;
       }
 
@@ -200,6 +233,11 @@ export const TrackParcel = () => {
             </CardTitle>
             <CardDescription className="text-blue-100">
               Enter your tracking number below
+              {networkInfo && (
+                <span className="block text-xs mt-1 opacity-75">
+                  Network: {networkInfo}
+                </span>
+              )}
             </CardDescription>
           </CardHeader>
           <CardContent className="p-6">
