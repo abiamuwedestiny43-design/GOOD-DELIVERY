@@ -9,11 +9,11 @@ import { MapPin, Calendar, Clock, Package, Truck, CheckCircle, AlertCircle, Home
 export type TrackingEvent = {
   id: string;
   shipment_id: string;
-  status: string;
-  location: string;
-  description: string;
-  created_at: string;
-  previous_location?: string; // <-- make this optional
+  status: string | null;
+  location: string | null;
+  description: string | null;
+  created_at: string | null;
+  previous_location?: string | null; // <-- make this optional
 };
 
 interface Shipment {
@@ -38,7 +38,7 @@ interface Shipment {
   sending_date: string | null;
   delivery_date: string | null;
   status: string | null;
-  current_location?: string;
+  current_location?: string | null;
   signature_required: boolean | null;
   insurance: boolean | null;
   insurance_amount: number | null;
