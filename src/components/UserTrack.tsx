@@ -6,14 +6,15 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { MapPin, Calendar, Clock, Package, Truck, CheckCircle, AlertCircle, Home } from 'lucide-react';
 
-interface TrackingEvent {
+export type TrackingEvent = {
   id: string;
+  shipment_id: string;
   status: string;
   location: string;
-  previous_location: string | null;
-  description: string | null;
+  description: string;
   created_at: string;
-}
+  previous_location?: string; // <-- make this optional
+};
 
 interface Shipment {
   id: string;
@@ -37,7 +38,7 @@ interface Shipment {
   sending_date: string | null;
   delivery_date: string | null;
   status: string | null;
-  current_location: string | null;
+  current_location?: string;
   signature_required: boolean | null;
   insurance: boolean | null;
   insurance_amount: number | null;
@@ -91,62 +92,62 @@ export const UserTrackPage = () => {
     return statusOrder.indexOf(status);
   };
 
-  const trackShipment = async () => {
-    if (!trackingNumber.trim()) {
-      toast({
-        title: 'Error',
-        description: 'Please enter a tracking number',
-        variant: 'destructive',
-      });
-      return;
+const trackShipment = async () => {
+  if (!trackingNumber.trim()) {
+    toast({
+      title: 'Error',
+      description: 'Please enter a tracking number',
+      variant: 'destructive',
+    });
+    return;
+  }
+
+  setLoading(true);
+  try {
+    // Fetch shipment details safely
+    const { data: shipmentData, error: shipmentError } = await supabase
+      .from('shipments')
+      .select('*')
+      .eq('tracking_number', trackingNumber.trim())
+      .maybeSingle(); // ✅ safer than .single()
+
+    if (shipmentError || !shipmentData) {
+      throw new Error('Shipment not found');
     }
 
-    setLoading(true);
-    try {
-      // Fetch shipment details
-      const { data: shipmentData, error: shipmentError } = await supabase
-        .from('shipments')
-        .select('*')
-        .eq('tracking_number', trackingNumber.trim())
-        .single();
+    setShipment(shipmentData);
 
-      if (shipmentError) {
-        throw new Error('Shipment not found');
-      }
+    // Fetch tracking events
+    const { data: eventsData, error: eventsError } = await supabase
+      .from('tracking_events')
+      .select('*')
+      .eq('shipment_id', shipmentData.id)
+      .order('created_at', { ascending: true });
 
-      setShipment(shipmentData);
-
-      // Fetch tracking events
-      const { data: eventsData, error: eventsError } = await supabase
-        .from('tracking_events')
-        .select('*')
-        .eq('shipment_id', shipmentData.id)
-        .order('created_at', { ascending: true });
-
-      if (eventsError) {
-        throw new Error('Failed to fetch tracking events');
-      }
-
-      setTrackingEvents(eventsData || []);
-      
-      toast({
-        title: 'Shipment found',
-        description: 'Tracking information loaded successfully',
-      });
-
-    } catch (error: any) {
-      console.error('Tracking error:', error);
-      toast({
-        title: 'Error',
-        description: error.message || 'Failed to track shipment',
-        variant: 'destructive',
-      });
-      setShipment(null);
-      setTrackingEvents([]);
-    } finally {
-      setLoading(false);
+    if (eventsError) {
+      throw new Error('Failed to fetch tracking events');
     }
-  };
+
+    setTrackingEvents(eventsData || []);
+
+    toast({
+      title: 'Shipment found',
+      description: 'Tracking information loaded successfully',
+    });
+
+  } catch (error: any) {
+    console.error('Tracking error:', error);
+    toast({
+      title: 'Error',
+      description: error.message || 'Failed to track shipment',
+      variant: 'destructive',
+    });
+    setShipment(null);
+    setTrackingEvents([]);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const formatDate = (dateString: string | null) => {
     if (!dateString) return 'N/A';
