@@ -104,18 +104,21 @@ const trackShipment = async () => {
 
   setLoading(true);
   try {
-    // Fetch shipment details safely
+    // Fetch shipment
     const { data: shipmentData, error: shipmentError } = await supabase
       .from('shipments')
       .select('*')
       .eq('tracking_number', trackingNumber.trim())
-      .maybeSingle(); // ✅ safer than .single()
+      .single();
 
-    if (shipmentError || !shipmentData) {
-      throw new Error('Shipment not found');
+    if (shipmentError) {
+      console.error('Error fetching shipment:', shipmentError);
+      throw new Error('Shipment not found. Please check the tracking number.');
     }
 
-    setShipment(shipmentData);
+    if (!shipmentData) {
+      throw new Error('No shipment found with this tracking number.');
+    }
 
     // Fetch tracking events
     const { data: eventsData, error: eventsError } = await supabase
@@ -125,21 +128,34 @@ const trackShipment = async () => {
       .order('created_at', { ascending: true });
 
     if (eventsError) {
+      console.error('Error fetching tracking events:', eventsError);
       throw new Error('Failed to fetch tracking events');
     }
 
-    setTrackingEvents(eventsData || []);
+    // ✅ Transform tracking events into your strict TrackingEvent type
+    const transformedEvents: TrackingEvent[] = (eventsData || []).map(ev => ({
+      id: ev.id,
+      shipment_id: ev.shipment_id,
+      status: ev.status,
+      location: ev.location,
+      description: ev.description,
+      created_at: ev.created_at,
+      previous_location: ev.previous_location ?? '', // normalize optional field
+    }));
+
+    setShipment(shipmentData);
+    setTrackingEvents(transformedEvents);
 
     toast({
       title: 'Shipment found',
       description: 'Tracking information loaded successfully',
     });
 
-  } catch (error: any) {
-    console.error('Tracking error:', error);
+  } catch (err: any) {
+    console.error('Tracking error:', err);
     toast({
       title: 'Error',
-      description: error.message || 'Failed to track shipment',
+      description: err.message || 'Failed to track shipment',
       variant: 'destructive',
     });
     setShipment(null);
