@@ -20,7 +20,7 @@ const generateShipmentEmailHtml = (shipmentData: any) => {
     <html>
     <head>
       <meta charset="utf-8">
-      <title>Shipment Created - Sant Sport Logistics</title>
+      <title>Shipment Created - Frangiles Fasts Logistics</title>
       <style>
         body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f5f5f5; }
         .container { max-width: 600px; margin: 0 auto; background-color: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
@@ -39,7 +39,7 @@ const generateShipmentEmailHtml = (shipmentData: any) => {
     <body>
       <div class="container">
         <div class="header">
-          <h1>🚚 Sant Sport Logistics</h1>
+          <h1>🚚 Frangiles Fasts Logistics</h1>
           <p>Your shipment has been successfully created!</p>
         </div>
         
@@ -77,8 +77,8 @@ const generateShipmentEmailHtml = (shipmentData: any) => {
         </div>
         
         <div class="footer">
-          <p>Thank you for choosing Sant Sport Logistics!</p>
-          <p>Questions? Contact us at support@santsport.example</p>
+          <p>Thank you for choosing Frangiles Fasts Logistics!</p>
+          <p>Questions? Contact us at support@frangilesfasts.online</p>
         </div>
       </div>
     </body>
@@ -98,33 +98,33 @@ export const AddTrackingForm = () => {
     sender_email: '',
     sender_phone: '',
     sender_address: '',
-    
+
     // Receiver Information
     receiver_name: '',
     receiver_email: '',
     receiver_phone: '',
     receiver_address: '',
-    
+
     // Package Information
     package_description: '',
     package_value: '',
     weight: '',
     dimensions: '',
     quantity: '1',
-    
+
     // Shipping Details
     service_type: 'standard',
     sending_date: '',
     delivery_date: '',
     status: 'pending',
-    
+
     // Insurance & Additional Services
     insurance: false,
     insurance_amount: '',
     special_instructions: '',
     fragile: false,
     signature_required: false,
-    
+
     // Payment Information
     payment_method: 'credit_card',
     payment_status: 'pending'
@@ -154,7 +154,7 @@ export const AddTrackingForm = () => {
       'priority': 2,
       'overnight': 3
     }[formData.service_type] || 1;
-    
+
     return (baseFee + weightFee) * serviceMultiplier;
   };
 
@@ -176,9 +176,9 @@ export const AddTrackingForm = () => {
       'receiver_name', 'receiver_email', 'receiver_address',
       'package_description', 'weight'
     ];
-    
+
     const missingFields = requiredFields.filter(field => !formData[field as keyof typeof formData]);
-    
+
     if (missingFields.length > 0) {
       toast({
         title: 'Missing required fields',
@@ -192,7 +192,7 @@ export const AddTrackingForm = () => {
     try {
       // Generate tracking number
       const trackingNumber = 'SL' + new Date().toISOString().replace(/-/g, '').slice(0, 8) + Math.floor(1000 + Math.random() * 9000);
-      
+
       // Calculate fees
       const shippingFee = calculateShippingFee();
       const insuranceAmount = formData.insurance ? calculateInsuranceAmount() : 0;
@@ -202,19 +202,19 @@ export const AddTrackingForm = () => {
         .from('shipments')
         .insert({
           tracking_number: trackingNumber,
-          
+
           // Sender information
           sender_name: formData.sender_name,
           sender_email: formData.sender_email,
           sender_phone: formData.sender_phone || null,
           sender_address: formData.sender_address,
-          
+
           // Receiver information
           receiver_name: formData.receiver_name,
           receiver_email: formData.receiver_email,
           receiver_phone: formData.receiver_phone || null,
           receiver_address: formData.receiver_address,
-          
+
           // Package information
           package_description: formData.package_description,
           package_value: formData.package_value ? parseFloat(formData.package_value) : null,
@@ -222,7 +222,7 @@ export const AddTrackingForm = () => {
           dimensions: formData.dimensions || null,
           quantity: parseInt(formData.quantity) || 1,
           fragile: formData.fragile,
-          
+
           // Shipping details
           shipping_fee: totalAmount,
           service_type: formData.service_type,
@@ -230,16 +230,16 @@ export const AddTrackingForm = () => {
           delivery_date: formData.delivery_date || null,
           status: formData.status,
           signature_required: formData.signature_required,
-          
+
           // Insurance & additional services
           insurance: formData.insurance,
           insurance_amount: insuranceAmount,
           special_instructions: formData.special_instructions || null,
-          
+
           // Payment information
           payment_method: formData.payment_method,
           payment_status: formData.payment_status,
-          
+
           created_by: user.id,
         })
         .select()
@@ -267,7 +267,7 @@ export const AddTrackingForm = () => {
         await supabase.functions.invoke('send-shipment-email', {
           body: {
             to: formData.receiver_email,
-            subject: `Your shipment ${trackingNumber} has been created - Sant Sport Logistics`,
+            subject: `Your shipment ${trackingNumber} has been created - Frangiles Fasts Logistics`,
             html: emailHtml,
             shipmentData: shipment
           }
@@ -280,17 +280,17 @@ export const AddTrackingForm = () => {
 
       setLastShipment(shipment as any);
 
-      toast({ 
-        title: 'Shipment created successfully!', 
-        description: `Tracking number: ${trackingNumber}. Email notification sent to receiver.` 
+      toast({
+        title: 'Shipment created successfully!',
+        description: `Tracking number: ${trackingNumber}. Email notification sent to receiver.`
       });
-      
+
     } catch (err: any) {
       console.error('Full error:', err);
-      toast({ 
-        title: 'Error creating shipment', 
-        description: err.message, 
-        variant: 'destructive' 
+      toast({
+        title: 'Error creating shipment',
+        description: err.message,
+        variant: 'destructive'
       });
     } finally {
       setLoading(false);
@@ -326,7 +326,7 @@ export const AddTrackingForm = () => {
             {/* Sender Information */}
             <TabsContent value="sender" className="space-y-6">
               <h3 className="text-lg font-semibold">Sender Information</h3>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="sender_name">Full Name *</Label>
@@ -337,7 +337,7 @@ export const AddTrackingForm = () => {
                     required
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="sender_email">Email *</Label>
                   <Input
@@ -348,7 +348,7 @@ export const AddTrackingForm = () => {
                     required
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="sender_phone">Phone</Label>
                   <Input
@@ -359,7 +359,7 @@ export const AddTrackingForm = () => {
                   />
                 </div>
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="sender_address">Full Address *</Label>
                 <Textarea
@@ -370,7 +370,7 @@ export const AddTrackingForm = () => {
                   required
                 />
               </div>
-              
+
               <Button type="button" onClick={() => setActiveTab('receiver')}>
                 Next: Receiver Information
               </Button>
@@ -379,7 +379,7 @@ export const AddTrackingForm = () => {
             {/* Receiver Information */}
             <TabsContent value="receiver" className="space-y-6">
               <h3 className="text-lg font-semibold">Receiver Information</h3>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="receiver_name">Full Name *</Label>
@@ -390,7 +390,7 @@ export const AddTrackingForm = () => {
                     required
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="receiver_email">Email *</Label>
                   <Input
@@ -401,7 +401,7 @@ export const AddTrackingForm = () => {
                     required
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="receiver_phone">Phone</Label>
                   <Input
@@ -412,7 +412,7 @@ export const AddTrackingForm = () => {
                   />
                 </div>
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="receiver_address">Full Address *</Label>
                 <Textarea
@@ -423,7 +423,7 @@ export const AddTrackingForm = () => {
                   required
                 />
               </div>
-              
+
               <div className="flex gap-4">
                 <Button type="button" variant="outline" onClick={() => setActiveTab('sender')}>
                   Back
@@ -437,7 +437,7 @@ export const AddTrackingForm = () => {
             {/* Package Information */}
             <TabsContent value="package" className="space-y-6">
               <h3 className="text-lg font-semibold">Package Details</h3>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="package_description">Package Description *</Label>
                 <Textarea
@@ -448,7 +448,7 @@ export const AddTrackingForm = () => {
                   required
                 />
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="weight">Weight (kg) *</Label>
@@ -462,7 +462,7 @@ export const AddTrackingForm = () => {
                     required
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="dimensions">Dimensions (LxWxH)</Label>
                   <Input
@@ -472,7 +472,7 @@ export const AddTrackingForm = () => {
                     placeholder="10x5x3 in"
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="quantity">Quantity</Label>
                   <Input
@@ -483,7 +483,7 @@ export const AddTrackingForm = () => {
                     onChange={(e) => handleInputChange('quantity', e.target.value)}
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="package_value">Value ($)</Label>
                   <Input
@@ -496,7 +496,7 @@ export const AddTrackingForm = () => {
                   />
                 </div>
               </div>
-              
+
               <div className="flex items-center gap-4">
                 <div className="flex items-center space-x-2">
                   <Switch
@@ -506,7 +506,7 @@ export const AddTrackingForm = () => {
                   />
                   <Label htmlFor="fragile">Fragile Item</Label>
                 </div>
-                
+
                 <div className="flex items-center space-x-2">
                   <Switch
                     id="signature_required"
@@ -516,7 +516,7 @@ export const AddTrackingForm = () => {
                   <Label htmlFor="signature_required">Signature Required</Label>
                 </div>
               </div>
-              
+
               <div className="flex gap-4">
                 <Button type="button" variant="outline" onClick={() => setActiveTab('receiver')}>
                   Back
@@ -530,7 +530,7 @@ export const AddTrackingForm = () => {
             {/* Shipping Options */}
             <TabsContent value="shipping" className="space-y-6">
               <h3 className="text-lg font-semibold">Shipping Options</h3>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <Label htmlFor="service_type">Service Type</Label>
@@ -549,7 +549,7 @@ export const AddTrackingForm = () => {
                     </SelectContent>
                   </Select>
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="status">Initial Status</Label>
                   <Select
@@ -566,7 +566,7 @@ export const AddTrackingForm = () => {
                     </SelectContent>
                   </Select>
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="sending_date">Sending Date</Label>
                   <Input
@@ -576,7 +576,7 @@ export const AddTrackingForm = () => {
                     onChange={(e) => handleInputChange('sending_date', e.target.value)}
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="delivery_date">Expected Delivery Date</Label>
                   <Input
@@ -587,7 +587,7 @@ export const AddTrackingForm = () => {
                   />
                 </div>
               </div>
-              
+
               <div className="space-y-4">
                 <div className="flex items-center space-x-2">
                   <Switch
@@ -597,7 +597,7 @@ export const AddTrackingForm = () => {
                   />
                   <Label htmlFor="insurance">Add Insurance</Label>
                 </div>
-                
+
                 {formData.insurance && (
                   <div className="space-y-2">
                     <Label htmlFor="insurance_amount">Insurance Amount</Label>
@@ -615,7 +615,7 @@ export const AddTrackingForm = () => {
                   </div>
                 )}
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="special_instructions">Special Instructions</Label>
                 <Textarea
@@ -625,16 +625,16 @@ export const AddTrackingForm = () => {
                   placeholder="Any special handling instructions..."
                 />
               </div>
-              
+
               <div className="bg-blue-50 p-4 rounded-lg">
                 <h4 className="font-semibold text-blue-800">Estimated Costs</h4>
                 <p className="text-blue-600">
-                  Shipping: ${calculateShippingFee().toFixed(2)} | 
-                  Insurance: ${calculateInsuranceAmount().toFixed(2)} | 
+                  Shipping: ${calculateShippingFee().toFixed(2)} |
+                  Insurance: ${calculateInsuranceAmount().toFixed(2)} |
                   Total: ${(calculateShippingFee() + calculateInsuranceAmount()).toFixed(2)}
                 </p>
               </div>
-              
+
               <div className="flex gap-4">
                 <Button type="button" variant="outline" onClick={() => setActiveTab('package')}>
                   Back
@@ -648,7 +648,7 @@ export const AddTrackingForm = () => {
             {/* Payment Information */}
             <TabsContent value="payment" className="space-y-6">
               <h3 className="text-lg font-semibold">Payment Information</h3>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="payment_method">Payment Method</Label>
@@ -667,7 +667,7 @@ export const AddTrackingForm = () => {
                     </SelectContent>
                   </Select>
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="payment_status">Payment Status</Label>
                   <Select
@@ -685,7 +685,7 @@ export const AddTrackingForm = () => {
                   </Select>
                 </div>
               </div>
-              
+
               <div className="bg-green-50 p-4 rounded-lg">
                 <h4 className="font-semibold text-green-800">Order Summary</h4>
                 <div className="text-green-600 space-y-1">
@@ -694,7 +694,7 @@ export const AddTrackingForm = () => {
                   <p className="font-bold">Total: ${(calculateShippingFee() + calculateInsuranceAmount()).toFixed(2)}</p>
                 </div>
               </div>
-              
+
               <div className="flex gap-4">
                 <Button type="button" variant="outline" onClick={() => setActiveTab('shipping')}>
                   Back
@@ -716,9 +716,9 @@ export const AddTrackingForm = () => {
           <div className="mt-6 p-4 bg-green-50 rounded-lg">
             <h3 className="font-semibold text-green-800">Shipment Created Successfully!</h3>
             <p className="text-green-600">Tracking Number: {lastShipment.tracking_number}</p>
-            <Button 
-              onClick={handleDownloadPDF} 
-              variant="outline" 
+            <Button
+              onClick={handleDownloadPDF}
+              variant="outline"
               className="mt-2"
             >
               Download Receipt

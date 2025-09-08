@@ -1,12 +1,12 @@
 import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { 
-  Target, 
-  Globe, 
-  Heart, 
-  Users, 
-  Award, 
+import {
+  Target,
+  Globe,
+  Heart,
+  Users,
+  Award,
   Calendar,
   ArrowRight,
   Truck,
@@ -58,10 +58,10 @@ const About = () => {
             className="text-center text-white"
           >
             <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
-              About Sant Sport Logistics
+              About Frangiles Fasts Logistics
             </h1>
             <p className="text-xl text-blue-200 max-w-3xl mx-auto">
-              Delivering excellence since 2018. We're committed to providing the best logistics 
+              Delivering excellence since 2018. We're committed to providing the best logistics
               solutions with cutting-edge technology and unparalleled customer service.
             </p>
           </motion.div>
@@ -80,12 +80,12 @@ const About = () => {
             >
               <h2 className="text-4xl font-bold text-slate-900 mb-6">Our Story</h2>
               <p className="text-lg text-slate-600 mb-6">
-                Founded in 2018, Sant Sport Logistics started with a simple mission: to make 
-                package delivery faster, safer, and more reliable. What began as a small local 
+                Founded in 2018, Frangiles Fasts Logistics started with a simple mission: to make
+                package delivery faster, safer, and more reliable. What began as a small local
                 service has grown into a global logistics provider trusted by thousands.
               </p>
               <p className="text-lg text-slate-600 mb-8">
-                Today, we leverage advanced technology, including real-time tracking and 
+                Today, we leverage advanced technology, including real-time tracking and
                 AI-powered routing, to ensure your packages arrive on time, every time.
               </p>
               <Button className="bg-blue-600 hover:bg-blue-700">
@@ -201,9 +201,8 @@ const About = () => {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: index * 0.2 }}
-                className={`relative mb-12 flex items-center ${
-                  index % 2 === 0 ? 'flex-row' : 'flex-row-reverse'
-                }`}
+                className={`relative mb-12 flex items-center ${index % 2 === 0 ? 'flex-row' : 'flex-row-reverse'
+                  }`}
               >
                 <div className="w-1/2">
                   <Card className="border-0 bg-slate-50 shadow-lg">
@@ -225,6 +224,17 @@ const About = () => {
           </div>
         </div>
       </section>
+       {/* WhatsApp Chat Button */ }
+  <a
+    href="https://wa.me/+447386762901"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="fixed bottom-6 right-6 bg-green-500 hover:bg-green-600 text-white rounded-full p-4 shadow-lg flex items-center justify-center transition-colors"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+      <path d="M20.52 3.48A11.78 11.78 0 0 0 12 0C5.37 0 0 5.37 0 12a11.9 11.9 0 0 0 1.64 6L0 24l6.26-1.64A11.9 11.9 0 0 0 12 24c6.63 0 12-5.37 12-12 0-3.17-1.23-6.17-3.48-8.52zM12 22c-1.91 0-3.73-.52-5.33-1.5l-.38-.23-3.73.98 1-3.64-.24-.38A10.05 10.05 0 0 1 2 12c0-5.52 4.48-10 10-10 2.67 0 5.18 1.04 7.07 2.93A9.94 9.94 0 0 1 22 12c0 5.52-4.48 10-10 10zm5.2-7.67c-.28-.14-1.65-.82-1.9-.91s-.44-.14-.62.14-.71.91-.87 1.1-.32.21-.6.07c-.28-.14-1.18-.43-2.25-1.38-.83-.74-1.39-1.65-1.55-1.93s-.02-.43.12-.57c.12-.12.28-.32.42-.49.14-.16.19-.28.28-.47.09-.18.05-.35-.02-.49-.07-.14-.62-1.48-.85-2.02-.22-.53-.45-.46-.62-.47h-.53c-.18 0-.49.07-.74.35s-.97.95-.97 2.31 1 .36 1.14.53c.14.18 1.34 2.06 3.25 2.89 1.91.83 1.91.55 2.25.52.35-.03 1.15-.47 1.31-.92.16-.46.16-.85.12-.92-.05-.07-.21-.14-.49-.28z" />
+    </svg>
+  </a>
     </div>
   );
 };

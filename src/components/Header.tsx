@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Truck, 
-  Menu, 
-  X, 
-  Phone, 
+import {
+  Truck,
+  Menu,
+  X,
+  Phone,
   Mail,
   MapPin,
   ChevronDown
@@ -34,8 +34,8 @@ const Header = () => {
 
   const navigation = [
     { name: 'Home', href: '/' },
-    { 
-      name: 'Services', 
+    {
+      name: 'Services',
       href: '/services',
       submenu: [
         { name: 'Express Delivery', href: '/services#express' },
@@ -44,14 +44,14 @@ const Header = () => {
         { name: 'Business Solutions', href: '/services#business' },
       ]
     },
-    { name: 'Tracking', href: '/track' },
+    { name: 'Tracking', href: '/tracking' },
     { name: 'About', href: '/about' },
     { name: 'Contact', href: '/contact' },
   ];
 
   const contactInfo = [
     { icon: Phone, text: '+447386762901' },
-    { icon: Mail, text: 'support@santsport.example' },
+    { icon: Mail, text: 'support@frangilesfasts.online' },
     { icon: MapPin, text: '19 Freeland Park, Wareham Road, Lytchett Matravers, Poole, BH16 6FH, UK' },
   ];
 
@@ -76,7 +76,7 @@ const Header = () => {
             <div className="flex items-center space-x-4">
               <span className="text-blue-200">24/7 Support</span>
               <Button variant="outline" size="sm" className="bg-blue-800 text-white border-blue-700 hover:bg-blue-700">
-               <a  href="/contact">Get Quote</a>
+                <a href="/contact">Get Quote</a>
               </Button>
             </div>
           </div>
@@ -90,8 +90,8 @@ const Header = () => {
         transition={{ duration: 0.5 }}
         className={cn(
           "sticky top-0 z-50 transition-all duration-300",
-          isScrolled 
-            ? "bg-white/95 backdrop-blur-md shadow-lg border-b border-slate-200" 
+          isScrolled
+            ? "bg-white/95 backdrop-blur-md shadow-lg border-b border-slate-200"
             : "bg-transparent"
         )}
       >
@@ -112,7 +112,7 @@ const Header = () => {
                     "text-xl font-bold",
                     isScrolled ? "text-slate-900" : "text-blue-900"
                   )}>
-                    Sant Sport
+                    Frangiles Fasts
                   </span>
                   <span className={cn(
                     "text-sm font-medium",
@@ -141,8 +141,8 @@ const Header = () => {
                           location.pathname === item.href
                             ? "text-blue-600"
                             : isScrolled
-                            ? "text-slate-700"
-                            : "text-blue-400"
+                              ? "text-slate-700"
+                              : "text-blue-400"
                         )}
                       >
                         {item.name}
@@ -173,7 +173,7 @@ const Header = () => {
                   {item.submenu && (
                     <motion.div
                       initial={{ opacity: 0, y: 10 }}
-                      animate={{ 
+                      animate={{
                         opacity: openSubmenu === item.name ? 1 : 0,
                         y: openSubmenu === item.name ? 0 : 10
                       }}
@@ -202,15 +202,15 @@ const Header = () => {
                 variant={isScrolled ? "outline" : "secondary"}
                 className={cn(
                   "transition-all",
-                  isScrolled 
-                    ? "border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white" 
+                  isScrolled
+                    ? "border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
                     : "bg-white text-blue-600 hover:bg-blue-50"
                 )}
               >
-                <a href="/track">Track Package</a>
+                <a href="/tracking">Track Package</a>
               </Button>
               <Button className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white">
-                <a href="/admin">Get Started</a>
+                <a href="#">Get Started</a>
               </Button>
             </div>
 
@@ -219,8 +219,8 @@ const Header = () => {
               onClick={() => setIsOpen(!isOpen)}
               className={cn(
                 "lg:hidden p-2 rounded-lg transition-colors",
-                isScrolled 
-                  ? "text-slate-700 hover:bg-slate-100" 
+                isScrolled
+                  ? "text-slate-700 hover:bg-slate-100"
                   : "text-white hover:bg-white/10"
               )}
             >
@@ -257,7 +257,7 @@ const Header = () => {
                               )}
                             />
                           </button>
-                          
+
                           <AnimatePresence>
                             {openSubmenu === item.name && (
                               <motion.div
@@ -310,7 +310,7 @@ const Header = () => {
                 {/* Mobile CTA Buttons */}
                 <div className="mt-6 space-y-3">
                   <Button className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white">
-                    <a href="/track">Track Package</a>
+                    <a href="/tracking">Track Package</a>
                   </Button>
                   <Button variant="outline" className="w-full border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white">
                     <a href="/contact">Get Started</a>

@@ -28,34 +28,34 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
     sender_email: '',
     sender_phone: '',
     sender_address: '',
-    
+
     // Receiver Information
     receiver_name: '',
     receiver_email: '',
     receiver_phone: '',
     receiver_address: '',
-    
+
     // Package Information
     package_description: '',
     package_value: '',
     weight: '',
     dimensions: '',
     quantity: '1',
-    
+
     // Shipping Details
     service_type: 'standard',
     sending_date: '',
     delivery_date: '',
     status: 'pending',
     current_location: '',
-    
+
     // Insurance & Additional Services
     insurance: false,
     insurance_amount: '',
     special_instructions: '',
     fragile: false,
     signature_required: false,
-    
+
     // Payment Information
     payment_method: 'credit_card',
     payment_status: 'pending'
@@ -82,7 +82,7 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
       'priority': 2,
       'overnight': 3
     }[formData.service_type] || 1;
-    
+
     return (baseFee + weightFee) * serviceMultiplier;
   };
 
@@ -104,9 +104,9 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
       'receiver_name', 'receiver_email', 'receiver_address',
       'package_description', 'weight', 'current_location'
     ];
-    
+
     const missingFields = requiredFields.filter(field => !formData[field as keyof typeof formData]);
-    
+
     if (missingFields.length > 0) {
       toast({
         title: 'Missing required fields',
@@ -120,7 +120,7 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
     try {
       // Generate tracking number
       const trackingNumber = 'SL' + new Date().toISOString().replace(/-/g, '').slice(0, 8) + Math.floor(1000 + Math.random() * 9000);
-      
+
       // Calculate fees
       const shippingFee = calculateShippingFee();
       const insuranceAmount = formData.insurance ? calculateInsuranceAmount() : 0;
@@ -130,19 +130,19 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
         .from('shipments')
         .insert({
           tracking_number: trackingNumber,
-          
+
           // Sender information
           sender_name: formData.sender_name,
           sender_email: formData.sender_email,
           sender_phone: formData.sender_phone || null,
           sender_address: formData.sender_address,
-          
+
           // Receiver information
           receiver_name: formData.receiver_name,
           receiver_email: formData.receiver_email,
           receiver_phone: formData.receiver_phone || null,
           receiver_address: formData.receiver_address,
-          
+
           // Package information
           package_description: formData.package_description,
           package_value: formData.package_value ? parseFloat(formData.package_value) : null,
@@ -150,7 +150,7 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
           dimensions: formData.dimensions || null,
           quantity: parseInt(formData.quantity) || 1,
           fragile: formData.fragile,
-          
+
           // Shipping details
           shipping_fee: totalAmount,
           service_type: formData.service_type,
@@ -159,16 +159,16 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
           status: formData.status,
           current_location: formData.current_location,
           signature_required: formData.signature_required,
-          
+
           // Insurance & additional services
           insurance: formData.insurance,
           insurance_amount: insuranceAmount,
           special_instructions: formData.special_instructions || null,
-          
+
           // Payment information
           payment_method: formData.payment_method,
           payment_status: formData.payment_status,
-          
+
           created_by: user.id,
         })
         .select()
@@ -194,7 +194,7 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
           <html>
           <head>
             <meta charset="utf-8">
-            <title>Shipment Created - Sant Sport Logistics</title>
+            <title>Shipment Created - Frangiles Fasts Logistics</title>
           </head>
           <body>
             <h2>Your Shipment Has Been Created</h2>
@@ -205,11 +205,11 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
           </body>
           </html>
         `;
-        
+
         await supabase.functions.invoke('send-shipment-email', {
           body: {
             to: formData.receiver_email,
-            subject: `Your shipment ${trackingNumber} has been created - Sant Sport Logistics`,
+            subject: `Your shipment ${trackingNumber} has been created - Frangiles Fasts Logistics`,
             html: emailHtml,
             shipmentData: shipment
           }
@@ -222,11 +222,11 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
 
       onShipmentCreated(shipment);
 
-      toast({ 
-        title: 'Shipment created successfully!', 
-        description: `Tracking number: ${trackingNumber}. Email notification sent to receiver.` 
+      toast({
+        title: 'Shipment created successfully!',
+        description: `Tracking number: ${trackingNumber}. Email notification sent to receiver.`
       });
-      
+
       // Reset form
       setFormData({
         sender_name: '',
@@ -256,13 +256,13 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
         payment_status: 'pending'
       });
       setActiveTab('sender');
-      
+
     } catch (err: any) {
       console.error('Full error:', err);
-      toast({ 
-        title: 'Error creating shipment', 
-        description: err.message, 
-        variant: 'destructive' 
+      toast({
+        title: 'Error creating shipment',
+        description: err.message,
+        variant: 'destructive'
       });
     } finally {
       setLoading(false);
@@ -292,7 +292,7 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
             {/* Sender Information */}
             <TabsContent value="sender" className="space-y-4">
               <h3 className="text-lg font-semibold">Sender Information</h3>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="sender_name">Full Name *</Label>
@@ -303,7 +303,7 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
                     required
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="sender_email">Email *</Label>
                   <Input
@@ -314,7 +314,7 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
                     required
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="sender_phone">Phone</Label>
                   <Input
@@ -325,7 +325,7 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
                   />
                 </div>
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="sender_address">Full Address *</Label>
                 <Textarea
@@ -336,7 +336,7 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
                   required
                 />
               </div>
-              
+
               <Button type="button" onClick={() => setActiveTab('receiver')} className="gap-2">
                 Next: Receiver Information
                 <ArrowRight className="w-4 h-4" />
@@ -346,7 +346,7 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
             {/* Receiver Information */}
             <TabsContent value="receiver" className="space-y-4">
               <h3 className="text-lg font-semibold">Receiver Information</h3>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="receiver_name">Full Name *</Label>
@@ -357,7 +357,7 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
                     required
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="receiver_email">Email *</Label>
                   <Input
@@ -368,7 +368,7 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
                     required
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="receiver_phone">Phone</Label>
                   <Input
@@ -379,7 +379,7 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
                   />
                 </div>
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="receiver_address">Full Address *</Label>
                 <Textarea
@@ -390,7 +390,7 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
                   required
                 />
               </div>
-              
+
               <div className="flex gap-4">
                 <Button type="button" variant="outline" onClick={() => setActiveTab('sender')} className="gap-2">
                   <ArrowLeft className="w-4 h-4" />
@@ -406,7 +406,7 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
             {/* Package Information */}
             <TabsContent value="package" className="space-y-4">
               <h3 className="text-lg font-semibold">Package Details</h3>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="package_description">Package Description *</Label>
                 <Textarea
@@ -417,7 +417,7 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
                   required
                 />
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="weight">Weight (kg) *</Label>
@@ -431,7 +431,7 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
                     required
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="dimensions">Dimensions (LxWxH)</Label>
                   <Input
@@ -441,7 +441,7 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
                     placeholder="10x5x3 in"
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="quantity">Quantity</Label>
                   <Input
@@ -452,7 +452,7 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
                     onChange={(e) => handleInputChange('quantity', e.target.value)}
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="package_value">Value ($)</Label>
                   <Input
@@ -465,7 +465,7 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
                   />
                 </div>
               </div>
-              
+
               <div className="flex items-center gap-4">
                 <div className="flex items-center space-x-2">
                   <Switch
@@ -475,7 +475,7 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
                   />
                   <Label htmlFor="fragile">Fragile Item</Label>
                 </div>
-                
+
                 <div className="flex items-center space-x-2">
                   <Switch
                     id="signature_required"
@@ -485,7 +485,7 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
                   <Label htmlFor="signature_required">Signature Required</Label>
                 </div>
               </div>
-              
+
               <div className="flex gap-4">
                 <Button type="button" variant="outline" onClick={() => setActiveTab('receiver')} className="gap-2">
                   <ArrowLeft className="w-4 h-4" />
@@ -501,7 +501,7 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
             {/* Shipping Options */}
             <TabsContent value="shipping" className="space-y-4">
               <h3 className="text-lg font-semibold">Shipping Options</h3>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="service_type">Service Type</Label>
@@ -520,7 +520,7 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
                     </SelectContent>
                   </Select>
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="status">Initial Status</Label>
                   <Select
@@ -541,7 +541,7 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
                     </SelectContent>
                   </Select>
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="current_location">Current Location *</Label>
                   <Input
@@ -552,7 +552,7 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
                     required
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="sending_date">Sending Date</Label>
                   <Input
@@ -562,7 +562,7 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
                     onChange={(e) => handleInputChange('sending_date', e.target.value)}
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="delivery_date">Expected Delivery Date</Label>
                   <Input
@@ -573,7 +573,7 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
                   />
                 </div>
               </div>
-              
+
               <div className="space-y-4">
                 <div className="flex items-center space-x-2">
                   <Switch
@@ -583,7 +583,7 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
                   />
                   <Label htmlFor="insurance">Add Insurance</Label>
                 </div>
-                
+
                 {formData.insurance && (
                   <div className="space-y-2">
                     <Label htmlFor="insurance_amount">Insurance Amount</Label>
@@ -601,7 +601,7 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
                   </div>
                 )}
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="special_instructions">Special Instructions</Label>
                 <Textarea
@@ -611,16 +611,16 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
                   placeholder="Any special handling instructions..."
                 />
               </div>
-              
+
               <div className="bg-blue-50 p-4 rounded-lg">
                 <h4 className="font-semibold text-blue-800">Estimated Costs</h4>
                 <p className="text-blue-600">
-                  Shipping: ${calculateShippingFee().toFixed(2)} | 
-                  Insurance: ${calculateInsuranceAmount().toFixed(2)} | 
+                  Shipping: ${calculateShippingFee().toFixed(2)} |
+                  Insurance: ${calculateInsuranceAmount().toFixed(2)} |
                   Total: ${(calculateShippingFee() + calculateInsuranceAmount()).toFixed(2)}
                 </p>
               </div>
-              
+
               <div className="flex gap-4">
                 <Button type="button" variant="outline" onClick={() => setActiveTab('package')} className="gap-2">
                   <ArrowLeft className="w-4 h-4" />
@@ -636,7 +636,7 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
             {/* Payment Information */}
             <TabsContent value="payment" className="space-y-4">
               <h3 className="text-lg font-semibold">Payment Information</h3>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="payment_method">Payment Method</Label>
@@ -655,7 +655,7 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
                     </SelectContent>
                   </Select>
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="payment_status">Payment Status</Label>
                   <Select
@@ -673,7 +673,7 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
                   </Select>
                 </div>
               </div>
-              
+
               <div className="bg-green-50 p-4 rounded-lg">
                 <h4 className="font-semibold text-green-800">Order Summary</h4>
                 <div className="text-green-600 space-y-1">
@@ -682,7 +682,7 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
                   <p className="font-bold">Total: ${(calculateShippingFee() + calculateInsuranceAmount()).toFixed(2)}</p>
                 </div>
               </div>
-              
+
               <div className="flex gap-4">
                 <Button type="button" variant="outline" onClick={() => setActiveTab('shipping')} className="gap-2">
                   <ArrowLeft className="w-4 h-4" />

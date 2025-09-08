@@ -4,11 +4,11 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { 
-  Mail, 
-  Phone, 
-  MapPin, 
-  Clock, 
+import {
+  Mail,
+  Phone,
+  MapPin,
+  Clock,
   Send,
   MessageCircle,
   User,
@@ -37,7 +37,7 @@ const Contact = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    
+
     try {
       const response = await fetch(`${API_BASE_URL}/api/send-email`, {
         method: 'POST',
@@ -67,7 +67,7 @@ const Contact = () => {
     {
       icon: Mail,
       title: 'Email',
-      content: 'support@santsport.example',
+      content: 'support@frangilesfasts.online',
       description: 'Send us an email anytime'
     },
     {
@@ -94,9 +94,8 @@ const Contact = () => {
     <div className="min-h-screen pt-20">
       {/* Notification */}
       {notification.show && (
-        <div className={`fixed top-4 right-4 z-50 p-4 rounded-md shadow-lg ${
-          notification.type === 'success' ? 'bg-green-500' : 'bg-red-500'
-        } text-white`}>
+        <div className={`fixed top-4 right-4 z-50 p-4 rounded-md shadow-lg ${notification.type === 'success' ? 'bg-green-500' : 'bg-red-500'
+          } text-white`}>
           {notification.message}
         </div>
       )}
@@ -115,7 +114,7 @@ const Contact = () => {
               Get In Touch
             </h1>
             <p className="text-xl text-blue-200 max-w-3xl mx-auto">
-              Have questions about our services? We're here to help. 
+              Have questions about our services? We're here to help.
               Reach out to our team and we'll get back to you promptly.
             </p>
           </motion.div>
@@ -197,8 +196,8 @@ const Contact = () => {
                       />
                     </div>
 
-                    <Button 
-                      type="submit" 
+                    <Button
+                      type="submit"
                       className="w-full bg-blue-600 hover:bg-blue-700"
                       disabled={isLoading}
                     >
@@ -228,7 +227,7 @@ const Contact = () => {
               className="space-y-6"
             >
               <h2 className="text-3xl font-bold text-slate-900 mb-8">Contact Information</h2>
-              
+
               {contactInfo.map((info, index) => (
                 <motion.div
                   key={index}
@@ -273,13 +272,13 @@ const Contact = () => {
                   <CardContent className="p-6">
                     <h3 className="text-lg font-semibold text-slate-900 mb-4">Our Location</h3>
                     <div className="rounded-lg overflow-hidden">
-                      <iframe 
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2523.907416360972!2d-2.0778401235436093!3d50.75875037165267!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4873af4738e42c67%3A0xd9959807005b40c5!2s19%20Freeland%20Pk%2C%20Lytchett%20Matravers%2C%20Poole%20BH16%206FH%2C%20UK!5e0!3m2!1sen!2sin!4v1756711049021!5m2!1sen!2sin" 
-                        width="100%" 
-                        height="300" 
-                        style={{ border: 0 }} 
-                        allowFullScreen 
-                        loading="lazy" 
+                      <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2523.907416360972!2d-2.0778401235436093!3d50.75875037165267!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4873af4738e42c67%3A0xd9959807005b40c5!2s19%20Freeland%20Pk%2C%20Lytchett%20Matravers%2C%20Poole%20BH16%206FH%2C%20UK!5e0!3m2!1sen!2sin!4v1756711049021!5m2!1sen!2sin"
+                        width="100%"
+                        height="300"
+                        style={{ border: 0 }}
+                        allowFullScreen
+                        loading="lazy"
                         referrerPolicy="no-referrer-when-downgrade"
                       ></iframe>
                     </div>

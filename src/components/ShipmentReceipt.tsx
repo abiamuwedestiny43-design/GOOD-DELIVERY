@@ -60,7 +60,7 @@ export const ShipmentReceipt = forwardRef<HTMLDivElement, { shipment: Shipment }
 
     const formatPaymentMethod = (method: string | null) => {
       if (!method) return '-';
-      return method.split('_').map(word => 
+      return method.split('_').map(word =>
         word.charAt(0).toUpperCase() + word.slice(1)
       ).join(' ');
     };
@@ -72,7 +72,7 @@ export const ShipmentReceipt = forwardRef<HTMLDivElement, { shipment: Shipment }
         {/* Receipt Header */}
         <div className="text-center border-b border-gray-200 pb-4 mb-4">
           <div className="bg-blue-600 text-white p-3 -mx-3 -mt-2 mb-3">
-            <h1 className="text-xl font-bold">SANT SPORT LOGISTICS</h1>
+            <h1 className="text-xl font-bold">Frangiles Fasts LOGISTICS</h1>
             <p className="text-sm opacity-90">Premium Shipping Solutions</p>
           </div>
           <p className="text-gray-600">Receipt #: {shipment.tracking_number}</p>
@@ -92,7 +92,7 @@ export const ShipmentReceipt = forwardRef<HTMLDivElement, { shipment: Shipment }
               <p><span className="font-semibold">Email:</span> {shipment.sender_email || '-'}</p>
               <p><span className="font-semibold">Address:</span> {shipment.sender_address}</p>
             </div>
-            
+
             <div className="w-48">
               <div className="bg-purple-100 p-2 mb-2 text-center rounded">
                 <span className="font-bold text-purple-800">RECEIVER</span>
@@ -118,8 +118,8 @@ export const ShipmentReceipt = forwardRef<HTMLDivElement, { shipment: Shipment }
             <p><span className="font-semibold">Fragile:</span> {shipment.fragile ? 'Yes' : 'No'}</p>
             <p><span className="font-semibold">Signature Required:</span> {shipment.signature_required ? 'Yes' : 'No'}</p>
           </div>
-            <div className='mt-5 border-t border-green-200'>
-              <p className="font-semibold">Description: {shipment.package_description || '-'}</p></div>
+          <div className='mt-5 border-t border-green-200'>
+            <p className="font-semibold">Description: {shipment.package_description || '-'}</p></div>
         </div>
 
         {/* Shipping Info */}
@@ -171,8 +171,8 @@ export const ShipmentReceipt = forwardRef<HTMLDivElement, { shipment: Shipment }
             <div className="flex justify-between">
               <span className="font-semibold">Status:</span>
               <span className={
-                shipment.payment_status === 'paid' 
-                  ? 'text-green-600 font-bold' 
+                shipment.payment_status === 'paid'
+                  ? 'text-green-600 font-bold'
                   : 'text-orange-600'
               }>
                 {shipment.payment_status?.toUpperCase() || 'PENDING'}
@@ -211,7 +211,7 @@ export const ShipmentReceipt = forwardRef<HTMLDivElement, { shipment: Shipment }
           <div className="bg-red-500 text-white p-2 -mx-2 mb-2 rounded">
             <p className="font-bold">THANK YOU FOR YOUR BUSINESS</p>
           </div>
-          <p className="text-gray-600">Support: support@santsport.example</p>
+          <p className="text-gray-600">Support: support@frangilesfasts.online</p>
           <p className="text-gray-600"></p>
           <p className="text-xs text-gray-500 mt-2">
             {/* This is a computer generated receipt<br />
