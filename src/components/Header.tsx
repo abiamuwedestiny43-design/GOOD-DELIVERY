@@ -12,13 +12,14 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/hooks/useAuth';
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
   const location = useLocation();
-
+  const { user, isAdmin, signOut } = useAuth();
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
@@ -198,37 +199,45 @@ const Header = () => {
 
             {/* Desktop CTA Buttons */}
             <div className="hidden lg:flex items-center space-x-4">
-              <Button
-                variant={isScrolled ? "outline" : "secondary"}
+              {!user || !isAdmin ? (
+                <Button
+                  variant={isScrolled ? "outline" : "secondary"}
+                  className={cn(
+                    "transition-all",
+                    isScrolled
+                      ? "border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
+                      : "bg-white text-blue-600 hover:bg-blue-50"
+                  )}
+                >
+                  <a href="/tracking">Track Package</a>
+                </Button>
+              ) : (
+                <Button
+                  variant="outline"
+                  className={cn(
+                    "transition-all",
+                    isScrolled
+                  )}
+                  onClick={signOut}>
+                  Sign Out
+                </Button>
+              )}
+
+              {/* Mobile Menu Button */}
+              <button
+                onClick={() => setIsOpen(!isOpen)}
                 className={cn(
-                  "transition-all",
+                  "lg:hidden p-2 rounded-lg transition-colors",
                   isScrolled
-                    ? "border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
-                    : "bg-white text-blue-600 hover:bg-blue-50"
+                    ? "text-slate-700 hover:bg-slate-100"
+                    : "text-white hover:bg-white/10"
                 )}
               >
-                <a href="/tracking">Track Package</a>
-              </Button>
-              <Button className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white">
-                <a href="#">Get Started</a>
-              </Button>
+                {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              </button>
             </div>
-
-            {/* Mobile Menu Button */}
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className={cn(
-                "lg:hidden p-2 rounded-lg transition-colors",
-                isScrolled
-                  ? "text-slate-700 hover:bg-slate-100"
-                  : "text-white hover:bg-white/10"
-              )}
-            >
-              {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
           </div>
         </div>
-
         {/* Mobile Navigation */}
         <AnimatePresence>
           {isOpen && (
@@ -309,9 +318,11 @@ const Header = () => {
 
                 {/* Mobile CTA Buttons */}
                 <div className="mt-6 space-y-3">
-                  <Button className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white">
+                  {!user || !isAdmin ? (<Button className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white">
                     <a href="/tracking">Track Package</a>
-                  </Button>
+                  </Button>) : (
+                    <Button className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white" onClick={signOut}>Sign Out</Button>
+                  )}
                   <Button variant="outline" className="w-full border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white">
                     <a href="/contact">Get Started</a>
                   </Button>

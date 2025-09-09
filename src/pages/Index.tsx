@@ -7,7 +7,7 @@ import Home from "./Home";
 import Header from "@/components/Header";
 
 const Index = () => {
-  const { user, loading, signOut, isAdmin } = useAuth();
+  const {loading,} = useAuth();
 
   if (loading) {
     return (
