@@ -16,7 +16,7 @@ export default function Auth() {
   const { signIn, signUp, isAdmin, user } = useAuth();
 
   // Redirect if already authenticated
-  if (user || isAdmin) {
+  if (isAdmin) {
     return <Navigate to="/admin" replace />;
   }
 
