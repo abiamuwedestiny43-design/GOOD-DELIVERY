@@ -74,17 +74,22 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
   };
 
   const calculateShippingFee = () => {
-    const baseFee = 15;
-    const weightFee = formData.weight ? parseFloat(formData.weight) * 2 : 0;
-    const serviceMultiplier = {
-      'standard': 1,
-      'express': 1.5,
-      'priority': 2,
-      'overnight': 3
-    }[formData.service_type] || 1;
+  const baseFee = 95; // flat service fee
+  const ratePerKg = 20; // USD per kg (you can adjust this)
+  const weight = formData.weight ? parseFloat(formData.weight) : 0;
 
-    return (baseFee + weightFee) * serviceMultiplier;
-  };
+  const serviceMultiplier = {
+    'standard': 1.2,    // no multiplier
+    'express': 1.7,   // +50%
+    'priority': 2.5,    // +100%
+    'overnight': 3.9    // +200%
+  }[formData.service_type] || 1;
+
+  const weightFee = weight * ratePerKg * serviceMultiplier;
+
+  return baseFee + weightFee;
+};
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

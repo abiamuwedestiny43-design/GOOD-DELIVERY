@@ -44,10 +44,10 @@ export const ShipmentReceipt = forwardRef<HTMLDivElement, { shipment: Shipment }
     };
 
     const formatCurrency = (amount: number | null) => {
-      if (amount === null || amount === 0) return '-';
-      return new Intl.NumberFormat('en-IN', {
+      if (amount === null || amount === 0) return "UNDECLARED";
+      return new Intl.NumberFormat('en-US', {
         style: 'currency',
-        currency: 'INR',
+        currency: 'USD',
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
       }).format(amount);
@@ -59,7 +59,7 @@ export const ShipmentReceipt = forwardRef<HTMLDivElement, { shipment: Shipment }
     };
 
     const formatPaymentMethod = (method: string | null) => {
-      if (!method) return '-';
+      if (!method) return 'Online Transfer';
       return method.split('_').map(word =>
         word.charAt(0).toUpperCase() + word.slice(1)
       ).join(' ');
@@ -69,10 +69,10 @@ export const ShipmentReceipt = forwardRef<HTMLDivElement, { shipment: Shipment }
 
     return (
       <div ref={ref as any} className="w-full mx-auto bg-white text-gray-800 p-4 font-sans text-sm shadow-lg">
-        {/* Receipt Header */}
+        {/* Header */}
         <div className="text-center border-b border-gray-200 pb-4 mb-4">
           <div className="bg-blue-600 text-white p-3 -mx-3 -mt-2 mb-3">
-            <h1 className="text-xl font-bold">Frangiles Fasts LOGISTICS</h1>
+            <h1 className="text-xl font-bold">FRANGILES FASTS LOGISTICS</h1>
             <p className="text-sm opacity-90">Premium Shipping Solutions</p>
           </div>
           <p className="text-gray-600">Receipt #: {shipment.tracking_number}</p>
@@ -81,27 +81,24 @@ export const ShipmentReceipt = forwardRef<HTMLDivElement, { shipment: Shipment }
         </div>
 
         {/* Sender & Receiver */}
-        <div className="mb-4">
-          <div className="flex justify-between">
-            <div className="w-48">
-              <div className="bg-blue-100 p-2 mb-2 text-center rounded">
-                <span className="font-bold text-blue-800">SENDER</span>
-              </div>
-              <p><span className="font-semibold">Name:</span> {shipment.sender_name}</p>
-              <p><span className="font-semibold">Phone:</span> {shipment.sender_phone || '-'}</p>
-              <p><span className="font-semibold">Email:</span> {shipment.sender_email || '-'}</p>
-              <p><span className="font-semibold">Address:</span> {shipment.sender_address}</p>
+        <div className="flex justify-between mb-4">
+          <div className="w-48">
+            <div className="bg-blue-100 p-2 mb-2 text-center rounded">
+              <span className="font-bold text-blue-800">SENDER</span>
             </div>
-
-            <div className="w-48">
-              <div className="bg-purple-100 p-2 mb-2 text-center rounded">
-                <span className="font-bold text-purple-800">RECEIVER</span>
-              </div>
-              <p><span className="font-semibold">Name:</span> {shipment.receiver_name}</p>
-              <p><span className="font-semibold">Phone:</span> {shipment.receiver_phone || '-'}</p>
-              <p><span className="font-semibold">Email:</span> {shipment.receiver_email || '-'}</p>
-              <p><span className="font-semibold">Address:</span> {shipment.receiver_address}</p>
+            <p><span className="font-semibold">Name:</span> {shipment.sender_name}</p>
+            <p><span className="font-semibold">Phone:</span> {shipment.sender_phone || '-'}</p>
+            <p><span className="font-semibold">Email:</span> {shipment.sender_email || '-'}</p>
+            <p><span className="font-semibold">Address:</span> {shipment.sender_address}</p>
+          </div>
+          <div className="w-48">
+            <div className="bg-purple-100 p-2 mb-2 text-center rounded">
+              <span className="font-bold text-purple-800">RECEIVER</span>
             </div>
+            <p><span className="font-semibold">Name:</span> {shipment.receiver_name}</p>
+            <p><span className="font-semibold">Phone:</span> {shipment.receiver_phone || '-'}</p>
+            <p><span className="font-semibold">Email:</span> {shipment.receiver_email || '-'}</p>
+            <p><span className="font-semibold">Address:</span> {shipment.receiver_address}</p>
           </div>
         </div>
 
@@ -111,15 +108,17 @@ export const ShipmentReceipt = forwardRef<HTMLDivElement, { shipment: Shipment }
             <span className="font-bold text-green-800">PACKAGE DETAILS</span>
           </div>
           <div className="grid grid-cols-2 gap-2">
-            <p><span className="font-semibold">Weight:</span> {shipment.weight ? `${shipment.weight}kg` : '-'}</p>
-            <p><span className="font-semibold">Dimensions:</span> {shipment.dimensions || '-'}</p>
+            <p><span className="font-semibold">Weight:</span> {shipment.weight ? `${shipment.weight} kg` : '-'}</p>
+            <p><span className="font-semibold">Dimensions:</span> {shipment?.dimensions || 'BOX'}</p>
             <p><span className="font-semibold">Quantity:</span> {shipment.quantity || '1'}</p>
-            <p><span className="font-semibold">Value:</span> {formatCurrency(shipment.package_value)}</p>
+            <p><span className="font-semibold">Value:</span> {formatCurrency(shipment?.package_value)}</p>
             <p><span className="font-semibold">Fragile:</span> {shipment.fragile ? 'Yes' : 'No'}</p>
             <p><span className="font-semibold">Signature Required:</span> {shipment.signature_required ? 'Yes' : 'No'}</p>
           </div>
-          <div className='mt-5 border-t border-green-200'>
-            <p className="font-semibold">Description: {shipment.package_description || '-'}</p></div>
+          <div className="mt-4 border-t border-green-200 pt-2">
+            <p className="font-semibold">Description:</p>
+            <p>{shipment.package_description || '-'}</p>
+          </div>
         </div>
 
         {/* Shipping Info */}
@@ -144,7 +143,7 @@ export const ShipmentReceipt = forwardRef<HTMLDivElement, { shipment: Shipment }
           )}
         </div>
 
-        {/* Payment Section */}
+        {/* Payment Info */}
         <div className="border border-red-200 p-3 mb-4 rounded">
           <div className="bg-red-100 p-2 mb-2 text-center -mx-2 -mt-2 rounded-t">
             <span className="font-bold text-red-800">PAYMENT DETAILS</span>
@@ -160,51 +159,26 @@ export const ShipmentReceipt = forwardRef<HTMLDivElement, { shipment: Shipment }
                 <span>{formatCurrency(shipment.insurance_amount)}</span>
               </div>
             )}
-            <div className="border-t border-dashed border-gray-300 pt-2 flex justify-between font-bold">
-              <span>TOTAL:</span>
-              <span>{formatCurrency(totalAmount)}</span>
-            </div>
             <div className="flex justify-between">
               <span className="font-semibold">Method:</span>
-              <span>{formatPaymentMethod(shipment.payment_method)}</span>
+              <span>{formatPaymentMethod(shipment?.payment_method) || 'Transfer'}</span>
             </div>
             <div className="flex justify-between">
               <span className="font-semibold">Status:</span>
               <span className={
-                shipment.payment_status === 'paid'
+                shipment?.payment_status === 'paid'
                   ? 'text-green-600 font-bold'
                   : 'text-orange-600'
               }>
-                {shipment.payment_status?.toUpperCase() || 'PENDING'}
+                {shipment.payment_status?.toUpperCase() || 'PAID'}
               </span>
+            </div>
+            <div className="border-t border-dashed border-gray-300 pt-2 flex justify-between font-bold">
+              <span>TOTAL:</span>
+              <span>{formatCurrency(totalAmount)}</span>
             </div>
           </div>
         </div>
-
-        {/* Timeline
-        <div className="border border-gray-200 p-3 mb-4 rounded">
-          <div className="bg-gray-100 p-2 mb-2 text-center -mx-2 -mt-2 rounded-t">
-            <span className="font-bold text-gray-800">TIMELINE</span>
-          </div>
-          <div className="space-y-2">
-            <div className="flex items-center">
-              <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-              <span>Created: {formatDate(shipment.created_at)}</span>
-            </div>
-            {shipment.sending_date && (
-              <div className="flex items-center">
-                <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
-                <span>Dispatched: {formatDate(shipment.sending_date)}</span>
-              </div>
-            )}
-            {shipment.delivery_date && (
-              <div className="flex items-center">
-                <div className="w-2 h-2 bg-purple-500 rounded-full mr-2"></div>
-                <span>Expected: {formatDate(shipment.delivery_date)}</span>
-              </div>
-            )}
-          </div>
-        </div> */}
 
         {/* Footer */}
         <div className="text-center border-t border-gray-200 pt-3">
@@ -212,24 +186,11 @@ export const ShipmentReceipt = forwardRef<HTMLDivElement, { shipment: Shipment }
             <p className="font-bold">THANK YOU FOR YOUR BUSINESS</p>
           </div>
           <p className="text-gray-600">Support: support@frangilesfasts.online</p>
-          <p className="text-gray-600"></p>
-          <p className="text-xs text-gray-500 mt-2">
-            {/* This is a computer generated receipt<br />
-            No signature required */}
-          </p>
         </div>
-
-        {/* Barcode Area
-        <div className="text-center mt-4 border border-dashed border-gray-200 p-3">
-          <p className="text-gray-600 mb-2">TRACKING CODE</p>
-          <div className="bg-white p-2 border border-gray-300">
-            <p className="font-mono text-lg font-bold tracking-wider">{shipment.tracking_number}</p>
-          </div>
-          <p className="text-xs text-gray-500 mt-2">Scan or visit website to track</p>
-        </div> */}
       </div>
     );
   }
 );
 
 ShipmentReceipt.displayName = 'ShipmentReceipt';
+

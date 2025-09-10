@@ -7,7 +7,6 @@ import { AuthProvider } from "@/hooks/useAuth";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
-import TrackPage from "./pages/Track";
 import AdminPage from "./pages/Admin";
 import About from "./pages/About";
 import Services from "./pages/Services";
@@ -33,7 +32,6 @@ const App = () => (
               <Route path="/tracking" element={<TrackingPage />} />
               <Route path="/services" element={<Services />} />
               <Route path="/contact" element={<Contact />} />
-              <Route path="/track" element={<TrackPage />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             
