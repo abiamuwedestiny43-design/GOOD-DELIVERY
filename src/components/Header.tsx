@@ -54,7 +54,6 @@ const Header = () => {
     { icon: Phone, text: '+18483199030' },
     { icon: Mail, text: 'support@frangilesfasts.online' },
     { icon: MapPin, text: '87 Michigan Avenue IL zip code 60611 Chicago, United States of America' },
-    { icon: MapPin, text: '87 Michigan Avenue IL zip code 60611 Chicago, United States of America' },
   ];
 
   return (
