@@ -51,9 +51,9 @@ const Header = () => {
   ];
 
   const contactInfo = [
-    { icon: Phone, text: '+447386762901' },
+    { icon: Phone, text: '+18483199030' },
     { icon: Mail, text: 'support@frangilesfasts.online' },
-    { icon: MapPin, text: '19 Freeland Park, Wareham Road, Lytchett Matravers, Poole, BH16 6FH, UK' },
+    { icon: MapPin, text: '123 Michigan Avenue IL zip code 60611 Chicago, United States of America' },
   ];
 
   return (

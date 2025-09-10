@@ -92,78 +92,78 @@ export const UserTrackPage = () => {
     return statusOrder.indexOf(status);
   };
 
-const trackShipment = async () => {
-  if (!trackingNumber.trim()) {
-    toast({
-      title: 'Error',
-      description: 'Please enter a tracking number',
-      variant: 'destructive',
-    });
-    return;
-  }
-
-  setLoading(true);
-  try {
-    // Fetch shipment
-    const { data: shipmentData, error: shipmentError } = await supabase
-      .from('shipments')
-      .select('*')
-      .eq('tracking_number', trackingNumber.trim())
-      .single();
-
-    if (shipmentError) {
-      console.error('Error fetching shipment:', shipmentError);
-      throw new Error('Shipment not found. Please check the tracking number.');
+  const trackShipment = async () => {
+    if (!trackingNumber.trim()) {
+      toast({
+        title: 'Error',
+        description: 'Please enter a tracking number',
+        variant: 'destructive',
+      });
+      return;
     }
 
-    if (!shipmentData) {
-      throw new Error('No shipment found with this tracking number.');
+    setLoading(true);
+    try {
+      // Fetch shipment
+      const { data: shipmentData, error: shipmentError } = await supabase
+        .from('shipments')
+        .select('*')
+        .eq('tracking_number', trackingNumber.trim())
+        .single();
+
+      if (shipmentError) {
+        console.error('Error fetching shipment:', shipmentError);
+        throw new Error('Shipment not found. Please check the tracking number.');
+      }
+
+      if (!shipmentData) {
+        throw new Error('No shipment found with this tracking number.');
+      }
+
+      // Fetch tracking events
+      const { data: eventsData, error: eventsError } = await supabase
+        .from('tracking_events')
+        .select('*')
+        .eq('shipment_id', shipmentData.id)
+        .order('created_at', { ascending: true });
+
+      if (eventsError) {
+        console.error('Error fetching tracking events:', eventsError);
+        throw new Error('Failed to fetch tracking events');
+      }
+
+      // ✅ Transform tracking events into your strict TrackingEvent type
+      const transformedEvents: TrackingEvent[] = (eventsData || []).map(ev => ({
+        id: ev.id,
+        shipment_id: ev.shipment_id,
+        status: ev.status,
+        location: ev.location,
+        description: ev.description,
+        created_at: ev.created_at,
+        previous_location: ev.previous_location ?? '', // normalize optional field
+      }));
+
+      setShipment(shipmentData);
+      setTrackingEvents(transformedEvents);
+
+      toast({
+        title: 'Shipment found',
+        description: 'Tracking information loaded successfully',
+      });
+
+    } catch (err: any) {
+      console.error('Tracking error:', err);
+      toast({
+        title: 'Error',
+        description: err.message || 'Failed to track shipment',
+        variant: 'destructive',
+      });
+      setShipment(null);
+      setTrackingEvents([]);
+    } finally {
+      setLoading(false);
     }
-
-    // Fetch tracking events
-    const { data: eventsData, error: eventsError } = await supabase
-      .from('tracking_events')
-      .select('*')
-      .eq('shipment_id', shipmentData.id)
-      .order('created_at', { ascending: true });
-
-    if (eventsError) {
-      console.error('Error fetching tracking events:', eventsError);
-      throw new Error('Failed to fetch tracking events');
-    }
-
-    // ✅ Transform tracking events into your strict TrackingEvent type
-    const transformedEvents: TrackingEvent[] = (eventsData || []).map(ev => ({
-      id: ev.id,
-      shipment_id: ev.shipment_id,
-      status: ev.status,
-      location: ev.location,
-      description: ev.description,
-      created_at: ev.created_at,
-      previous_location: ev.previous_location ?? '', // normalize optional field
-    }));
-
-    setShipment(shipmentData);
-    setTrackingEvents(transformedEvents);
-
-    toast({
-      title: 'Shipment found',
-      description: 'Tracking information loaded successfully',
-    });
-
-  } catch (err: any) {
-    console.error('Tracking error:', err);
-    toast({
-      title: 'Error',
-      description: err.message || 'Failed to track shipment',
-      variant: 'destructive',
-    });
-    setShipment(null);
-    setTrackingEvents([]);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   const formatDate = (dateString: string | null) => {
     if (!dateString) return 'N/A';
@@ -199,8 +199,8 @@ const trackShipment = async () => {
               onKeyPress={(e) => e.key === 'Enter' && trackShipment()}
               className="flex-1"
             />
-            <Button 
-              onClick={trackShipment} 
+            <Button
+              onClick={trackShipment}
               disabled={loading}
               className="bg-green-600 hover:bg-green-700"
             >
@@ -257,22 +257,21 @@ const trackShipment = async () => {
               <div className="relative">
                 {/* Progress Line */}
                 <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-gray-200" />
-                
+
                 <div className="space-y-8">
                   {statusOrder.map((status, index) => {
                     const currentIndex = getStatusIndex(shipment.status);
                     const isCompleted = currentIndex !== -1 && index < currentIndex;
                     const isCurrent = index === currentIndex;
                     const isFuture = currentIndex === -1 || index > currentIndex;
-                    
+
                     return (
                       <div key={status} className="relative flex items-start gap-4">
                         {/* Status Indicator */}
-                        <div className={`relative z-10 flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
-                          isCompleted ? 'bg-green-500' : 
-                          isCurrent ? 'bg-blue-500 animate-pulse' : 
-                          'bg-gray-300'
-                        }`}>
+                        <div className={`relative z-10 flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${isCompleted ? 'bg-green-500' :
+                            isCurrent ? 'bg-blue-500 animate-pulse' :
+                              'bg-gray-300'
+                          }`}>
                           {isCompleted ? (
                             <CheckCircle className="w-5 h-5 text-white" />
                           ) : isCurrent ? (
@@ -283,9 +282,8 @@ const trackShipment = async () => {
                         </div>
 
                         {/* Status Content */}
-                        <div className={`flex-1 pt-1 ${
-                          isFuture ? 'text-gray-400' : 'text-gray-900'
-                        }`}>
+                        <div className={`flex-1 pt-1 ${isFuture ? 'text-gray-400' : 'text-gray-900'
+                          }`}>
                           <h3 className="font-semibold capitalize">
                             {statusLabels[status as keyof typeof statusLabels]}
                           </h3>
@@ -320,14 +318,13 @@ const trackShipment = async () => {
                   trackingEvents.map((event, index) => (
                     <div key={event.id} className="flex gap-4">
                       <div className="flex flex-col items-center">
-                        <div className={`w-3 h-3 rounded-full ${
-                          index === trackingEvents.length - 1 ? 'bg-green-500' : 'bg-blue-500'
-                        }`} />
+                        <div className={`w-3 h-3 rounded-full ${index === trackingEvents.length - 1 ? 'bg-green-500' : 'bg-blue-500'
+                          }`} />
                         {index < trackingEvents.length - 1 && (
                           <div className="w-0.5 h-16 bg-gray-200 mt-1" />
                         )}
                       </div>
-                      
+
                       <div className="flex-1 pb-6">
                         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                           <h3 className="font-semibold capitalize">
@@ -340,7 +337,7 @@ const trackShipment = async () => {
                             <span>{formatTime(event.created_at)}</span>
                           </div>
                         </div>
-                        
+
                         <div className="mt-2 space-y-2">
                           {event.location && (
                             <div className="flex items-center gap-2 text-sm">
@@ -348,14 +345,14 @@ const trackShipment = async () => {
                               <span>Location: {event.location}</span>
                             </div>
                           )}
-                          
+
                           {event.previous_location && (
                             <div className="flex items-center gap-2 text-sm text-gray-600">
                               <Home className="w-4 h-4" />
                               <span>Previous: {event.previous_location}</span>
                             </div>
                           )}
-                          
+
                           {event.description && (
                             <p className="text-sm text-gray-600 mt-1">{event.description}</p>
                           )}
@@ -390,7 +387,7 @@ const trackShipment = async () => {
                     <p><span className="text-gray-500">Address:</span> {shipment.sender_address}</p>
                   </div>
                 </div>
-                
+
                 <div>
                   <h3 className="font-semibold mb-3">Receiver Information</h3>
                   <div className="space-y-2 text-sm">
@@ -405,7 +402,7 @@ const trackShipment = async () => {
                   </div>
                 </div>
               </div>
-              
+
               <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <h3 className="font-semibold mb-3">Package Details</h3>
@@ -418,7 +415,7 @@ const trackShipment = async () => {
                     <p><span className="text-gray-500">Fragile:</span> {shipment.fragile ? 'Yes' : 'No'}</p>
                   </div>
                 </div>
-                
+
                 <div>
                   <h3 className="font-semibold mb-3">Shipping Information</h3>
                   <div className="space-y-2 text-sm">
@@ -431,7 +428,7 @@ const trackShipment = async () => {
                   </div>
                 </div>
               </div>
-              
+
               {shipment.special_instructions && (
                 <div className="mt-6 p-4 bg-blue-50 rounded-lg">
                   <h3 className="font-semibold text-blue-800 mb-2">Special Instructions</h3>
@@ -443,17 +440,17 @@ const trackShipment = async () => {
         </div>
       )}
 
-         {/* WhatsApp Chat Button */ }
-  <a
-    href="https://wa.me/+447386762901"
-    target="_blank"
-    rel="noopener noreferrer"
-    className="fixed bottom-6 right-6 bg-green-500 hover:bg-green-600 text-white rounded-full p-4 shadow-lg flex items-center justify-center transition-colors z-50"
-  >
-    <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
-      <path d="M20.52 3.48A11.78 11.78 0 0 0 12 0C5.37 0 0 5.37 0 12a11.9 11.9 0 0 0 1.64 6L0 24l6.26-1.64A11.9 11.9 0 0 0 12 24c6.63 0 12-5.37 12-12 0-3.17-1.23-6.17-3.48-8.52zM12 22c-1.91 0-3.73-.52-5.33-1.5l-.38-.23-3.73.98 1-3.64-.24-.38A10.05 10.05 0 0 1 2 12c0-5.52 4.48-10 10-10 2.67 0 5.18 1.04 7.07 2.93A9.94 9.94 0 0 1 22 12c0 5.52-4.48 10-10 10zm5.2-7.67c-.28-.14-1.65-.82-1.9-.91s-.44-.14-.62.14-.71.91-.87 1.1-.32.21-.6.07c-.28-.14-1.18-.43-2.25-1.38-.83-.74-1.39-1.65-1.55-1.93s-.02-.43.12-.57c.12-.12.28-.32.42-.49.14-.16.19-.28.28-.47.09-.18.05-.35-.02-.49-.07-.14-.62-1.48-.85-2.02-.22-.53-.45-.46-.62-.47h-.53c-.18 0-.49.07-.74.35s-.97.95-.97 2.31 1 .36 1.14.53c.14.18 1.34 2.06 3.25 2.89 1.91.83 1.91.55 2.25.52.35-.03 1.15-.47 1.31-.92.16-.46.16-.85.12-.92-.05-.07-.21-.14-.49-.28z" />
-    </svg>
-  </a>
+      {/* WhatsApp Chat Button */}
+      <a
+        href="https://wa.me/+18483199030"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-6 right-6 bg-green-500 hover:bg-green-600 text-white rounded-full p-4 shadow-lg flex items-center justify-center transition-colors z-50"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M20.52 3.48A11.78 11.78 0 0 0 12 0C5.37 0 0 5.37 0 12a11.9 11.9 0 0 0 1.64 6L0 24l6.26-1.64A11.9 11.9 0 0 0 12 24c6.63 0 12-5.37 12-12 0-3.17-1.23-6.17-3.48-8.52zM12 22c-1.91 0-3.73-.52-5.33-1.5l-.38-.23-3.73.98 1-3.64-.24-.38A10.05 10.05 0 0 1 2 12c0-5.52 4.48-10 10-10 2.67 0 5.18 1.04 7.07 2.93A9.94 9.94 0 0 1 22 12c0 5.52-4.48 10-10 10zm5.2-7.67c-.28-.14-1.65-.82-1.9-.91s-.44-.14-.62.14-.71.91-.87 1.1-.32.21-.6.07c-.28-.14-1.18-.43-2.25-1.38-.83-.74-1.39-1.65-1.55-1.93s-.02-.43.12-.57c.12-.12.28-.32.42-.49.14-.16.19-.28.28-.47.09-.18.05-.35-.02-.49-.07-.14-.62-1.48-.85-2.02-.22-.53-.45-.46-.62-.47h-.53c-.18 0-.49.07-.74.35s-.97.95-.97 2.31 1 .36 1.14.53c.14.18 1.34 2.06 3.25 2.89 1.91.83 1.91.55 2.25.52.35-.03 1.15-.47 1.31-.92.16-.46.16-.85.12-.92-.05-.07-.21-.14-.49-.28z" />
+        </svg>
+      </a>
     </div>
   );
 };
