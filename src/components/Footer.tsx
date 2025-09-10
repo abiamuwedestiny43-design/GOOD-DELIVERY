@@ -73,7 +73,11 @@ const Footer = () => {
               </div>
               <div className="flex items-center space-x-3 text-slate-400">
                 <MapPin className="w-4 h-4" />
-                <span>123 Michigan Avenue IL zip code 60611 Chicago, United States of America</span>
+                <span>87 Michigan Avenue IL zip code 60611 Chicago, United States of America</span>
+              </div>
+              <div className="flex items-center space-x-3 text-slate-400">
+                <MapPin className="w-4 h-4" />
+                <span>Cumhuriyet Caddesi No: 45 Daire 7 Beşiktaş, İstanbul post code 34349 Turkiye</span>
               </div>
             </div>
           </div>

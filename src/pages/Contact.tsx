@@ -79,7 +79,7 @@ const Contact = () => {
     {
       icon: MapPin,
       title: 'Office',
-      content: '123 Michigan Avenue IL zip code 60611 Chicago, United States of America',
+      content: '123 Michigan Avenue IL zip code 60611 Chicago, United States of America \n\n\nCumhuriyet Caddesi No: 45 Daire 7 Beşiktaş, İstanbul post code 34349 Turkiye',
       description: 'Visit our headquarters'
     },
     {
@@ -273,7 +273,7 @@ const Contact = () => {
                     <h3 className="text-lg font-semibold text-slate-900 mb-4">Our Location</h3>
                     <div className="rounded-lg overflow-hidden">
                       <iframe
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2523.907416360972!2d-2.0778401235436093!3d50.75875037165267!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4873af4738e42c67%3A0xd9959807005b40c5!2s19%20Freeland%20Pk%2C%20Lytchett%20Matravers%2C%20Poole%20BH16%206FH%2C%20UK!5e0!3m2!1sen!2sin!4v1756711049021!5m2!1sen!2sin"
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d12035.755533207466!2d29.006207312272352!3d41.04846559151503!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14cab64b55cc46f7%3A0x847a09ab856eefc5!2zWcSxbGTEsXosIDM0MzQ5IEJlxZ9pa3RhxZ8vxLBzdGFuYnVsLCBUw7xya2l5ZQ!5e0!3m2!1sen!2sin!4v1757507186067!5m2!1sen!2sin"
                         width="100%"
                         height="300"
                         style={{ border: 0 }}
