@@ -52,63 +52,146 @@ export const EditShipmentDialog = ({
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!shipment) return;
+  // Improved email handling with better error management
 
-    setLoading(true);
-    try {
-      // --- Update shipment fields ---
-      const updateData = {
-        tracking_number: formData.tracking_number ?? shipment.tracking_number,
-        status: formData.status ?? shipment.status,
-        current_location: formData.current_location ?? shipment.current_location,
-        sender_name: formData.sender_name ?? shipment.sender_name,
-        receiver_name: formData.receiver_name ?? shipment.receiver_name,
-        special_instructions:
-          formData.special_instructions ?? shipment.special_instructions,
-      };
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  if (!shipment) return;
 
-      const { error: updateError } = await supabase
-        .from('shipments')
-        .update(updateData)
-        .eq('id', shipment.id);
+  setLoading(true);
+  try {
+    // --- Update shipment fields ---
+    const updateData = {
+      tracking_number: formData.tracking_number ?? shipment.tracking_number,
+      status: formData.status ?? shipment.status,
+      current_location: formData.current_location ?? shipment.current_location,
+      sender_name: formData.sender_name ?? shipment.sender_name,
+      receiver_name: formData.receiver_name ?? shipment.receiver_name,
+      receiver_email: formData.receiver_email ?? shipment.receiver_email,
+      special_instructions:
+        formData.special_instructions ?? shipment.special_instructions,
+    };
 
-      if (updateError) throw updateError;
+    const { error: updateError } = await supabase
+      .from('shipments')
+      .update(updateData)
+      .eq('id', shipment.id);
 
-      // --- Insert tracking event ---
-      const trackingEvent = {
-        shipment_id: shipment.id,
-        status: updateData.status,
-        location: updateData.current_location,
-        previous_location: shipment.current_location,
-        description: `Status changed to "${updateData.status}". Location moved from "${shipment.current_location || 'N/A'}" to "${updateData.current_location || 'N/A'}".`,
-        created_at: new Date().toISOString(),
-      };
+    if (updateError) throw updateError;
 
-      const { error: insertError } = await supabase
-        .from('tracking_events')
-        .insert([trackingEvent]);
+    // --- Insert tracking event ---
+    const trackingEvent = {
+      shipment_id: shipment.id,
+      status: updateData.status,
+      location: updateData.current_location,
+      previous_location: shipment.current_location,
+      description: `Status changed to "${updateData.status}". Location moved from "${shipment.current_location || 'N/A'}" to "${updateData.current_location || 'N/A'}".`,
+      timestamp: new Date().toISOString(), // Use timestamp instead of created_at
+    };
 
-      if (insertError) throw insertError;
+    const { error: insertError } = await supabase
+      .from('tracking_events')
+      .insert([trackingEvent]);
 
+    if (insertError) {
+      console.error('Tracking event insert error:', insertError);
+      // Continue even if tracking event fails - don't break the whole update
+    }
+
+    // Send email update with improved error handling
+    const receiverEmail = updateData.receiver_email || shipment.receiver_email;
+    
+    if (receiverEmail && receiverEmail.includes('@')) {
+      try {
+        // Use the correct port (3001) or set up proxy
+        const emailResponse = await fetch('http://localhost:3001/api/send-shipment-update-email', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            to: receiverEmail,
+            shipment: { ...shipment, ...updateData },
+            trackingEvent
+          }),
+        });
+
+        // Check if response is ok before trying to parse JSON
+        if (emailResponse.ok) {
+          // Only try to parse JSON if there's content
+          let emailResult = null;
+          const contentType = emailResponse.headers.get('content-type');
+          
+          if (contentType && contentType.includes('application/json')) {
+            try {
+              emailResult = await emailResponse.json();
+              console.log('Email sent successfully:', emailResult);
+            } catch (parseError) {
+              console.log('Email sent successfully (no JSON response)');
+            }
+          } else {
+            console.log('Email sent successfully (non-JSON response)');
+          }
+          
+          toast({
+            title: 'Shipment updated',
+            description: 'Shipment updated and email notification sent successfully.',
+          });
+        } else {
+          // Handle HTTP errors (404, 500, etc.)
+          let errorMessage = `HTTP ${emailResponse.status}: ${emailResponse.statusText}`;
+          
+          // Only try to parse JSON if the response has content and is JSON
+          const contentType = emailResponse.headers.get('content-type');
+          if (contentType && contentType.includes('application/json')) {
+            try {
+              const errorData = await emailResponse.json();
+              errorMessage = errorData.message || errorMessage;
+            } catch (parseError) {
+              // If response isn't valid JSON, use the status text
+              console.error('Error parsing error response:', parseError);
+            }
+          }
+          
+          throw new Error(errorMessage);
+        }
+      } catch (emailError) {
+        console.error('Email sending failed:', emailError);
+        
+        // More specific error messages
+        let errorDescription = 'Email notification failed to send.';
+        if (emailError.message.includes('404')) {
+          errorDescription = 'Email service not available. Is your email server running on port 3001?';
+        } else if (emailError.message.includes('Failed to fetch')) {
+          errorDescription = 'Cannot connect to email service. Check if your email server is running.';
+        }
+        
+        toast({
+          title: 'Shipment updated',
+          description: `Shipment updated successfully, but ${errorDescription}`,
+          variant: 'default',
+        });
+      }
+    } else {
       toast({
         title: 'Shipment updated',
-        description: 'Shipment and tracking event recorded successfully.',
+        description: 'Shipment updated successfully. No email sent (missing or invalid email address).',
       });
-
-      onUpdate();
-      onOpenChange(false);
-    } catch (error: any) {
-      toast({
-        title: 'Error updating shipment',
-        description: error.message,
-        variant: 'destructive',
-      });
-    } finally {
-      setLoading(false);
     }
-  };
+
+    onUpdate();
+    onOpenChange(false);
+  } catch (error) {
+    console.error('Update error:', error);
+    toast({
+      title: 'Error updating shipment',
+      description: error.message || 'An unexpected error occurred',
+      variant: 'destructive',
+    });
+  } finally {
+    setLoading(false);
+  }
+};
 
   const copyTrackingNumber = () => {
     if (shipment?.tracking_number) {

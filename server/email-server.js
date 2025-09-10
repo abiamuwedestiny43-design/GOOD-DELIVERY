@@ -111,7 +111,7 @@ app.post('/api/send-shipment-email', async (req, res) => {
               <h2>Your Tracking Number</h2>
               <div class="tracking-number">${shipment.tracking_number}</div>
               <p>Use this number to track your package online</p>
-              <a href="https://www.frangilesfasts.online/tracking?number=${shipment.tracking_number}" class="btn">Track Your Package</a>
+              <a class="detail-title" href="https://www.frangilesfasts.online/tracking?number=${shipment.tracking_number}" class="btn">Track Your Package</a>
             </div>
             
             <div class="details-grid">
@@ -204,7 +204,7 @@ app.post('/api/send-shipment-update-email', async (req, res) => {
               <div class="tracking-number">${shipment.tracking_number}</div>
               <p>Status: <strong>${trackingEvent.status}</strong></p>
               <p>Current Location: <strong>${trackingEvent.location || 'N/A'}</strong></p>
-              <a href="https://www.frangilesfasts.online/tracking?number=${shipment.tracking_number}" class="btn">Track Your Package</a>
+              <a class="detail-title" href="https://www.frangilesfasts.online/tracking?number=${shipment.tracking_number}" class="btn">Track Your Package</a>
             </div>
 
             <div class="detail-section">
