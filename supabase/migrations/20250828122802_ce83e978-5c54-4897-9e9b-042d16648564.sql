@@ -40,7 +40,8 @@ CREATE TABLE public.shipments (
   receiver_address TEXT NOT NULL,
   package_description TEXT,
   weight DECIMAL(10,2),
-  status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'picked_up', 'in_transit', 'out_for_delivery', 'delivered', 'returned')),
+-- Update the status check constraint
+status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'dispatched', 'in_transit', 'arrived', 'delivered', 'cancelled', 'on_hold')),
   created_by UUID REFERENCES auth.users(id),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()

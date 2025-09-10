@@ -37,7 +37,7 @@ export const ShipmentList = ({
         return 'secondary';
       case 'in_transit':
         return 'secondary';
-      case 'processing':
+      case 'dispatched':
         return 'default';
       case 'out_for_delivery':
         return 'default';

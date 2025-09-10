@@ -10,10 +10,10 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Shipment } from '@/types/shipment';
 import { downloadNodeAsPDF } from '@/lib/pdf';
-// import { ShipmentReceipt } from '@/components/shipment/ShipmentReceipt';
 import { EditShipmentDialog } from './EditShipmentDialog';
 import { DeleteConfirmationDialog } from './DeleteConfirmationDialog';
 import { ShipmentDetailsDialog } from './ShipmentDetailsDialog';
+import { ShipmentReceipt } from '../ShipmentReceipt';
 
 export const ShipmentManagement = () => {
   const [shipments, setShipments] = useState<Shipment[]>([]);
