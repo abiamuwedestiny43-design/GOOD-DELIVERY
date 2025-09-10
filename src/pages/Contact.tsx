@@ -79,7 +79,8 @@ const Contact = () => {
     {
       icon: MapPin,
       title: 'Office',
-      content: '123 Michigan Avenue IL zip code 60611 Chicago, United States of America \n\n\nCumhuriyet Caddesi No: 45 Daire 7 Beşiktaş, İstanbul post code 34349 Turkiye',
+      content: '123 Michigan Avenue IL zip code 60611 Chicago, United States of America.',
+      contents: 'Cumhuriyet Caddesi No: 45 Daire 7 Beşiktaş, İstanbul post code 34349 Turkiye.',  
       description: 'Visit our headquarters'
     },
     {
@@ -247,8 +248,11 @@ const Contact = () => {
                           <h3 className="text-lg font-semibold text-slate-900 mb-1">
                             {info.title}
                           </h3>
-                          <p className="text-slate-900 font-medium mb-1">
+                          <p className="text-slate-900 font-medium mb-3">
                             {info.content}
+                          </p>
+                          <p className="text-slate-900 font-medium mb-1">
+                            {info.contents}
                           </p>
                           <p className="text-slate-600 text-sm">
                             {info.description}
