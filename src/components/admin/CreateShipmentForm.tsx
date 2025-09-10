@@ -211,14 +211,14 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
           </html>
         `;
 
-        await supabase.functions.invoke('send-shipment-email', {
-          body: {
-            to: formData.receiver_email,
-            subject: `Your shipment ${trackingNumber} has been created - Frangiles Fasts Logistics`,
-            html: emailHtml,
-            shipmentData: shipment
-          }
-        });
+await fetch('http://localhost:3001/api/send-shipment-email', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    to: formData.receiver_email,
+    shipment,
+  }),
+});
         console.log("Email notification sent successfully");
       } catch (emailError) {
         console.error("Failed to send email notification:", emailError);
