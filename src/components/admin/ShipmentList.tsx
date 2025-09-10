@@ -39,6 +39,8 @@ export const ShipmentList = ({
         return 'secondary';
       case 'processing':
         return 'default';
+      case 'out_for_delivery':
+        return 'default';
       case 'pending':
         return 'outline';
       case 'cancelled':
@@ -89,10 +91,10 @@ export const ShipmentList = ({
           <SelectContent>
             <SelectItem value="all">All Statuses</SelectItem>
             <SelectItem value="pending">Pending</SelectItem>
-            <SelectItem value="processing">Processing</SelectItem>
+            <SelectItem value="processing">Dispatched</SelectItem>
             <SelectItem value="in_transit">In Transit</SelectItem>
             <SelectItem value="on_hold">On Hold</SelectItem>
-            <SelectItem value="out_for_delivery">Out for Delivery</SelectItem>
+            <SelectItem value="out_for_delivery">Arrived</SelectItem>
             <SelectItem value="delivered">Delivered</SelectItem>
             <SelectItem value="cancelled">Cancelled</SelectItem>
           </SelectContent>
@@ -137,7 +139,7 @@ export const ShipmentList = ({
                   <TableCell>{shipment.weight} kg</TableCell>
                   <TableCell>
                     <Badge variant={getStatusBadgeVariant(shipment.status || 'pending')}>
-                      {shipment.status?.replace('_', ' ') || 'pending'}
+                      {shipment.status}
                     </Badge>
                   </TableCell>
                   <TableCell>

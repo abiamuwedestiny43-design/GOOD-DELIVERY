@@ -83,9 +83,9 @@ export const TrackParcel = () => {
 
   const statusStages = [
     { status: 'pending', label: 'Pending', color: 'bg-yellow-500' },
-    { status: 'processing', label: 'Processing', color: 'bg-blue-500' },
+    { status: 'processing', label: 'Dispatched', color: 'bg-blue-500' },
     { status: 'in_transit', label: 'In Transit', color: 'bg-indigo-500' },
-    { status: 'out_for_delivery', label: 'Out for Delivery', color: 'bg-purple-500' },
+    { status: 'out_for_delivery', label: 'Arrived', color: 'bg-purple-500' },
     { status: 'delivered', label: 'Delivered', color: 'bg-green-500' },
     { status: 'cancelled', label: 'Cancelled', color: 'bg-red-500' }
   ];

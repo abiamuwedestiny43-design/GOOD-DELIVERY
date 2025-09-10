@@ -79,9 +79,9 @@ export const UserTrackPage = () => {
 
   const statusLabels = {
     pending: 'Pending',
-    processing: 'Processing',
+    processing: 'Dispatched',
     in_transit: 'In Transit',
-    out_for_delivery: 'Out for Delivery',
+    out_for_delivery: 'Arrived',
     delivered: 'Delivered',
     cancelled: 'Cancelled',
     on_hold: 'On Hold'

@@ -78,7 +78,7 @@ export const ShipmentManagement = () => {
         return 'secondary';
       case 'in_transit':
         return 'secondary';
-      case 'processing':
+      case 'dispatched':
         return 'default';
       case 'pending':
         return 'outline';
@@ -247,10 +247,10 @@ export const ShipmentManagement = () => {
           <SelectContent>
             <SelectItem value="all">All Statuses</SelectItem>
             <SelectItem value="pending">Pending</SelectItem>
-            <SelectItem value="processing">Processing</SelectItem>
+            <SelectItem value="processing">Dispatched</SelectItem>
             <SelectItem value="in_transit">In Transit</SelectItem>
             <SelectItem value="on_hold">On Hold</SelectItem>
-            <SelectItem value="out_for_delivery">Out for Delivery</SelectItem>
+            <SelectItem value="out_for_delivery">Arrived</SelectItem>
             <SelectItem value="delivered">Delivered</SelectItem>
             <SelectItem value="cancelled">Cancelled</SelectItem>
           </SelectContent>
