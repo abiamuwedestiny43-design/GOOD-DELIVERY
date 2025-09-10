@@ -12,7 +12,7 @@ app.use(express.json());
 
 // Email transporter configuration with better error handling
 const createTransporter = () => {
-  return nodemailer.createTransporter({
+  return nodemailer.createTransport({
     service: 'gmail', // Use service instead of host/port for Gmail
     auth: {
       user: process.env.SMTP_USER,
