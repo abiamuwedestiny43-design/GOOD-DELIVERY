@@ -12,7 +12,6 @@ export type Shipment = {
   receiver_phone: string | null;
   receiver_address: string;
   package_description: string | null;
-  package_value: number | null;
   weight: number | null;
   quantity: number | null;
   shipping_fee: number | null;
@@ -20,7 +19,6 @@ export type Shipment = {
   sending_date: string | null;
   delivery_date: string | null;
   status: string | null;
-  signature_required: boolean | null;
   insurance: boolean | null;
   insurance_amount: number | null;
   special_instructions: string | null;
@@ -108,8 +106,6 @@ export const ShipmentReceipt = forwardRef<HTMLDivElement, { shipment: Shipment }
           <div className="grid grid-cols-2 gap-2">
             <p><span className="font-semibold">Weight:</span> {shipment.weight ? `${shipment.weight} kg` : '-'}</p>
             <p><span className="font-semibold">Quantity:</span> {shipment.quantity || '1'}</p>
-            <p><span className="font-semibold">Value:</span> {formatCurrency(shipment?.package_value)}</p>
-            <p><span className="font-semibold">Signature Required:</span> {shipment.signature_required ? 'Yes' : 'No'}</p>
           </div>
           <div className="mt-4 border-t border-green-200 pt-2">
             <p className="font-semibold">Description:</p>

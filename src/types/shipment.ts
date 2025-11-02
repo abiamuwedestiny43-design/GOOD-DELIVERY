@@ -10,7 +10,6 @@ export interface Shipment {
   receiver_phone: string | null;
   receiver_address: string;
   package_description: string | null;
-  package_value: number | null;
   weight: number | null;
   quantity: number | null;
   service_type: string | null;
@@ -20,7 +19,6 @@ export interface Shipment {
   updated_at: string | null;
   sending_date: string | null;
   delivery_date: string | null;
-  signature_required: boolean | null;
   insurance: boolean | null;
   insurance_amount: number | null;
   special_instructions: string | null;

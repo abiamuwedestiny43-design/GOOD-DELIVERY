@@ -82,7 +82,6 @@ export const ShipmentDetailsDialog = ({
             <CardContent className="space-y-2">
               <p><strong>Description:</strong> {shipment.package_description || 'N/A'}</p>
               <p><strong>Weight:</strong> {shipment.weight} kg</p>
-              <p><strong>Value:</strong> ${shipment.package_value || 'N/A'}</p>
             </CardContent>
           </Card>
 

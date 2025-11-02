@@ -37,7 +37,6 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
 
     // Package Information
     package_description: '',
-    package_value: '',
     weight: '',
     quantity: '1',
 
@@ -52,7 +51,6 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
     insurance: false,
     insurance_amount: '',
     special_instructions: '',
-    signature_required: false,
 
     // Payment Information
     payment_method: 'credit_card',
@@ -64,9 +62,8 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
   };
 
   const calculateInsuranceAmount = () => {
-    if (formData.insurance && formData.package_value) {
-      const packageValue = parseFloat(formData.package_value);
-      return Math.min(packageValue * 0.01, 100); // 1% of value, max $100
+    if (formData.insurance) {
+      return 50; // Fixed insurance amount
     }
     return 0;
   };
@@ -148,7 +145,6 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
 
           // Package information
           package_description: formData.package_description,
-          package_value: formData.package_value ? parseFloat(formData.package_value) : null,
           weight: parseFloat(formData.weight),
           quantity: parseInt(formData.quantity) || 1,
 
@@ -159,7 +155,6 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
           delivery_date: formData.delivery_date || null,
           status: formData.status,
           current_location: formData.current_location,
-          signature_required: formData.signature_required,
 
           // Insurance & additional services
           insurance: formData.insurance,
@@ -239,7 +234,6 @@ await fetch('http://localhost:3001/api/send-shipment-email', {
         receiver_phone: '',
         receiver_address: '',
         package_description: '',
-        package_value: '',
         weight: '',
         quantity: '1',
         service_type: 'standard',
@@ -250,7 +244,6 @@ await fetch('http://localhost:3001/api/send-shipment-email', {
         insurance: false,
         insurance_amount: '',
         special_instructions: '',
-        signature_required: false,
         payment_method: 'credit_card',
         payment_status: 'pending'
       });
@@ -417,7 +410,7 @@ await fetch('http://localhost:3001/api/send-shipment-email', {
                 />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="weight">Weight (kg) *</Label>
                   <Input
@@ -440,29 +433,6 @@ await fetch('http://localhost:3001/api/send-shipment-email', {
                     value={formData.quantity}
                     onChange={(e) => handleInputChange('quantity', e.target.value)}
                   />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="package_value">Value ($)</Label>
-                  <Input
-                    id="package_value"
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    value={formData.package_value}
-                    onChange={(e) => handleInputChange('package_value', e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <div className="flex items-center gap-4">
-                <div className="flex items-center space-x-2">
-                  <Switch
-                    id="signature_required"
-                    checked={formData.signature_required}
-                    onCheckedChange={(checked) => handleInputChange('signature_required', checked)}
-                  />
-                  <Label htmlFor="signature_required">Signature Required</Label>
                 </div>
               </div>
 
@@ -575,9 +545,6 @@ await fetch('http://localhost:3001/api/send-shipment-email', {
                       value={calculateInsuranceAmount()}
                       disabled
                     />
-                    <p className="text-sm text-gray-500">
-                      Insurance covers up to ${formData.package_value || '0'} at 1% of declared value
-                    </p>
                   </div>
                 )}
               </div>

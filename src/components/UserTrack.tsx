@@ -28,7 +28,6 @@ interface Shipment {
   receiver_phone: string | null;
   receiver_address: string;
   package_description: string | null;
-  package_value: number | null;
   weight: number | null;
   quantity: number | null;
   service_type: string | null;
@@ -408,7 +407,6 @@ export const UserTrackPage = () => {
                     <p><span className="text-gray-500">Description:</span> {shipment.package_description || 'N/A'}</p>
                     <p><span className="text-gray-500">Weight:</span> {shipment.weight ? `${shipment.weight} kg` : 'N/A'}</p>
                     <p><span className="text-gray-500">Quantity:</span> {shipment.quantity || '1'}</p>
-                    <p><span className="text-gray-500">Value:</span> {shipment.package_value ? `$${shipment.package_value}` : 'N/A'}</p>
                   </div>
                 </div>
 
@@ -419,7 +417,6 @@ export const UserTrackPage = () => {
                     <p><span className="text-gray-500">Shipping Fee:</span> {shipment.shipping_fee ? `$${shipment.shipping_fee.toFixed(2)}` : 'N/A'}</p>
                     <p><span className="text-gray-500">Sending Date:</span> {formatDate(shipment.sending_date)}</p>
                     <p><span className="text-gray-500">Estimated Delivery:</span> {formatDate(shipment.delivery_date)}</p>
-                    <p><span className="text-gray-500">Signature Required:</span> {shipment.signature_required ? 'Yes' : 'No'}</p>
                     <p><span className="text-gray-500">Insurance:</span> {shipment.insurance ? `$${shipment.insurance_amount?.toFixed(2)}` : 'No'}</p>
                   </div>
                 </div>
