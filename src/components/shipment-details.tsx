@@ -79,13 +79,11 @@ export default function ShipmentDetails() {
         updated_at: shipment.updated_at,
         // Fields that exist in the interface but not necessarily in DB
         package_value: null,
-        dimensions: null,
         quantity: null,
         service_type: null,
         sending_date: shipment.sending_date,
         delivery_date: shipment.delivery_date,
         shipping_fee: shipment.shipping_fee,
-        fragile: null,
         signature_required: null,
         insurance: null,
         insurance_amount: null,
@@ -169,7 +167,6 @@ export default function ShipmentDetails() {
           package_description: editingShipment.package_description,
           package_value: editingShipment.package_value,
           weight: editingShipment.weight,
-          dimensions: editingShipment.dimensions,
           status: editingShipment.status,
           service_type: editingShipment.service_type,
           shipping_fee: editingShipment.shipping_fee,
@@ -678,7 +675,6 @@ export default function ShipmentDetails() {
                 <h3 className="font-semibold mb-2">Package Details</h3>
                 <p><strong>Description:</strong> {selectedShipment.package_description}</p>
                 <p><strong>Weight:</strong> {selectedShipment.weight} kg</p>
-                <p><strong>Dimensions:</strong> {selectedShipment.dimensions}</p>
                 <p><strong>Value:</strong> ${selectedShipment.package_value}</p>
               </div>
               <div>

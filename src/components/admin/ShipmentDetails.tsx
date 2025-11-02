@@ -73,7 +73,6 @@ export const ShipmentDetails = ({ shipment, events }: ShipmentDetailsProps) => {
               <h3 className="font-semibold mb-2">Package Details</h3>
               <p><strong>Description:</strong> {shipment.package_description}</p>
               <p><strong>Weight:</strong> {shipment.weight} kg</p>
-              <p><strong>Dimensions:</strong> {shipment.dimensions}</p>
               <p><strong>Value:</strong> ${shipment.package_value}</p>
             </div>
             <div>

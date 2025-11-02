@@ -39,7 +39,6 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
     package_description: '',
     package_value: '',
     weight: '',
-    dimensions: '',
     quantity: '1',
 
     // Shipping Details
@@ -53,7 +52,6 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
     insurance: false,
     insurance_amount: '',
     special_instructions: '',
-    fragile: false,
     signature_required: false,
 
     // Payment Information
@@ -152,9 +150,7 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
           package_description: formData.package_description,
           package_value: formData.package_value ? parseFloat(formData.package_value) : null,
           weight: parseFloat(formData.weight),
-          dimensions: formData.dimensions || null,
           quantity: parseInt(formData.quantity) || 1,
-          fragile: formData.fragile,
 
           // Shipping details
           shipping_fee: totalAmount,
@@ -245,7 +241,6 @@ await fetch('http://localhost:3001/api/send-shipment-email', {
         package_description: '',
         package_value: '',
         weight: '',
-        dimensions: '',
         quantity: '1',
         service_type: 'standard',
         sending_date: '',
@@ -255,7 +250,6 @@ await fetch('http://localhost:3001/api/send-shipment-email', {
         insurance: false,
         insurance_amount: '',
         special_instructions: '',
-        fragile: false,
         signature_required: false,
         payment_method: 'credit_card',
         payment_status: 'pending'
@@ -423,7 +417,7 @@ await fetch('http://localhost:3001/api/send-shipment-email', {
                 />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="weight">Weight (kg) *</Label>
                   <Input
@@ -434,16 +428,6 @@ await fetch('http://localhost:3001/api/send-shipment-email', {
                     value={formData.weight}
                     onChange={(e) => handleInputChange('weight', e.target.value)}
                     required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="dimensions">Dimensions (LxWxH)</Label>
-                  <Input
-                    id="dimensions"
-                    value={formData.dimensions}
-                    onChange={(e) => handleInputChange('dimensions', e.target.value)}
-                    placeholder="10x5x3 in"
                   />
                 </div>
 
@@ -472,15 +456,6 @@ await fetch('http://localhost:3001/api/send-shipment-email', {
               </div>
 
               <div className="flex items-center gap-4">
-                <div className="flex items-center space-x-2">
-                  <Switch
-                    id="fragile"
-                    checked={formData.fragile}
-                    onCheckedChange={(checked) => handleInputChange('fragile', checked)}
-                  />
-                  <Label htmlFor="fragile">Fragile Item</Label>
-                </div>
-
                 <div className="flex items-center space-x-2">
                   <Switch
                     id="signature_required"

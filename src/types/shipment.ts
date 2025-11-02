@@ -12,7 +12,6 @@ export interface Shipment {
   package_description: string | null;
   package_value: number | null;
   weight: number | null;
-  dimensions: string | null;
   quantity: number | null;
   service_type: string | null;
   shipping_fee: number | null;
@@ -21,7 +20,6 @@ export interface Shipment {
   updated_at: string | null;
   sending_date: string | null;
   delivery_date: string | null;
-  fragile: boolean | null;
   signature_required: boolean | null;
   insurance: boolean | null;
   insurance_amount: number | null;

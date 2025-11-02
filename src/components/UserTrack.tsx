@@ -30,9 +30,7 @@ interface Shipment {
   package_description: string | null;
   package_value: number | null;
   weight: number | null;
-  dimensions: string | null;
   quantity: number | null;
-  fragile: boolean | null;
   service_type: string | null;
   shipping_fee: number | null;
   sending_date: string | null;
@@ -409,10 +407,8 @@ export const UserTrackPage = () => {
                   <div className="space-y-2 text-sm">
                     <p><span className="text-gray-500">Description:</span> {shipment.package_description || 'N/A'}</p>
                     <p><span className="text-gray-500">Weight:</span> {shipment.weight ? `${shipment.weight} kg` : 'N/A'}</p>
-                    <p><span className="text-gray-500">Dimensions:</span> {shipment.dimensions || 'N/A'}</p>
                     <p><span className="text-gray-500">Quantity:</span> {shipment.quantity || '1'}</p>
                     <p><span className="text-gray-500">Value:</span> {shipment.package_value ? `$${shipment.package_value}` : 'N/A'}</p>
-                    <p><span className="text-gray-500">Fragile:</span> {shipment.fragile ? 'Yes' : 'No'}</p>
                   </div>
                 </div>
 

@@ -61,13 +61,11 @@ export const PrintReceiptSection = () => {
         updated_at: shipmentData.updated_at,
         // Fields that exist in the interface but not necessarily in DB
         package_value: null,
-        dimensions: null,
         quantity: null,
         service_type: null,
         sending_date: shipmentData.sending_date,
         delivery_date: shipmentData.delivery_date,
         shipping_fee: shipmentData.shipping_fee,
-        fragile: null,
         signature_required: null,
         insurance: null,
         insurance_amount: null,
