@@ -83,7 +83,7 @@ app.post('/api/send-shipment-email', async (req, res) => {
       <html>
       <head>
         <meta charset="utf-8">
-        <title>Shipment Created - Frangiles Fasts Logistics</title>
+        <title>Shipment Created -  EC WorldWide Service</title>
         <style>
           body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f5f5f5; }
           .container { max-width: 600px; margin: 0 auto; background-color: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
@@ -102,7 +102,7 @@ app.post('/api/send-shipment-email', async (req, res) => {
       <body>
         <div class="container">
           <div class="header">
-            <h1>🚚 Frangiles Fasts Logistics</h1>
+            <h1>🚚  EC WorldWide Service</h1>
             <p>Your shipment has been successfully created!</p>
           </div>
           
@@ -140,8 +140,8 @@ app.post('/api/send-shipment-email', async (req, res) => {
           </div>
           
           <div class="footer">
-            <p>Thank you for choosing Frangiles Fasts Logistics!</p>
-            <p>Questions? Contact us at support@frangilesfasts.online</p>
+            <p>Thank you for choosing  EC WorldWide Service!</p>
+            <p>Questions? Contact us at support@ecwservices.sbs</p>
           </div>
         </div>
       </body>
@@ -151,7 +151,7 @@ app.post('/api/send-shipment-email', async (req, res) => {
     await transporter.sendMail({
       from: process.env.FROM_EMAIL || process.env.SMTP_USER,
       to,
-      subject: `📦 Shipment ${shipment.tracking_number} Created - Frangiles Fasts Logistics`,
+      subject: `📦 Shipment ${shipment.tracking_number} Created -  EC WorldWide Service`,
       html: emailHtml,
     });
 
@@ -176,7 +176,7 @@ app.post('/api/send-shipment-update-email', async (req, res) => {
       <html>
       <head>
         <meta charset="utf-8">
-        <title>Shipment Update - Frangiles Fasts Logistics</title>
+        <title>Shipment Update -  EC WorldWide Service</title>
         <style>
           body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f5f5f5; }
           .container { max-width: 600px; margin: 0 auto; background-color: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
@@ -221,8 +221,8 @@ app.post('/api/send-shipment-update-email', async (req, res) => {
           </div>
           
           <div class="footer">
-            <p>Thanks for using Frangiles Fasts Logistics!</p>
-            <p>Need help? Contact support@frangilesfasts.online</p>
+            <p>Thanks for using  EC WorldWide Service!</p>
+            <p>Need help? Contact support@ecwservices.sbs</p>
           </div>
         </div>
       </body>

@@ -190,7 +190,7 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
           <html>
           <head>
             <meta charset="utf-8">
-            <title>Shipment Created - Frangiles Fasts Logistics</title>
+            <title>Shipment Created -  EC WorldWide Service</title>
           </head>
           <body>
             <h2>Your Shipment Has Been Created</h2>

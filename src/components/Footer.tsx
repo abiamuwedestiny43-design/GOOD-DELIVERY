@@ -15,7 +15,7 @@ const Footer = () => {
   const footerLinks = {
     services: [
       { name: 'Express Delivery', href: '/services#express' },
-      { name: 'Secure Logistics', href: '/services#secure' },
+      { name: 'Secure Service', href: '/services#secure' },
       { name: 'International Shipping', href: '/services#international' },
       { name: 'Business Solutions', href: '/services#business' },
     ],
@@ -52,12 +52,12 @@ const Footer = () => {
                 <Truck className="w-6 h-6 text-white" />
               </div>
               <div className="flex flex-col">
-                <span className="text-2xl font-bold">Frangiles Fasts</span>
-                <span className="text-blue-400 font-medium">Logistics</span>
+                <span className="text-2xl font-bold"> EC WorldWide</span>
+                <span className="text-blue-400 font-medium">Service</span>
               </div>
             </Link>
             <p className="text-slate-400 mb-6 max-w-md">
-              Delivering excellence worldwide with fast, secure, and reliable logistics solutions.
+              Delivering excellence worldwide with fast, secure, and reliable Service solutions.
               Trusted by thousands for all your shipping needs.
             </p>
 
@@ -65,15 +65,15 @@ const Footer = () => {
             <div className="space-y-3">
               <div className="flex items-center space-x-3 text-slate-400">
                 <Phone className="w-4 h-4" />
-                <span>+18483199030</span>
+                <span>‪+447876820984</span>
               </div>
               <div className="flex items-center space-x-3 text-slate-400">
                 <Mail className="w-4 h-4" />
-                <span>support@frangilesfasts.online</span>
+                <span>support@ecwservices.sbs</span>
               </div>
               <div className="flex items-center space-x-3 text-slate-400">
                 <MapPin className="w-4 h-4" />
-                <span>87 Michigan Avenue IL zip code 60611 Chicago, United States of America</span>
+                <span> 49 Featherstone St, London EC 1Y 8SY United Kingdom</span>
               </div>
               <div className="flex items-center space-x-3 text-slate-400">
                 <MapPin className="w-4 h-4" />
@@ -126,7 +126,7 @@ const Footer = () => {
         {/* Social Links */}
         <div className="flex items-center justify-between pt-12 border-t border-slate-800">
           <p className="text-slate-400">
-            © 2024 Frangiles Fasts Logistics. All rights reserved.
+            © 2024  EC WorldWide Service. All rights reserved.
           </p>
           <div className="flex items-center space-x-4">
             {socialLinks.map((social) => (

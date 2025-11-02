@@ -45,12 +45,12 @@ export default function Auth() {
           <div className="flex justify-center mb-4">
             <img 
               src={speedyLogo} 
-              alt="Speedy Logistics" 
+              alt="Speedy Service" 
               className="w-24 h-24 rounded-full"
             />
           </div>
           <CardTitle className="text-2xl font-semibold text-foreground">
-            Welcome to Speedy Logistics
+            Welcome to Speedy Service
           </CardTitle>
           <p className="text-muted-foreground text-sm">
             Sign in to access your account or create a new one.

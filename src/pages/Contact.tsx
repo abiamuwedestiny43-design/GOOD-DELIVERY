@@ -67,19 +67,19 @@ const Contact = () => {
     {
       icon: Mail,
       title: 'Email',
-      content: 'support@frangilesfasts.online',
+      content: 'support@ecwservices.sbs',
       description: 'Send us an email anytime'
     },
     {
       icon: Phone,
       title: 'Phone',
-      content: '+18483199030',
+      content: '+447876820984',
       description: 'Mon-Fri from 8am to 6pm'
     },
     {
       icon: MapPin,
       title: 'Office',
-      content: '123 Michigan Avenue IL zip code 60611 Chicago, United States of America.',
+      content: ' 49 Featherstone St, London EC 1Y 8SY United Kingdom',
       contents: 'Cumhuriyet Caddesi No: 45 Daire 7 Beşiktaş, İstanbul post code 34349 Turkiye.',  
       description: 'Visit our headquarters'
     },
@@ -348,7 +348,7 @@ const Contact = () => {
       </section>
       {/* WhatsApp Chat Button */}
       <a
-        href="https://wa.me/+18483199030"
+        href="https://wa.me/‪+447876820984"
         target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-6 right-6 bg-green-500 hover:bg-green-600 text-white rounded-full p-4 shadow-lg flex items-center justify-center transition-colors z-50"

@@ -87,7 +87,7 @@ const Home = () => {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent"
           >
-            Premium Logistics
+            Premium Service
           </motion.h1>
 
           <motion.p
@@ -188,7 +188,7 @@ const Home = () => {
               Our Services
             </h2>
             <p className="text-xl text-slate-600 max-w-2xl mx-auto">
-              Comprehensive logistics solutions tailored to your needs
+              Comprehensive Service solutions tailored to your needs
             </p>
           </motion.div>
 
@@ -240,7 +240,7 @@ const Home = () => {
               About Us
             </h2>
             <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-              We are committed to redefining global logistics through reliability, speed, and innovation.
+              We are committed to redefining global Service through reliability, speed, and innovation.
             </p>
           </motion.div>
 
@@ -331,7 +331,7 @@ const Home = () => {
 
       {/* WhatsApp Chat Button */}
       <a
-        href="https://wa.me/+18483199030"
+        href="https://wa.me/‪+447876820984"
         target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-6 right-6 bg-green-500 hover:bg-green-600 text-white rounded-full p-4 shadow-lg flex items-center justify-center transition-colors z-50"

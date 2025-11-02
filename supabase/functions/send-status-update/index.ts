@@ -52,7 +52,7 @@ const generateStatusUpdateEmailHtml = (
     <html>
     <head>
       <meta charset="utf-8">
-      <title>Shipment Status Update - Frangiles Fasts Logistics</title>
+      <title>Shipment Status Update -  EC WorldWide Service</title>
       <style>
         body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f5f5f5; }
         .container { max-width: 600px; margin: 0 auto; background-color: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
@@ -79,7 +79,7 @@ const generateStatusUpdateEmailHtml = (
     <body>
       <div class="container">
         <div class="header">
-          <h1>🚚 Frangiles Fasts Logistics</h1>
+          <h1>🚚  EC WorldWide Service</h1>
           <p>Shipment Status Update</p>
         </div>
         
@@ -123,7 +123,7 @@ const generateStatusUpdateEmailHtml = (
             <div class="detail-title">ℹ️ What's Next?</div>
             ${
               newStatus === 'delivered'
-                ? '<div class="detail-item">• Your package has been delivered successfully!</div><div class="detail-item">• Thank you for choosing Frangiles Fasts Logistics</div>'
+                ? '<div class="detail-item">• Your package has been delivered successfully!</div><div class="detail-item">• Thank you for choosing  EC WorldWide Service</div>'
                 : '<div class="detail-item">• You will receive further updates as your package progresses</div><div class="detail-item">• Track your package anytime using the link above</div>'
             }
             <div class="detail-item">• Contact us if you have any questions</div>
@@ -131,8 +131,8 @@ const generateStatusUpdateEmailHtml = (
         </div>
         
         <div class="footer">
-          <p>Thank you for choosing Frangiles Fasts Logistics!</p>
-          <p>Questions? Contact us at support@frangilesfasts.online</p>
+          <p>Thank you for choosing  EC WorldWide Service!</p>
+          <p>Questions? Contact us at support@ecwservices.sbs</p>
         </div>
       </div>
     </body>

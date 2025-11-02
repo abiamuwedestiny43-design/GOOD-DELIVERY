@@ -40,7 +40,7 @@ const Header = () => {
       href: '/services',
       submenu: [
         { name: 'Express Delivery', href: '/services#express' },
-        { name: 'Secure Logistics', href: '/services#secure' },
+        { name: 'Secure Service', href: '/services#secure' },
         { name: 'International Shipping', href: '/services#international' },
         { name: 'Business Solutions', href: '/services#business' },
       ]
@@ -51,9 +51,9 @@ const Header = () => {
   ];
 
   const contactInfo = [
-    { icon: Phone, text: '+18483199030' },
-    { icon: Mail, text: 'support@frangilesfasts.online' },
-    { icon: MapPin, text: '87 Michigan Avenue IL zip code 60611 Chicago, United States of America' },
+    { icon: Phone, text: '‪+447876820984' },
+    { icon: Mail, text: 'support@ecwservices.sbs' },
+    { icon: MapPin, text: ' 49 Featherstone St, London EC 1Y 8SY United Kingdom' },
   ];
 
   return (
@@ -113,13 +113,13 @@ const Header = () => {
                     "text-xl font-bold",
                     isScrolled ? "text-slate-900" : "text-blue-900"
                   )}>
-                    Frangiles Fasts
+                     EC WorldWide
                   </span>
                   <span className={cn(
                     "text-sm font-medium",
                     isScrolled ? "text-blue-900" : "text-blue-900"
                   )}>
-                    Logistics
+                    Service
                   </span>
                 </div>
               </motion.div>

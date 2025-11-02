@@ -26,7 +26,7 @@ const Services = () => {
     },
     {
       icon: Shield,
-      title: 'Secure Logistics',
+      title: 'Secure Service',
       description: 'Advanced security measures for valuable and sensitive packages',
       features: ['Insurance included', 'Tamper-proof packaging', '24/7 monitoring'],
       price: 'From $25',
@@ -43,7 +43,7 @@ const Services = () => {
     {
       icon: Building,
       title: 'Business Solutions',
-      description: 'Custom logistics solutions for businesses of all sizes',
+      description: 'Custom Service solutions for businesses of all sizes',
       features: ['Bulk discounts', 'Dedicated account manager', 'API integration'],
       price: 'Custom pricing',
       color: 'from-orange-500 to-red-500'
@@ -64,7 +64,7 @@ const Services = () => {
     {
       icon: Users,
       title: 'Expert Team',
-      description: 'Experienced logistics professionals'
+      description: 'Experienced Service professionals'
     },
     {
       icon: CheckCircle,
@@ -89,7 +89,7 @@ const Services = () => {
               Our Services
             </h1>
             <p className="text-xl text-blue-200 max-w-3xl mx-auto">
-              Comprehensive logistics solutions designed to meet your every need. 
+              Comprehensive Service solutions designed to meet your every need. 
               From local deliveries to international shipping, we've got you covered.
             </p>
           </motion.div>
@@ -204,7 +204,7 @@ const Services = () => {
             Ready to Get Started?
           </h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto">
-            Join thousands of satisfied customers who trust us with their logistics needs
+            Join thousands of satisfied customers who trust us with their Service needs
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button 
