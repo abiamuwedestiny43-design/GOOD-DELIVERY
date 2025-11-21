@@ -13,11 +13,13 @@ interface StatusUpdateRequest {
   newStatus: string
 }
 
+type StatusType = 'pending' | 'picked_up' | 'in_transit' | 'out_for_delivery' | 'delivered' | 'returned';
+
 const generateStatusUpdateEmailHtml = (
   shipmentData: any,
   newStatus: string
 ) => {
-  const statusMessages = {
+  const statusMessages: Record<StatusType, string> = {
     pending: 'Your shipment is being prepared for pickup.',
     picked_up:
       'Your shipment has been picked up and is on its way to our facility.',
@@ -27,7 +29,7 @@ const generateStatusUpdateEmailHtml = (
     returned: 'Your shipment is being returned to the sender.',
   }
 
-  const statusEmojis = {
+  const statusEmojis: Record<StatusType, string> = {
     pending: '📦',
     picked_up: '🚚',
     in_transit: '✈️',
@@ -36,7 +38,7 @@ const generateStatusUpdateEmailHtml = (
     returned: '↩️',
   }
 
-  const statusColor = {
+  const statusColor: Record<StatusType, string> = {
     pending: '#f59e0b',
     picked_up: '#3b82f6',
     in_transit: '#8b5cf6',
@@ -44,6 +46,8 @@ const generateStatusUpdateEmailHtml = (
     delivered: '#10b981',
     returned: '#ef4444',
   }
+  
+  const status = newStatus as StatusType;
 
   const siteUrl = Deno.env.get('SITE_URL') || 'http://localhost:3000'
 
@@ -59,13 +63,13 @@ const generateStatusUpdateEmailHtml = (
         .header { background: linear-gradient(135deg, #2563eb, #7c3aed); color: white; padding: 30px; text-align: center; }
         .content { padding: 30px; }
         .status-box { background-color: ${
-          statusColor[newStatus] || '#f59e0b'
+          statusColor[status] || '#f59e0b'
         }20; border: 2px solid ${
-    statusColor[newStatus] || '#f59e0b'
+    statusColor[status] || '#f59e0b'
   }; border-radius: 8px; padding: 20px; margin: 20px 0; text-align: center; }
         .status-emoji { font-size: 48px; margin-bottom: 10px; }
         .status-title { font-size: 24px; font-weight: bold; color: ${
-          statusColor[newStatus] || '#f59e0b'
+          statusColor[status] || '#f59e0b'
         }; margin: 10px 0; }
         .tracking-number { font-size: 20px; font-weight: bold; color: #2563eb; margin: 10px 0; font-family: monospace; }
         .details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0; }
@@ -85,13 +89,13 @@ const generateStatusUpdateEmailHtml = (
         
         <div class="content">
           <div class="status-box">
-            <div class="status-emoji">${statusEmojis[newStatus] || '📦'}</div>
+            <div class="status-emoji">${statusEmojis[status] || '📦'}</div>
             <div class="status-title">${newStatus
               .replace('_', ' ')
               .toUpperCase()}</div>
             <div class="tracking-number">${shipmentData.tracking_number}</div>
             <p>${
-              statusMessages[newStatus] ||
+              statusMessages[status] ||
               'Your shipment status has been updated.'
             }</p>
             <a href="${siteUrl}/track?number=${
