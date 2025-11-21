@@ -52,7 +52,7 @@ const Footer = () => {
                 <Truck className="w-6 h-6 text-white" />
               </div>
               <div className="flex flex-col">
-                <span className="text-2xl font-bold"> EC WorldWide</span>
+                <span className="text-2xl font-bold"> Zenfiq Express</span>
                 <span className="text-blue-400 font-medium">Service</span>
               </div>
             </Link>
@@ -65,11 +65,11 @@ const Footer = () => {
             <div className="space-y-3">
               <div className="flex items-center space-x-3 text-slate-400">
                 <Phone className="w-4 h-4" />
-                <span>‪+447876820984</span>
+                <span>+447876820904</span>
               </div>
               <div className="flex items-center space-x-3 text-slate-400">
                 <Mail className="w-4 h-4" />
-                <span>support@ecwservices.sbs</span>
+                <span>support@zenfiqexpressdeliveryservice.online</span>
               </div>
               <div className="flex items-center space-x-3 text-slate-400">
                 <MapPin className="w-4 h-4" />
@@ -126,7 +126,7 @@ const Footer = () => {
         {/* Social Links */}
         <div className="flex items-center justify-between pt-12 border-t border-slate-800">
           <p className="text-slate-400">
-            © 2024  EC WorldWide Service. All rights reserved.
+            © 2024  Zenfiq Express Service. All rights reserved.
           </p>
           <div className="flex items-center space-x-4">
             {socialLinks.map((social) => (

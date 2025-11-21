@@ -67,13 +67,13 @@ const Contact = () => {
     {
       icon: Mail,
       title: 'Email',
-      content: 'support@ecwservices.sbs',
+      content: 'support@zenfiqexpressdeliveryservice.online',
       description: 'Send us an email anytime'
     },
     {
       icon: Phone,
       title: 'Phone',
-      content: '+447876820984',
+      content: '+447876820904',
       description: 'Mon-Fri from 8am to 6pm'
     },
     {

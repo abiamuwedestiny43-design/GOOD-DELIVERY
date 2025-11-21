@@ -51,8 +51,8 @@ const Header = () => {
   ];
 
   const contactInfo = [
-    { icon: Phone, text: '‪+447876820984' },
-    { icon: Mail, text: 'support@ecwservices.sbs' },
+    { icon: Phone, text: '+447876820904' },
+    { icon: Mail, text: 'support@zenfiqexpressdeliveryservice.online' },
     { icon: MapPin, text: ' 49 Featherstone St, London EC 1Y 8SY United Kingdom' },
   ];
 
@@ -113,7 +113,7 @@ const Header = () => {
                     "text-xl font-bold",
                     isScrolled ? "text-slate-900" : "text-blue-900"
                   )}>
-                     EC WorldWide
+                     Zenfiq Express
                   </span>
                   <span className={cn(
                     "text-sm font-medium",

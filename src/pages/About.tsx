@@ -58,7 +58,7 @@ const About = () => {
             className="text-center text-white"
           >
             <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
-              About  EC WorldWide Service
+              About  Zenfiq Express Service
             </h1>
             <p className="text-xl text-blue-200 max-w-3xl mx-auto">
               Delivering excellence since 2018. We're committed to providing the best logistics
@@ -80,7 +80,7 @@ const About = () => {
             >
               <h2 className="text-4xl font-bold text-slate-900 mb-6">Our Story</h2>
               <p className="text-lg text-slate-600 mb-6">
-                Founded in 2018,  EC WorldWide Service started with a simple mission: to make
+                Founded in 2018,  Zenfiq Express Service started with a simple mission: to make
                 package delivery faster, safer, and more reliable. What began as a small local
                 service has grown into a global logistics provider trusted by thousands.
               </p>

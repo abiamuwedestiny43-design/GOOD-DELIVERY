@@ -68,7 +68,7 @@ export const ShipmentReceipt = forwardRef<HTMLDivElement, { shipment: Shipment }
         {/* Header */}
         <div className="text-center border-b border-gray-200 pb-4 mb-4">
           <div className="bg-blue-600 text-white p-3 -mx-3 -mt-2 mb-3">
-            <h1 className="text-xl font-bold"> EC WorldWide Service</h1>
+            <h1 className="text-xl font-bold"> Zenfiq Express Service</h1>
             <p className="text-sm opacity-90">Premium Shipping Solutions</p>
           </div>
           <p className="text-gray-600">Receipt #: {shipment.tracking_number}</p>
@@ -177,7 +177,7 @@ export const ShipmentReceipt = forwardRef<HTMLDivElement, { shipment: Shipment }
           <div className="bg-red-500 text-white p-2 -mx-2 mb-2 rounded">
             <p className="font-bold">THANK YOU FOR YOUR BUSINESS</p>
           </div>
-          <p className="text-gray-600">Support: support@ecwservices.sbs</p>
+          <p className="text-gray-600">Support: support@zenfiqexpressdeliveryservice.online</p>
         </div>
       </div>
     );
