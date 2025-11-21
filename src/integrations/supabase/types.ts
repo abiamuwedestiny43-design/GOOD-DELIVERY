@@ -48,6 +48,7 @@ export type Database = {
         Row: {
           created_at: string | null
           created_by: string | null
+          current_location: string | null
           delivery_date: string | null
           dimensions: string | null
           fragile: boolean | null
@@ -80,6 +81,7 @@ export type Database = {
         Insert: {
           created_at?: string | null
           created_by?: string | null
+          current_location?: string | null
           delivery_date?: string | null
           dimensions?: string | null
           fragile?: boolean | null
@@ -112,6 +114,7 @@ export type Database = {
         Update: {
           created_at?: string | null
           created_by?: string | null
+          current_location?: string | null
           delivery_date?: string | null
           dimensions?: string | null
           fragile?: boolean | null
@@ -149,27 +152,27 @@ export type Database = {
           description: string | null
           id: string
           location: string | null
+          previous_location: string | null
           shipment_id: string
           status: string
-          previous_location?: string | null;
         }
         Insert: {
           created_at?: string | null
           description?: string | null
           id?: string
           location?: string | null
+          previous_location?: string | null
           shipment_id: string
           status: string
-          previous_location?: string | null
         }
         Update: {
           created_at?: string | null
           description?: string | null
           id?: string
           location?: string | null
+          previous_location?: string | null
           shipment_id?: string
           status?: string
-          previous_location?: string | null
         }
         Relationships: [
           {
@@ -186,10 +189,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      generate_tracking_number: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
+      generate_tracking_number: { Args: never; Returns: string }
     }
     Enums: {
       service_type: "standard" | "express" | "priority" | "overnight"

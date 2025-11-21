@@ -35,9 +35,18 @@ export const ShipmentManagement = () => {
 
   const fetchShipments = async () => {
     try {
+      // Get current user
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        throw new Error('User not authenticated');
+      }
+
+      // Fetch shipments created by current admin user only
       const { data, error } = await supabase
         .from('shipments')
         .select('*')
+        .eq('created_by', user.id)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
