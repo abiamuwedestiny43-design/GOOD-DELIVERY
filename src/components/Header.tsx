@@ -62,21 +62,21 @@ const Header = () => {
       <motion.div
         initial={{ y: -100 }}
         animate={{ y: 0 }}
-        className="bg-blue-900 text-blue-300 text-sm hidden md:block"
+        className="bg-emerald-900 text-emerald-300 text-sm hidden md:block"
       >
         <div className="container mx-auto px-4 py-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-6">
               {contactInfo.map((item, index) => (
                 <div key={index} className="flex items-center space-x-2">
-                  <item.icon className="w-4 h-4 text-blue-300" />
-                  <span className="text-blue-200">{item.text}</span>
+                  <item.icon className="w-4 h-4 text-emerald-300" />
+                  <span className="text-emerald-200">{item.text}</span>
                 </div>
               ))}
             </div>
             <div className="flex items-center space-x-4">
-              <span className="text-blue-200">24/7 Support</span>
-              <Button variant="outline" size="sm" className="bg-blue-800 text-white border-blue-700 hover:bg-blue-700">
+              <span className="text-emerald-200">24/7 Support</span>
+              <Button variant="outline" size="sm" className="bg-emerald-800 text-white border-emerald-700 hover:bg-emerald-700">
                 <a href="/contact">Get Quote</a>
               </Button>
             </div>
@@ -105,21 +105,21 @@ const Header = () => {
                 whileTap={{ scale: 0.95 }}
                 className="flex items-center space-x-3"
               >
-                <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-2xl flex items-center justify-center">
+                <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-emerald-700 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/20">
                   <Truck className="w-6 h-6 text-white" />
                 </div>
                 <div className="flex flex-col">
                   <span className={cn(
                     "text-xl font-bold",
-                    isScrolled ? "text-slate-900" : "text-blue-900"
+                    isScrolled ? "text-emerald-950" : "text-emerald-900"
                   )}>
-                     Zenfiq Express
+                    GOOD
                   </span>
                   <span className={cn(
                     "text-sm font-medium",
-                    isScrolled ? "text-blue-900" : "text-blue-900"
+                    isScrolled ? "text-emerald-900" : "text-emerald-900"
                   )}>
-                    Service
+                    DELIVERY
                   </span>
                 </div>
               </motion.div>
@@ -138,12 +138,12 @@ const Header = () => {
                       <Link
                         to={item.href}
                         className={cn(
-                          "font-semibold transition-colors hover:text-blue-600",
+                          "font-semibold transition-colors hover:text-emerald-600",
                           location.pathname === item.href
-                            ? "text-blue-600"
+                            ? "text-emerald-600"
                             : isScrolled
-                              ? "text-slate-700"
-                              : "text-blue-400"
+                              ? "text-emerald-800"
+                              : "text-emerald-400"
                         )}
                       >
                         {item.name}
@@ -151,19 +151,19 @@ const Header = () => {
                       <ChevronDown className={cn(
                         "w-4 h-4 transition-transform",
                         openSubmenu === item.name ? "rotate-180" : "",
-                        isScrolled ? "text-slate-700" : "text-blue-400"
+                        isScrolled ? "text-emerald-800" : "text-emerald-400"
                       )} />
                     </div>
                   ) : (
                     <Link
                       to={item.href}
                       className={cn(
-                        "font-semibold transition-colors hover:text-blue-600",
+                        "font-semibold transition-colors hover:text-emerald-600",
                         location.pathname === item.href
-                          ? "text-blue-600"
+                          ? "text-emerald-600"
                           : isScrolled
-                            ? "text-slate-700"
-                            : "text-blue-400"
+                            ? "text-emerald-800"
+                            : "text-emerald-400"
                       )}
                     >
                       {item.name}
@@ -186,7 +186,7 @@ const Header = () => {
                         <Link
                           key={subItem.name}
                           to={subItem.href}
-                          className="block px-4 py-3 text-slate-700 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-200"
+                          className="block px-4 py-3 text-emerald-800 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all duration-200"
                         >
                           {subItem.name}
                         </Link>
@@ -205,8 +205,8 @@ const Header = () => {
                   className={cn(
                     "transition-all",
                     isScrolled
-                      ? "border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
-                      : "bg-white text-blue-600 hover:bg-blue-50"
+                      ? "border-emerald-600 text-emerald-600 hover:bg-emerald-600 hover:text-white"
+                      : "bg-white text-emerald-600 hover:bg-emerald-50"
                   )}
                 >
                   <a href="/tracking">Track Package</a>
@@ -229,7 +229,7 @@ const Header = () => {
                 className={cn(
                   "lg:hidden p-2 rounded-lg transition-colors",
                   isScrolled
-                    ? "text-slate-700 hover:bg-slate-100"
+                    ? "text-emerald-800 hover:bg-slate-100"
                     : "text-white hover:bg-white/10"
                 )}
               >
@@ -256,7 +256,7 @@ const Header = () => {
                         <div>
                           <button
                             onClick={() => setOpenSubmenu(openSubmenu === item.name ? null : item.name)}
-                            className="flex items-center justify-between w-full py-3 text-left font-semibold text-slate-900"
+                            className="flex items-center justify-between w-full py-3 text-left font-semibold text-emerald-950"
                           >
                             <span>{item.name}</span>
                             <ChevronDown
@@ -280,7 +280,7 @@ const Header = () => {
                                   <Link
                                     key={subItem.name}
                                     to={subItem.href}
-                                    className="block py-2 text-slate-600 hover:text-blue-600"
+                                    className="block py-2 text-slate-600 hover:text-emerald-600"
                                   >
                                     {subItem.name}
                                   </Link>
@@ -295,8 +295,8 @@ const Header = () => {
                           className={cn(
                             "block py-3 font-semibold transition-colors",
                             location.pathname === item.href
-                              ? "text-blue-600"
-                              : "text-slate-900 hover:text-blue-600"
+                              ? "text-emerald-600"
+                              : "text-emerald-950 hover:text-emerald-600"
                           )}
                         >
                           {item.name}
@@ -318,12 +318,12 @@ const Header = () => {
 
                 {/* Mobile CTA Buttons */}
                 <div className="mt-6 space-y-3">
-                  {!user || !isAdmin ? (<Button className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white">
+                  {!user || !isAdmin ? (<Button className="w-full bg-gradient-to-r from-emerald-600 to-emerald-600 text-white">
                     <a href="/tracking">Track Package</a>
                   </Button>) : (
-                    <Button className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white" onClick={signOut}>Sign Out</Button>
+                    <Button className="w-full bg-gradient-to-r from-emerald-600 to-emerald-600 text-white" onClick={signOut}>Sign Out</Button>
                   )}
-                  <Button variant="outline" className="w-full border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white">
+                  <Button variant="outline" className="w-full border-emerald-600 text-emerald-600 hover:bg-emerald-600 hover:text-white">
                     <a href="/contact">Get Started</a>
                   </Button>
                 </div>

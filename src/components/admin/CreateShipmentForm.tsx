@@ -559,9 +559,9 @@ await fetch('http://localhost:3001/api/send-shipment-email', {
                 />
               </div>
 
-              <div className="bg-blue-50 p-4 rounded-lg">
-                <h4 className="font-semibold text-blue-800">Estimated Costs</h4>
-                <p className="text-blue-600">
+              <div className="bg-emerald-50 p-4 rounded-lg">
+                <h4 className="font-semibold text-emerald-800">Estimated Costs</h4>
+                <p className="text-emerald-600">
                   Shipping: ${calculateShippingFee().toFixed(2)} |
                   Insurance: ${calculateInsuranceAmount().toFixed(2)} |
                   Total: ${(calculateShippingFee() + calculateInsuranceAmount()).toFixed(2)}

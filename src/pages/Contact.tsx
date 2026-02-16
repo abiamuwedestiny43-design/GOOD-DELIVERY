@@ -102,7 +102,7 @@ const Contact = () => {
       )}
 
       {/* Hero Section */}
-      <section className="relative py-20 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
+      <section className="relative py-20 bg-gradient-to-br from-emerald-950 via-emerald-900 to-emerald-950">
         <div className="absolute inset-0 bg-grid-white/10 [mask-image:linear-gradient(to_bottom,white,transparent)]" />
         <div className="container mx-auto px-4 relative z-10">
           <motion.div
@@ -111,10 +111,10 @@ const Contact = () => {
             transition={{ duration: 0.8 }}
             className="text-center text-white"
           >
-            <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
+            <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white to-emerald-200 bg-clip-text text-transparent">
               Get In Touch
             </h1>
-            <p className="text-xl text-blue-200 max-w-3xl mx-auto">
+            <p className="text-xl text-emerald-200 max-w-3xl mx-auto">
               Have questions about our services? We're here to help.
               Reach out to our team and we'll get back to you promptly.
             </p>
@@ -136,14 +136,14 @@ const Contact = () => {
               <Card className="border-0 bg-white shadow-xl">
                 <CardContent className="p-8">
                   <div className="flex items-center mb-8">
-                    <MessageCircle className="w-8 h-8 text-blue-600 mr-3" />
-                    <h2 className="text-3xl font-bold text-slate-900">Send us a Message</h2>
+                    <MessageCircle className="w-8 h-8 text-emerald-600 mr-3" />
+                    <h2 className="text-3xl font-bold text-emerald-950">Send us a Message</h2>
                   </div>
 
                   <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="grid md:grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-700">Name</label>
+                        <label className="text-sm font-medium text-emerald-800">Name</label>
                         <div className="relative">
                           <User className="absolute left-3 top-3 w-4 h-4 text-slate-400" />
                           <Input
@@ -157,7 +157,7 @@ const Contact = () => {
                         </div>
                       </div>
                       <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-700">Email</label>
+                        <label className="text-sm font-medium text-emerald-800">Email</label>
                         <div className="relative">
                           <MailIcon className="absolute left-3 top-3 w-4 h-4 text-slate-400" />
                           <Input
@@ -174,7 +174,7 @@ const Contact = () => {
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-sm font-medium text-slate-700">Subject</label>
+                      <label className="text-sm font-medium text-emerald-800">Subject</label>
                       <Input
                         placeholder="What's this about?"
                         value={formData.subject}
@@ -185,7 +185,7 @@ const Contact = () => {
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-sm font-medium text-slate-700">Message</label>
+                      <label className="text-sm font-medium text-emerald-800">Message</label>
                       <Textarea
                         placeholder="Tell us how we can help..."
                         rows={5}
@@ -199,7 +199,7 @@ const Contact = () => {
 
                     <Button
                       type="submit"
-                      className="w-full bg-blue-600 hover:bg-blue-700"
+                      className="w-full bg-emerald-600 hover:bg-emerald-700"
                       disabled={isLoading}
                     >
                       {isLoading ? (
@@ -227,7 +227,7 @@ const Contact = () => {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="space-y-6"
             >
-              <h2 className="text-3xl font-bold text-slate-900 mb-8">Contact Information</h2>
+              <h2 className="text-3xl font-bold text-emerald-950 mb-8">Contact Information</h2>
 
               {contactInfo.map((info, index) => (
                 <motion.div
@@ -241,17 +241,17 @@ const Contact = () => {
                   <Card className="border-0 bg-white shadow-lg hover:shadow-xl transition-shadow">
                     <CardContent className="p-6">
                       <div className="flex items-start space-x-4">
-                        <div className="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center flex-shrink-0">
-                          <info.icon className="w-6 h-6 text-blue-600" />
+                        <div className="w-12 h-12 bg-emerald-100 rounded-2xl flex items-center justify-center flex-shrink-0">
+                          <info.icon className="w-6 h-6 text-emerald-600" />
                         </div>
                         <div>
-                          <h3 className="text-lg font-semibold text-slate-900 mb-1">
+                          <h3 className="text-lg font-semibold text-emerald-950 mb-1">
                             {info.title}
                           </h3>
-                          <p className="text-slate-900 font-medium mb-3">
+                          <p className="text-emerald-950 font-medium mb-3">
                             {info.content}
                           </p>
-                          <p className="text-slate-900 font-medium mb-1">
+                          <p className="text-emerald-950 font-medium mb-1">
                             {info.contents}
                           </p>
                           <p className="text-slate-600 text-sm">
@@ -274,7 +274,7 @@ const Contact = () => {
               >
                 <Card className="border-0 bg-white shadow-lg">
                   <CardContent className="p-6">
-                    <h3 className="text-lg font-semibold text-slate-900 mb-4">Our Location</h3>
+                    <h3 className="text-lg font-semibold text-emerald-950 mb-4">Our Location</h3>
                     <div className="rounded-lg overflow-hidden">
                       <iframe
                         src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d12035.755533207466!2d29.006207312272352!3d41.04846559151503!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14cab64b55cc46f7%3A0x847a09ab856eefc5!2zWcSxbGTEsXosIDM0MzQ5IEJlxZ9pa3RhxZ8vxLBzdGFuYnVsLCBUw7xya2l5ZQ!5e0!3m2!1sen!2sin!4v1757507186067!5m2!1sen!2sin"
@@ -304,7 +304,7 @@ const Contact = () => {
             transition={{ duration: 0.8 }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl font-bold text-slate-900 mb-4">Frequently Asked Questions</h2>
+            <h2 className="text-4xl font-bold text-emerald-950 mb-4">Frequently Asked Questions</h2>
             <p className="text-xl text-slate-600">Quick answers to common questions</p>
           </motion.div>
 
@@ -333,9 +333,9 @@ const Contact = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
-                className="bg-slate-50 rounded-2xl p-6 hover:bg-blue-50 transition-colors"
+                className="bg-slate-50 rounded-2xl p-6 hover:bg-emerald-50 transition-colors"
               >
-                <h3 className="text-lg font-semibold text-slate-900 mb-3">
+                <h3 className="text-lg font-semibold text-emerald-950 mb-3">
                   {faq.question}
                 </h3>
                 <p className="text-slate-600">

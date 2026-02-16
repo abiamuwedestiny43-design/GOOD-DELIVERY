@@ -41,19 +41,19 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="bg-slate-900 text-white">
+    <footer className="bg-emerald-950 text-white">
       {/* Main Footer */}
       <div className="container mx-auto px-4 py-16">
         <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-8">
           {/* Brand */}
           <div className="lg:col-span-2">
             <Link to="/" className="flex items-center space-x-3 mb-6">
-              <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-2xl flex items-center justify-center">
+              <div className="w-12 h-12 bg-gradient-to-r from-emerald-600 to-emerald-600 rounded-2xl flex items-center justify-center">
                 <Truck className="w-6 h-6 text-white" />
               </div>
               <div className="flex flex-col">
-                <span className="text-2xl font-bold"> Zenfiq Express</span>
-                <span className="text-blue-400 font-medium">Service</span>
+                <span className="text-2xl font-bold"> GOOD</span>
+                <span className="text-emerald-400 font-medium">DELIVERY</span>
               </div>
             </Link>
             <p className="text-slate-400 mb-6 max-w-md">
@@ -124,9 +124,9 @@ const Footer = () => {
         </div>
 
         {/* Social Links */}
-        <div className="flex items-center justify-between pt-12 border-t border-slate-800">
+        <div className="flex items-center justify-between pt-12 border-t border-emerald-900">
           <p className="text-slate-400">
-            © 2024  Zenfiq Express Service. All rights reserved.
+            © 2024 GOOD DELIVERY. All rights reserved.
           </p>
           <div className="flex items-center space-x-4">
             {socialLinks.map((social) => (
@@ -135,7 +135,7 @@ const Footer = () => {
                 href={social.href}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
-                className="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center hover:bg-blue-600 transition-colors"
+                className="w-10 h-10 bg-emerald-900 rounded-lg flex items-center justify-center hover:bg-emerald-600 transition-colors"
                 aria-label={social.label}
               >
                 <social.icon className="w-5 h-5" />

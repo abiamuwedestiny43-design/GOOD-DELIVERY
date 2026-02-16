@@ -1,11 +1,11 @@
 import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { 
-  Truck, 
-  Shield, 
-  Clock, 
-  Globe, 
+import {
+  Truck,
+  Shield,
+  Clock,
+  Globe,
   Package,
   ArrowRight,
   CheckCircle,
@@ -22,7 +22,7 @@ const Services = () => {
       description: 'Fast and reliable delivery services with real-time tracking',
       features: ['Next-day delivery', 'Real-time tracking', 'Dedicated support'],
       price: 'From $15',
-      color: 'from-blue-500 to-cyan-500'
+      color: 'from-emerald-500 to-emerald-500'
     },
     {
       icon: Shield,
@@ -46,7 +46,7 @@ const Services = () => {
       description: 'Custom Service solutions for businesses of all sizes',
       features: ['Bulk discounts', 'Dedicated account manager', 'API integration'],
       price: 'Custom pricing',
-      color: 'from-orange-500 to-red-500'
+      color: 'from-emerald-500 to-red-500'
     }
   ];
 
@@ -74,30 +74,42 @@ const Services = () => {
   ];
 
   return (
-    <div className="min-h-screen pt-20">
+    <div className="min-h-screen pt-20 bg-[#F8F9FA]">
       {/* Hero Section */}
-      <section className="relative py-20 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
-        <div className="absolute inset-0 bg-grid-white/10 [mask-image:linear-gradient(to_bottom,white,transparent)]" />
+      <section className="relative py-32 bg-gradient-to-br from-white via-[#F2F4F7] to-[#E5E9F0] overflow-hidden">
+        <div className="absolute inset-0 bg-grid-slate-200/50 [mask-image:linear-gradient(to_bottom,white,transparent)]" />
+
+        {/* Pearlescent Glows */}
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-emerald-200/20 blur-[100px] rounded-full animate-pulse" />
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-100/20 blur-[100px] rounded-full animate-pulse" />
+
         <div className="container mx-auto px-4 relative z-10">
           <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-center text-white"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1 }}
+            className="text-center"
           >
-            <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
-              Our Services
+            <motion.span
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="inline-block px-4 py-1.5 mb-6 text-sm font-bold tracking-widest uppercase bg-emerald-100 text-emerald-700 rounded-full"
+            >
+              Elite Logistics Solutions
+            </motion.span>
+            <h1 className="text-6xl md:text-8xl font-bold mb-8 text-slate-900 tracking-tight">
+              Our <span className="text-emerald-600">Services</span>
             </h1>
-            <p className="text-xl text-blue-200 max-w-3xl mx-auto">
-              Comprehensive Service solutions designed to meet your every need. 
-              From local deliveries to international shipping, we've got you covered.
+            <p className="text-xl md:text-2xl text-slate-600 max-w-4xl mx-auto leading-relaxed font-medium">
+              Experience the pinnacle of precision shipping. From hyper-local couriers to
+              intercontinental freight, GOOD DELIVERY sets the standard in global logistics.
             </p>
           </motion.div>
         </div>
       </section>
 
       {/* Services Grid */}
-      <section className="py-20 bg-slate-50">
+      <section className="py-24 bg-[#F8F9FA]">
         <div className="container mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-8">
             {services.map((service, index) => (
@@ -114,17 +126,17 @@ const Services = () => {
                     <div className={`w-16 h-16 bg-gradient-to-r ${service.color} rounded-2xl flex items-center justify-center mb-6`}>
                       <service.icon className="w-8 h-8 text-white" />
                     </div>
-                    
-                    <h3 className="text-2xl font-bold text-slate-900 mb-4">
+
+                    <h3 className="text-2xl font-bold text-emerald-950 mb-4">
                       {service.title}
                     </h3>
-                    
+
                     <p className="text-slate-600 mb-6">
                       {service.description}
                     </p>
 
                     <div className="mb-6">
-                      <h4 className="font-semibold text-slate-900 mb-3">Features:</h4>
+                      <h4 className="font-semibold text-emerald-950 mb-3">Features:</h4>
                       <ul className="space-y-2">
                         {service.features.map((feature, idx) => (
                           <li key={idx} className="flex items-center text-slate-600">
@@ -136,10 +148,10 @@ const Services = () => {
                     </div>
 
                     <div className="flex items-center justify-between">
-                      <span className="text-2xl font-bold text-slate-900">
+                      <span className="text-2xl font-bold text-emerald-950">
                         {service.price}
                       </span>
-                      <Button className="bg-blue-600 hover:bg-blue-700">
+                      <Button className="bg-emerald-600 hover:bg-emerald-700">
                         Get Started
                         <ArrowRight className="w-4 h-4 ml-2" />
                       </Button>
@@ -162,7 +174,7 @@ const Services = () => {
             transition={{ duration: 0.8 }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl font-bold text-slate-900 mb-4">Why Choose Us?</h2>
+            <h2 className="text-4xl font-bold text-emerald-950 mb-4">Why Choose Us?</h2>
             <p className="text-xl text-slate-600">The features that set us apart from the competition</p>
           </motion.div>
 
@@ -176,11 +188,11 @@ const Services = () => {
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 className="text-center"
               >
-                <div className="bg-slate-50 rounded-2xl p-8 hover:bg-blue-50 transition-colors duration-300">
-                  <div className="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                    <feature.icon className="w-6 h-6 text-blue-600" />
+                <div className="bg-slate-50 rounded-2xl p-8 hover:bg-emerald-50 transition-colors duration-300">
+                  <div className="w-12 h-12 bg-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <feature.icon className="w-6 h-6 text-emerald-600" />
                   </div>
-                  <h3 className="text-xl font-semibold text-slate-900 mb-3">
+                  <h3 className="text-xl font-semibold text-emerald-950 mb-3">
                     {feature.title}
                   </h3>
                   <p className="text-slate-600">{feature.description}</p>
@@ -192,7 +204,7 @@ const Services = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-blue-600 to-cyan-600">
+      <section className="py-20 bg-gradient-to-r from-emerald-600 to-emerald-600">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           whileInView={{ opacity: 1, scale: 1 }}
@@ -207,15 +219,15 @@ const Services = () => {
             Join thousands of satisfied customers who trust us with their Service needs
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              size="lg" 
+            <Button
+              size="lg"
               variant="secondary"
-              className="bg-white text-blue-600 hover:bg-slate-100"
+              className="bg-white text-emerald-600 hover:bg-slate-100"
             >
               Start Shipping
             </Button>
-            <Button 
-              size="lg" 
+            <Button
+              size="lg"
               variant="outline"
               className="border-white text-white hover:bg-white/10"
             >

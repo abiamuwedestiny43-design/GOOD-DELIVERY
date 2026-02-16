@@ -142,9 +142,9 @@ export const PrintReceiptSection = () => {
 
   return (
     <Card className="w-full">
-      <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+      <CardHeader className="bg-gradient-to-r from-emerald-600 to-purple-600 text-white">
         <CardTitle className="text-xl">Print Shipment Receipt</CardTitle>
-        <CardDescription className="text-blue-100">
+        <CardDescription className="text-emerald-100">
           Enter tracking number to generate and print receipt
         </CardDescription>
       </CardHeader>
@@ -171,7 +171,7 @@ export const PrintReceiptSection = () => {
             <Button 
               onClick={handlePrintReceipt} 
               disabled={loading}
-              className="bg-blue-600 hover:bg-blue-700"
+              className="bg-emerald-600 hover:bg-emerald-700"
             >
               {loading ? 'Searching...' : 'Find Shipment'}
             </Button>
@@ -196,7 +196,7 @@ export const PrintReceiptSection = () => {
                     onClick={handleDownloadPDF}
                     variant="outline"
                     size="sm"
-                    className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
+                    className="border-emerald-600 text-emerald-600 hover:bg-emerald-600 hover:text-white"
                   >
                     Download PDF
                   </Button>

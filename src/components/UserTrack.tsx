@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -66,8 +67,8 @@ export const UserTrackPage = () => {
 
   const statusIcons = {
     pending: <AlertCircle className="w-5 h-5 text-yellow-500" />,
-    processing: <Package className="w-5 h-5 text-blue-500" />,
-    in_transit: <Truck className="w-5 h-5 text-orange-500" />,
+    processing: <Package className="w-5 h-5 text-emerald-500" />,
+    in_transit: <Truck className="w-5 h-5 text-emerald-500" />,
     out_for_delivery: <Truck className="w-5 h-5 text-purple-500" />,
     delivered: <CheckCircle className="w-5 h-5 text-green-500" />,
     cancelled: <AlertCircle className="w-5 h-5 text-red-500" />,
@@ -180,258 +181,304 @@ export const UserTrackPage = () => {
   };
 
   return (
-    <div className="container mx-auto py-8 px-4 max-w-4xl">
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-green-600 mb-2">Track Your Shipment</h1>
-        <p className="text-gray-600">Enter your tracking number to get real-time updates</p>
-      </div>
+    <div className="min-h-screen bg-[#F8F9FA] relative overflow-hidden pt-20">
+      {/* Subtle Pearlescent Background Detail */}
+      <div className="absolute inset-0 bg-grid-slate-200/40 [mask-image:linear-gradient(to_bottom,white,transparent)]" />
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-emerald-100/30 blur-[120px] rounded-full" />
+      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-50/20 blur-[120px] rounded-full" />
 
-      <Card className="mb-8">
-        <CardContent className="pt-6">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <Input
-              placeholder="Enter tracking number (e.g., SL20240101XXXX)"
-              value={trackingNumber}
-              onChange={(e) => setTrackingNumber(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && trackShipment()}
-              className="flex-1"
-            />
-            <Button
-              onClick={trackShipment}
-              disabled={loading}
-              className="bg-green-600 hover:bg-green-700"
-            >
-              {loading ? 'Tracking...' : 'Track Shipment'}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="relative z-10 container mx-auto py-12 px-4 max-w-4xl">
+        <div className="text-center mb-12">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="inline-block px-3 py-1 bg-emerald-100 text-emerald-600 rounded-full text-xs font-bold uppercase tracking-widest mb-4"
+          >
+            Live Logistics Network
+          </motion.div>
+          <motion.h1
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-5xl md:text-6xl font-black text-slate-900 mb-4 tracking-tight"
+          >
+            Global <span className="text-emerald-600">Tracking</span>
+          </motion.h1>
+          <p className="text-slate-500 text-lg font-medium">Precision monitoring for your global shipments</p>
+        </div>
 
-      {shipment && (
-        <div className="space-y-6">
-          {/* Shipment Overview */}
-          <Card>
-            <CardHeader className="bg-gradient-to-r from-green-600 to-emerald-600 text-white">
-              <CardTitle>Shipment Overview</CardTitle>
-            </CardHeader>
-            <CardContent className="pt-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div className="space-y-2">
-                  <p className="text-sm text-gray-500">Tracking Number</p>
-                  <p className="font-semibold">{shipment.tracking_number}</p>
-                </div>
-                <div className="space-y-2">
-                  <p className="text-sm text-gray-500">Current Status</p>
+        <Card className="mb-12 border-0 bg-white shadow-2xl shadow-emerald-950/5 rounded-[2rem] overflow-hidden">
+          <CardContent className="p-8 md:p-10">
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="relative flex-1">
+                <Input
+                  placeholder="Enter tracking number (e.g., GOOD-XXXX-XXXX)"
+                  value={trackingNumber}
+                  onChange={(e) => setTrackingNumber(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && trackShipment()}
+                  className="bg-slate-50 border-slate-100 text-slate-900 placeholder:text-slate-400 h-16 pl-6 text-lg focus:ring-emerald-500 rounded-2xl shadow-inner font-medium"
+                />
+              </div>
+              <Button
+                onClick={trackShipment}
+                disabled={loading}
+                className="bg-emerald-600 hover:bg-emerald-700 text-white h-16 px-10 text-lg font-bold rounded-2xl transition-all shadow-xl shadow-emerald-600/20 active:scale-95"
+              >
+                {loading ? (
                   <div className="flex items-center gap-2">
-                    {shipment.status && statusIcons[shipment.status as keyof typeof statusIcons]}
-                    <span className="font-semibold capitalize">
-                      {shipment.status ? statusLabels[shipment.status as keyof typeof statusLabels] : 'Unknown'}
-                    </span>
+                    <div className="w-5 h-5 border-3 border-white/30 border-t-white rounded-full animate-spin" />
+                    Locating...
+                  </div>
+                ) : 'Track Package'}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {shipment && (
+          <div className="space-y-8 animate-in fade-in slide-in-from-bottom-5 duration-700">
+            {/* Shipment Overview */}
+            <Card className="border-0 bg-white shadow-2xl shadow-slate-200/50 rounded-[2rem] overflow-hidden">
+              <div className="h-2 bg-gradient-to-r from-emerald-500 via-emerald-400 to-emerald-600" />
+              <CardHeader className="bg-slate-50/50 border-b border-slate-100 px-8 py-6">
+                <CardTitle className="text-slate-900 flex items-center justify-between text-xl font-bold">
+                  <span>Shipment Status</span>
+                  <div className="px-3 py-1 bg-white border border-slate-200 rounded-lg shadow-sm text-sm font-mono text-emerald-600">
+                    {shipment.tracking_number}
+                  </div>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+                  <div className="space-y-2">
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Current Phase</p>
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
+                        {shipment.status && statusIcons[shipment.status as keyof typeof statusIcons]}
+                      </div>
+                      <span className="font-bold text-slate-900 text-lg capitalize">
+                        {shipment.status ? statusLabels[shipment.status as keyof typeof statusLabels] : 'Unknown'}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Location</p>
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400">
+                        <MapPin className="w-5 h-5" />
+                      </div>
+                      <span className="font-bold text-slate-900 text-lg">{shipment.current_location || 'Transit Hub'}</span>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Service Level</p>
+                    <div className="flex items-center gap-3 h-10">
+                      <span className="font-bold text-slate-900 text-lg capitalize">{shipment.service_type || 'Standard'}</span>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Expected Arrival</p>
+                    <div className="flex items-center gap-3 h-10 font-bold text-emerald-600 text-lg">
+                      {formatDate(shipment.delivery_date)}
+                    </div>
                   </div>
                 </div>
-                <div className="space-y-2">
-                  <p className="text-sm text-gray-500">Current Location</p>
-                  <div className="flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-red-500" />
-                    <span className="font-semibold">{shipment.current_location || 'Unknown'}</span>
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <p className="text-sm text-gray-500">Service Type</p>
-                  <p className="font-semibold capitalize">{shipment.service_type || 'Standard'}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
 
-          {/* Status Timeline */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Delivery Status</CardTitle>
-              <CardDescription>Current progress of your shipment</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="relative">
-                {/* Progress Line */}
-                <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-gray-200" />
+            {/* Status Timeline */}
+            <Card className="border-0 bg-white shadow-2xl shadow-slate-200/50 rounded-[2rem] overflow-hidden">
+              <CardHeader className="bg-slate-50/50 border-b border-slate-100 px-8 py-6">
+                <CardTitle className="text-slate-900 text-xl font-bold">Delivery Progress</CardTitle>
+                <CardDescription className="text-slate-500 font-medium">Stage-by-stage logistics transparency</CardDescription>
+              </CardHeader>
+              <CardContent className="p-8">
+                <div className="relative">
+                  {/* Progress Line */}
+                  <div className="absolute left-[15px] top-2 bottom-2 w-0.5 bg-slate-100" />
 
-                <div className="space-y-8">
-                  {statusOrder.map((status, index) => {
-                    const currentIndex = getStatusIndex(shipment.status);
-                    const isCompleted = currentIndex !== -1 && index < currentIndex;
-                    const isCurrent = index === currentIndex;
-                    const isFuture = currentIndex === -1 || index > currentIndex;
+                  <div className="space-y-10">
+                    {statusOrder.map((status, index) => {
+                      const currentIndex = getStatusIndex(shipment.status);
+                      const isCompleted = currentIndex !== -1 && index < currentIndex;
+                      const isCurrent = index === currentIndex;
+                      const isFuture = currentIndex === -1 || index > currentIndex;
 
-                    return (
-                      <div key={status} className="relative flex items-start gap-4">
-                        {/* Status Indicator */}
-                        <div className={`relative z-10 flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${isCompleted ? 'bg-green-500' :
-                            isCurrent ? 'bg-blue-500 animate-pulse' :
-                              'bg-gray-300'
-                          }`}>
-                          {isCompleted ? (
-                            <CheckCircle className="w-5 h-5 text-white" />
-                          ) : isCurrent ? (
-                            <div className="w-3 h-3 bg-white rounded-full" />
-                          ) : (
-                            <div className="w-2 h-2 bg-white rounded-full" />
-                          )}
-                        </div>
+                      return (
+                        <div key={status} className="relative flex items-start gap-6 group">
+                          {/* Status Indicator */}
+                          <div className={`relative z-10 flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-500 shadow-lg ${isCompleted ? 'bg-emerald-500 shadow-emerald-500/20' :
+                            isCurrent ? 'bg-emerald-500 animate-pulse shadow-emerald-500/30' :
+                              'bg-slate-100'
+                            }`}>
+                            {isCompleted ? (
+                              <CheckCircle className="w-5 h-5 text-white" />
+                            ) : isCurrent ? (
+                              <div className="w-3 h-3 bg-white rounded-full" />
+                            ) : (
+                              <div className="w-2 h-2 bg-slate-300 rounded-full" />
+                            )}
+                          </div>
 
-                        {/* Status Content */}
-                        <div className={`flex-1 pt-1 ${isFuture ? 'text-gray-400' : 'text-gray-900'
-                          }`}>
-                          <h3 className="font-semibold capitalize">
-                            {statusLabels[status as keyof typeof statusLabels]}
-                          </h3>
-                          {isCurrent && shipment.current_location && (
-                            <p className="text-sm text-gray-600 mt-1">
-                              Current location: {shipment.current_location}
-                            </p>
-                          )}
-                          {isCompleted && trackingEvents.find(event => event.status === status) && (
-                            <p className="text-sm text-gray-600 mt-1">
-                              Completed on {formatDate(trackingEvents.find(event => event.status === status)!.created_at)}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Tracking History */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Tracking History</CardTitle>
-              <CardDescription>Detailed timeline of your shipment's journey</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-6">
-                {trackingEvents.length > 0 ? (
-                  trackingEvents.map((event, index) => (
-                    <div key={event.id} className="flex gap-4">
-                      <div className="flex flex-col items-center">
-                        <div className={`w-3 h-3 rounded-full ${index === trackingEvents.length - 1 ? 'bg-green-500' : 'bg-blue-500'
-                          }`} />
-                        {index < trackingEvents.length - 1 && (
-                          <div className="w-0.5 h-16 bg-gray-200 mt-1" />
-                        )}
-                      </div>
-
-                      <div className="flex-1 pb-6">
-                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                          <h3 className="font-semibold capitalize">
-                            {statusLabels[event.status as keyof typeof statusLabels] || event.status}
-                          </h3>
-                          <div className="flex items-center gap-2 text-sm text-gray-500">
-                            <Calendar className="w-4 h-4" />
-                            <span>{formatDate(event.created_at)}</span>
-                            <Clock className="w-4 h-4 ml-2" />
-                            <span>{formatTime(event.created_at)}</span>
+                          {/* Status Content */}
+                          <div className={`flex-1 pt-0.5 ${isFuture ? 'text-slate-400' : 'text-slate-900'
+                            }`}>
+                            <h3 className={`font-bold text-lg group-hover:text-emerald-600 transition-colors ${isCurrent ? 'text-emerald-600' : ''}`}>
+                              {statusLabels[status as keyof typeof statusLabels]}
+                            </h3>
+                            {isCurrent && shipment.current_location && (
+                              <p className="text-sm text-slate-500 mt-1 flex items-center gap-1 font-medium">
+                                <MapPin className="w-3 h-3 text-emerald-600" /> {shipment.current_location}
+                              </p>
+                            )}
+                            {isCompleted && trackingEvents.find(event => event.status === status) && (
+                              <p className="text-xs text-slate-400 mt-1 font-medium">
+                                Verified on {formatDate(trackingEvents.find(event => event.status === status)!.created_at)}
+                              </p>
+                            )}
                           </div>
                         </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
-                        <div className="mt-2 space-y-2">
-                          {event.location && (
-                            <div className="flex items-center gap-2 text-sm">
-                              <MapPin className="w-4 h-4 text-red-500" />
-                              <span>Location: {event.location}</span>
-                            </div>
-                          )}
-
-                          {event.previous_location && (
-                            <div className="flex items-center gap-2 text-sm text-gray-600">
-                              <Home className="w-4 h-4" />
-                              <span>Previous: {event.previous_location}</span>
-                            </div>
-                          )}
-
-                          {event.description && (
-                            <p className="text-sm text-gray-600 mt-1">{event.description}</p>
+            {/* Tracking History */}
+            <Card className="border-0 bg-white shadow-2xl shadow-slate-200/50 rounded-[2rem] overflow-hidden">
+              <CardHeader className="bg-slate-50/50 border-b border-slate-100 px-8 py-6">
+                <CardTitle className="text-slate-900 text-xl font-bold">Activity Log</CardTitle>
+                <CardDescription className="text-slate-500 font-medium">Chronological record of all logistical events</CardDescription>
+              </CardHeader>
+              <CardContent className="p-8">
+                <div className="space-y-8">
+                  {trackingEvents.length > 0 ? (
+                    [...trackingEvents].reverse().map((event, index) => (
+                      <div key={event.id} className="flex gap-6 group">
+                        <div className="flex flex-col items-center">
+                          <div className={`w-3 h-3 rounded-full transition-colors ${index === 0 ? 'bg-emerald-500 shadow-[0_0_10px_rgba(249,115,22,0.3)]' : 'bg-emerald-200'
+                            }`} />
+                          {index < trackingEvents.length - 1 && (
+                            <div className="w-0.5 h-full bg-slate-50 mt-2" />
                           )}
                         </div>
+
+                        <div className="flex-1 pb-8">
+                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                            <h3 className="font-bold text-slate-900 text-lg">
+                              {statusLabels[event.status as keyof typeof statusLabels] || event.status}
+                            </h3>
+                            <div className="flex items-center gap-3 text-xs font-mono">
+                              <span className="bg-slate-50 text-slate-600 px-3 py-1 rounded-full border border-slate-100 font-bold">{formatDate(event.created_at)}</span>
+                              <span className="bg-white text-emerald-600 px-3 py-1 rounded-full border border-emerald-100 font-black">{formatTime(event.created_at)}</span>
+                            </div>
+                          </div>
+
+                          <div className="mt-4 space-y-4">
+                            {event.location && (
+                              <div className="flex items-center gap-2 text-sm text-slate-600 font-medium">
+                                <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center">
+                                  <MapPin className="w-4 h-4 text-emerald-600" />
+                                </div>
+                                <span>Facility: {event.location}</span>
+                              </div>
+                            )}
+
+                            {event.description && (
+                              <p className="text-sm text-slate-500 leading-relaxed font-medium bg-slate-50/50 p-4 rounded-2xl border border-slate-50 italic">
+                                "{event.description}"
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center py-16 px-4 bg-slate-50/50 rounded-[2rem] border-2 border-dashed border-slate-100">
+                      <Package className="w-16 h-16 text-slate-200 mx-auto mb-4" />
+                      <p className="text-slate-400 font-bold">No logistical events recorded yet</p>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Shipment Details */}
+            <Card className="border-0 bg-white shadow-2xl shadow-slate-200/50 rounded-[2rem] overflow-hidden">
+              <CardHeader className="bg-slate-50/50 border-b border-slate-100 px-8 py-6">
+                <CardTitle className="text-slate-900 text-xl font-bold">Manifest Details</CardTitle>
+              </CardHeader>
+              <CardContent className="p-0">
+                <div className="grid grid-cols-1 md:grid-cols-2">
+                  <div className="p-10 border-b md:border-b-0 md:border-r border-slate-100">
+                    <h3 className="text-emerald-600 font-black uppercase tracking-[0.2em] text-[10px] mb-8">Sender Details</h3>
+                    <div className="space-y-6 text-sm">
+                      <div className="flex flex-col gap-1 border-b border-slate-50 pb-4">
+                        <span className="text-slate-400 font-bold text-[10px] uppercase">Full Name</span>
+                        <span className="text-slate-900 font-bold text-base">{shipment.sender_name}</span>
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <span className="text-slate-400 font-bold text-[10px] uppercase">Point of Origin</span>
+                        <span className="text-slate-700 font-medium text-sm leading-relaxed">{shipment.sender_address}</span>
                       </div>
                     </div>
-                  ))
-                ) : (
-                  <p className="text-gray-500 text-center py-4">No tracking events found</p>
+                  </div>
+
+                  <div className="p-10">
+                    <h3 className="text-emerald-600 font-black uppercase tracking-[0.2em] text-[10px] mb-8">Receiver Details</h3>
+                    <div className="space-y-6 text-sm">
+                      <div className="flex flex-col gap-1 border-b border-slate-50 pb-4">
+                        <span className="text-slate-400 font-bold text-[10px] uppercase">Full Name</span>
+                        <span className="text-slate-900 font-bold text-base">{shipment.receiver_name}</span>
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <span className="text-slate-400 font-bold text-[10px] uppercase">Final Destination</span>
+                        <span className="text-slate-700 font-medium text-sm leading-relaxed">{shipment.receiver_address}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-10 bg-slate-50/50 border-t border-slate-100">
+                  <h3 className="text-slate-400 font-black uppercase tracking-[0.2em] text-[10px] mb-8 text-center">Package Properties</h3>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-10">
+                    <div className="text-center space-y-2">
+                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Weight</p>
+                      <p className="text-slate-900 font-black text-xl">{shipment.weight ? `${shipment.weight} kg` : 'N/A'}</p>
+                    </div>
+                    <div className="text-center space-y-2">
+                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Quantity</p>
+                      <p className="text-slate-900 font-black text-xl">{shipment.quantity || '1'}</p>
+                    </div>
+                    <div className="text-center space-y-2">
+                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Class</p>
+                      <p className="text-slate-900 font-black text-xl capitalize">{shipment.service_type || 'Express'}</p>
+                    </div>
+                    <div className="text-center space-y-2">
+                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Coverage</p>
+                      <p className="text-emerald-600 font-black text-xl">{shipment.insurance ? 'Active' : 'N/A'}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {shipment.special_instructions && (
+                  <div className="p-8 bg-emerald-50/50 m-6 rounded-3xl border border-emerald-100">
+                    <div className="flex gap-4">
+                      <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                        <AlertCircle className="w-5 h-5 text-emerald-600" />
+                      </div>
+                      <div>
+                        <h4 className="text-emerald-600 text-xs font-black uppercase tracking-widest mb-2">Internal Logistics Note</h4>
+                        <p className="text-slate-600 text-sm font-medium italic leading-relaxed">"{shipment.special_instructions}"</p>
+                      </div>
+                    </div>
+                  </div>
                 )}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Shipment Details */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Shipment Details</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h3 className="font-semibold mb-3">Sender Information</h3>
-                  <div className="space-y-2 text-sm">
-                    <p><span className="text-gray-500">Name:</span> {shipment.sender_name}</p>
-                    {shipment.sender_email && (
-                      <p><span className="text-gray-500">Email:</span> {shipment.sender_email}</p>
-                    )}
-                    {shipment.sender_phone && (
-                      <p><span className="text-gray-500">Phone:</span> {shipment.sender_phone}</p>
-                    )}
-                    <p><span className="text-gray-500">Address:</span> {shipment.sender_address}</p>
-                  </div>
-                </div>
-
-                <div>
-                  <h3 className="font-semibold mb-3">Receiver Information</h3>
-                  <div className="space-y-2 text-sm">
-                    <p><span className="text-gray-500">Name:</span> {shipment.receiver_name}</p>
-                    {shipment.receiver_email && (
-                      <p><span className="text-gray-500">Email:</span> {shipment.receiver_email}</p>
-                    )}
-                    {shipment.receiver_phone && (
-                      <p><span className="text-gray-500">Phone:</span> {shipment.receiver_phone}</p>
-                    )}
-                    <p><span className="text-gray-500">Address:</span> {shipment.receiver_address}</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h3 className="font-semibold mb-3">Package Details</h3>
-                  <div className="space-y-2 text-sm">
-                    <p><span className="text-gray-500">Description:</span> {shipment.package_description || 'N/A'}</p>
-                    <p><span className="text-gray-500">Weight:</span> {shipment.weight ? `${shipment.weight} kg` : 'N/A'}</p>
-                    <p><span className="text-gray-500">Quantity:</span> {shipment.quantity || '1'}</p>
-                  </div>
-                </div>
-
-                <div>
-                  <h3 className="font-semibold mb-3">Shipping Information</h3>
-                  <div className="space-y-2 text-sm">
-                    <p><span className="text-gray-500">Service Type:</span> {shipment.service_type || 'Standard'}</p>
-                    <p><span className="text-gray-500">Shipping Fee:</span> {shipment.shipping_fee ? `$${shipment.shipping_fee.toFixed(2)}` : 'N/A'}</p>
-                    <p><span className="text-gray-500">Sending Date:</span> {formatDate(shipment.sending_date)}</p>
-                    <p><span className="text-gray-500">Estimated Delivery:</span> {formatDate(shipment.delivery_date)}</p>
-                    <p><span className="text-gray-500">Insurance:</span> {shipment.insurance ? `$${shipment.insurance_amount?.toFixed(2)}` : 'No'}</p>
-                  </div>
-                </div>
-              </div>
-
-              {shipment.special_instructions && (
-                <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-                  <h3 className="font-semibold text-blue-800 mb-2">Special Instructions</h3>
-                  <p className="text-blue-600">{shipment.special_instructions}</p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-      )}
+              </CardContent>
+            </Card>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

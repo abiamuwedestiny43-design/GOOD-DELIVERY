@@ -67,8 +67,8 @@ export const ShipmentReceipt = forwardRef<HTMLDivElement, { shipment: Shipment }
       <div ref={ref as any} className="w-full mx-auto bg-white text-gray-800 p-4 font-sans text-sm shadow-lg">
         {/* Header */}
         <div className="text-center border-b border-gray-200 pb-4 mb-4">
-          <div className="bg-blue-600 text-white p-3 -mx-3 -mt-2 mb-3">
-            <h1 className="text-xl font-bold"> Zenfiq Express Service</h1>
+          <div className="bg-emerald-600 text-white p-3 -mx-3 -mt-2 mb-3">
+            <h1 className="text-xl font-bold"> GOOD DELIVERY</h1>
             <p className="text-sm opacity-90">Premium Shipping Solutions</p>
           </div>
           <p className="text-gray-600">Receipt #: {shipment.tracking_number}</p>
@@ -79,8 +79,8 @@ export const ShipmentReceipt = forwardRef<HTMLDivElement, { shipment: Shipment }
         {/* Sender & Receiver */}
         <div className="flex justify-between mb-4">
           <div className="w-48">
-            <div className="bg-blue-100 p-2 mb-2 text-center rounded">
-              <span className="font-bold text-blue-800">SENDER</span>
+            <div className="bg-emerald-100 p-2 mb-2 text-center rounded">
+              <span className="font-bold text-emerald-800">SENDER</span>
             </div>
             <p><span className="font-semibold">Name:</span> {shipment.sender_name}</p>
             <p><span className="font-semibold">Phone:</span> {shipment.sender_phone || '-'}</p>
@@ -114,9 +114,9 @@ export const ShipmentReceipt = forwardRef<HTMLDivElement, { shipment: Shipment }
         </div>
 
         {/* Shipping Info */}
-        <div className="border border-orange-200 p-3 mb-4 rounded">
-          <div className="bg-orange-100 p-2 mb-2 text-center -mx-2 -mt-2 rounded-t">
-            <span className="font-bold text-orange-800">SHIPPING INFO</span>
+        <div className="border border-emerald-200 p-3 mb-4 rounded">
+          <div className="bg-emerald-100 p-2 mb-2 text-center -mx-2 -mt-2 rounded-t">
+            <span className="font-bold text-emerald-800">SHIPPING INFO</span>
           </div>
           <div className="grid grid-cols-2 gap-2">
             <p><span className="font-semibold">Service:</span> {formatServiceType(shipment.service_type)}</p>
@@ -129,7 +129,7 @@ export const ShipmentReceipt = forwardRef<HTMLDivElement, { shipment: Shipment }
             )}
           </div>
           {shipment.special_instructions && (
-            <p className="mt-2 border-t border-dashed border-orange-300 pt-2">
+            <p className="mt-2 border-t border-dashed border-emerald-300 pt-2">
               <span className="font-semibold">Instructions:</span> {shipment.special_instructions}
             </p>
           )}
@@ -160,7 +160,7 @@ export const ShipmentReceipt = forwardRef<HTMLDivElement, { shipment: Shipment }
               <span className={
                 shipment?.payment_status === 'paid'
                   ? 'text-green-600 font-bold'
-                  : 'text-orange-600'
+                  : 'text-emerald-600'
               }>
                 {shipment.payment_status?.toUpperCase() || 'PAID'}
               </span>

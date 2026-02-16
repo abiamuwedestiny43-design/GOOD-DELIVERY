@@ -101,10 +101,10 @@ export const ShipmentDetails = ({ shipment, events }: ShipmentDetailsProps) => {
               {locationHistory.map((history, index) => (
                 <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
                   <div className="flex items-center space-x-4">
-                    <div className="text-sm font-medium bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                    <div className="text-sm font-medium bg-emerald-100 text-emerald-800 px-2 py-1 rounded">
                       {history.from}
                     </div>
-                    <div className="text-blue-500">→</div>
+                    <div className="text-emerald-500">→</div>
                     <div className="text-sm font-medium bg-green-100 text-green-800 px-2 py-1 rounded">
                       {history.to}
                     </div>
@@ -141,7 +141,7 @@ export const ShipmentDetails = ({ shipment, events }: ShipmentDetailsProps) => {
                   </div>
                   <p className="text-muted-foreground mb-2">{event.description}</p>
                   {event.location && (
-                    <p className="text-sm text-blue-600">
+                    <p className="text-sm text-emerald-600">
                       <strong>Location:</strong> {event.location}
                     </p>
                   )}
