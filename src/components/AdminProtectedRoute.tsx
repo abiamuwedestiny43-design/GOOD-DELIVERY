@@ -13,7 +13,7 @@ const AdminProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   }
 
   if (!user || !isAdmin) {
-    return <Navigate to="/auth" replace />;
+    return <Navigate to="/login" replace />;
   }
 
   return <>{children}</>;

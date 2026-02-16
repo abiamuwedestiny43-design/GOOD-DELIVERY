@@ -16,14 +16,17 @@ export default function Auth() {
   const { signIn, signUp, isAdmin, user } = useAuth();
 
   // Redirect if already authenticated
-  if (isAdmin) {
-    return <Navigate to="/admin" replace />;
+  if (user) {
+    if (isAdmin) {
+      return <Navigate to="/admin" replace />;
+    }
+    return <Navigate to="/" replace />;
   }
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) return;
-    
+
     setLoading(true);
     await signIn(email, password);
     setLoading(false);
@@ -32,7 +35,7 @@ export default function Auth() {
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password || !fullName) return;
-    
+
     setLoading(true);
     await signUp(email, password, fullName);
     setLoading(false);
@@ -43,9 +46,9 @@ export default function Auth() {
       <Card className="w-full max-w-md mx-auto shadow-lg">
         <CardHeader className="text-center pb-6">
           <div className="flex justify-center mb-4">
-            <img 
-              src={speedyLogo} 
-              alt="Speedy Service" 
+            <img
+              src={speedyLogo}
+              alt="Speedy Service"
               className="w-24 h-24 rounded-full"
             />
           </div>
@@ -56,14 +59,14 @@ export default function Auth() {
             Sign in to access your account or create a new one.
           </p>
         </CardHeader>
-        
+
         <CardContent>
           <Tabs defaultValue="signin" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="signin">Sign In</TabsTrigger>
               <TabsTrigger value="signup">Sign Up</TabsTrigger>
             </TabsList>
-            
+
             <TabsContent value="signin">
               <form onSubmit={handleSignIn} className="space-y-4">
                 <div className="space-y-2">
@@ -77,7 +80,7 @@ export default function Auth() {
                     required
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="signin-password">Password</Label>
                   <Input
@@ -89,9 +92,9 @@ export default function Auth() {
                     required
                   />
                 </div>
-                
-                <Button 
-                  type="submit" 
+
+                <Button
+                  type="submit"
                   className="w-full"
                   disabled={loading}
                 >
@@ -99,7 +102,7 @@ export default function Auth() {
                 </Button>
               </form>
             </TabsContent>
-            
+
             <TabsContent value="signup">
               <form onSubmit={handleSignUp} className="space-y-4">
                 <div className="space-y-2">
@@ -113,7 +116,7 @@ export default function Auth() {
                     required
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="signup-email">Email</Label>
                   <Input
@@ -125,7 +128,7 @@ export default function Auth() {
                     required
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="signup-password">Password</Label>
                   <Input
@@ -137,9 +140,9 @@ export default function Auth() {
                     required
                   />
                 </div>
-                
-                <Button 
-                  type="submit" 
+
+                <Button
+                  type="submit"
                   className="w-full"
                   disabled={loading}
                 >
