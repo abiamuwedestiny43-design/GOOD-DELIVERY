@@ -6,12 +6,13 @@ import { CreateShipmentForm } from '@/components/admin/CreateShipmentForm'
 import { PrintReceiptSection } from '@/components/admin-print'
 import { ShipmentManagement } from '@/components/admin/ShipmentManagement'
 import AdminProtectedRoute from '@/components/AdminProtectedRoute'
+import { Shipment } from '@/types/shipment'
 
 const AdminPageContent = () => {
   const [activeTab, setActiveTab] = useState('create')
-  const [newShipment, setNewShipment] = useState<any>(null)
+  const [newShipment, setNewShipment] = useState<Shipment | null>(null)
 
-  const handleShipmentCreated = (shipment: any) => {
+  const handleShipmentCreated = (shipment: Shipment) => {
     setNewShipment(shipment)
     setActiveTab('print')
   }

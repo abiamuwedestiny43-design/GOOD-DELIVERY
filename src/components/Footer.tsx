@@ -73,11 +73,11 @@ const Footer = () => {
               </div>
               <div className="flex items-center space-x-3 text-slate-400">
                 <MapPin className="w-4 h-4" />
-                <span> 49 Featherstone St, London EC 1Y 8SY United Kingdom</span>
+                <span> 49 Featherstone St, London EC 1Y 8SY United Kingdom</span>
               </div>
               <div className="flex items-center space-x-3 text-slate-400">
                 <MapPin className="w-4 h-4" />
-                <span>Cumhuriyet Caddesi No: 45 Daire 7 Beşiktaş, İstanbul post code 34349 Turkiye</span>
+                <span>Cumhuriyet Caddesi No: 45 Daire 7 Beşiktaş, İstanbul post code 34349 Turkiye</span>
               </div>
             </div>
           </div>

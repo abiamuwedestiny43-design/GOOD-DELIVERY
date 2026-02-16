@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -29,15 +29,11 @@ export const ShipmentManagement = () => {
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
   const { toast } = useToast();
 
-  useEffect(() => {
-    fetchShipments();
-  }, []);
-
-  const fetchShipments = async () => {
+  const fetchShipments = useCallback(async () => {
     try {
       // Get current user
       const { data: { user } } = await supabase.auth.getUser();
-      
+
       if (!user) {
         throw new Error('User not authenticated');
       }
@@ -70,16 +66,21 @@ export const ShipmentManagement = () => {
       );
 
       setShipments(shipmentsWithLocation);
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
       toast({
         title: 'Error fetching shipments',
-        description: error.message,
+        description: errorMessage,
         variant: 'destructive',
       });
     } finally {
       setLoading(false);
     }
-  };
+  }, [toast]);
+
+  useEffect(() => {
+    fetchShipments();
+  }, [fetchShipments]);
 
   const getStatusBadgeVariant = (status: string) => {
     switch (status) {
@@ -137,10 +138,11 @@ export const ShipmentManagement = () => {
       });
 
       fetchShipments();
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
       toast({
         title: 'Error deleting shipment',
-        description: error.message,
+        description: errorMessage,
         variant: 'destructive',
       });
     } finally {
@@ -158,12 +160,12 @@ export const ShipmentManagement = () => {
           <ShipmentReceipt shipment={${JSON.stringify(shipment)}} />
         </div>
       `;
-      
+
       // Wait for the component to render
       await new Promise(resolve => setTimeout(resolve, 100));
-      
+
       await downloadNodeAsPDF(tempDiv, `receipt_${shipment.tracking_number}.pdf`);
-      
+
       toast({
         title: 'PDF Downloaded',
         description: 'Receipt has been downloaded successfully',
@@ -179,7 +181,7 @@ export const ShipmentManagement = () => {
 
   const handlePrintReceipt = (shipment: Shipment) => {
     setSelectedShipment(shipment);
-    
+
     // Create print window
     const printWindow = window.open('', '_blank');
     if (printWindow && selectedShipment) {
@@ -199,7 +201,7 @@ export const ShipmentManagement = () => {
         </html>
       `);
       printWindow.document.close();
-      
+
       // Render the receipt component
       const receiptElement = printWindow.document.getElementById('receipt-content');
       if (receiptElement) {
@@ -209,14 +211,14 @@ export const ShipmentManagement = () => {
           </div>
         `;
       }
-      
+
       printWindow.focus();
       printWindow.print();
     }
   };
 
   const filteredShipments = shipments.filter(shipment => {
-    const matchesSearch = 
+    const matchesSearch =
       shipment.tracking_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
       shipment.receiver_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       shipment.sender_name.toLowerCase().includes(searchTerm.toLowerCase()) ||

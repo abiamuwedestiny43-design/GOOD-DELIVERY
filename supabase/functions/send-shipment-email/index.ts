@@ -10,7 +10,7 @@ interface EmailRequest {
   to: string;
   subject: string;
   html: string;
-  shipmentData?: any;
+  shipmentData?: Record<string, unknown>;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -21,7 +21,7 @@ const handler = async (req: Request): Promise<Response> => {
 
   try {
     const { to, subject, html }: EmailRequest = await req.json();
-    
+
     console.log("Attempting to send email to:", to);
 
     // Get SMTP configuration from environment
@@ -68,17 +68,18 @@ const handler = async (req: Request): Promise<Response> => {
       await client.close();
       console.log("Email sent successfully to:", to);
 
-    } catch (smtpError: any) {
+    } catch (smtpError: unknown) {
+      const errorMessage = smtpError instanceof Error ? smtpError.message : String(smtpError);
       console.error("SMTP error:", smtpError);
       await client.close();
-      throw new Error(`Failed to send email: ${smtpError.message}`);
+      throw new Error(`Failed to send email: ${errorMessage}`);
     }
 
     return new Response(
-      JSON.stringify({ 
-        success: true, 
+      JSON.stringify({
+        success: true,
         message: "Email sent successfully",
-        recipient: to 
+        recipient: to
       }),
       {
         status: 200,
@@ -86,12 +87,13 @@ const handler = async (req: Request): Promise<Response> => {
       }
     );
 
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
     console.error("Error in send-shipment-email function:", error);
     return new Response(
-      JSON.stringify({ 
-        success: false, 
-        error: error.message 
+      JSON.stringify({
+        success: false,
+        error: errorMessage
       }),
       {
         status: 500,

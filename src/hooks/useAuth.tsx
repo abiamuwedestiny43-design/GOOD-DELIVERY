@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { User, Session } from '@supabase/supabase-js';
+import { User, Session, AuthError } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
@@ -7,8 +7,8 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
-  signUp: (email: string, password: string, fullName?: string) => Promise<{ error: any }>;
-  signIn: (email: string, password: string) => Promise<{ error: any }>;
+  signUp: (email: string, password: string, fullName?: string) => Promise<{ error: AuthError | null }>;
+  signIn: (email: string, password: string) => Promise<{ error: AuthError | null }>;
   signOut: () => Promise<void>;
   isAdmin: boolean;
 }
@@ -40,7 +40,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       async (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
-        
+
         if (session?.user) {
           // Check user role after auth state change
           setTimeout(async () => {
@@ -50,7 +50,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                 .select('role')
                 .eq('user_id', session.user.id)
                 .single();
-              
+
               setIsAdmin(profile?.role === 'admin');
             } catch (error) {
               console.error('Error fetching user role:', error);
@@ -60,7 +60,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         } else {
           setIsAdmin(false);
         }
-        
+
         setLoading(false);
       }
     );
@@ -77,7 +77,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const signUp = async (email: string, password: string, fullName?: string) => {
     const redirectUrl = `${window.location.origin}/`;
-    
+
     const { data, error } = await supabase.auth.signUp({
       email,
       password,

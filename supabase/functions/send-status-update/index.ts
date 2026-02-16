@@ -7,16 +7,24 @@ const corsHeaders = {
     'authorization, x-client-info, apikey, content-type',
 }
 
+interface ShipmentData {
+  tracking_number: string;
+  package_description?: string;
+  weight?: string;
+  receiver_name?: string;
+  receiver_address?: string;
+}
+
 interface StatusUpdateRequest {
   to: string
-  shipmentData: any
+  shipmentData: ShipmentData
   newStatus: string
 }
 
 type StatusType = 'pending' | 'picked_up' | 'in_transit' | 'out_for_delivery' | 'delivered' | 'returned';
 
 const generateStatusUpdateEmailHtml = (
-  shipmentData: any,
+  shipmentData: ShipmentData,
   newStatus: string
 ) => {
   const statusMessages: Record<StatusType, string> = {
@@ -46,7 +54,7 @@ const generateStatusUpdateEmailHtml = (
     delivered: '#10b981',
     returned: '#ef4444',
   }
-  
+
   const status = newStatus as StatusType;
 
   const siteUrl = Deno.env.get('SITE_URL') || 'http://localhost:3000'
@@ -62,15 +70,12 @@ const generateStatusUpdateEmailHtml = (
         .container { max-width: 600px; margin: 0 auto; background-color: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .header { background: linear-gradient(135deg, #2563eb, #7c3aed); color: white; padding: 30px; text-align: center; }
         .content { padding: 30px; }
-        .status-box { background-color: ${
-          statusColor[status] || '#f59e0b'
-        }20; border: 2px solid ${
-    statusColor[status] || '#f59e0b'
-  }; border-radius: 8px; padding: 20px; margin: 20px 0; text-align: center; }
+        .status-box { background-color: ${statusColor[status] || '#f59e0b'
+    }20; border: 2px solid ${statusColor[status] || '#f59e0b'
+    }; border-radius: 8px; padding: 20px; margin: 20px 0; text-align: center; }
         .status-emoji { font-size: 48px; margin-bottom: 10px; }
-        .status-title { font-size: 24px; font-weight: bold; color: ${
-          statusColor[status] || '#f59e0b'
-        }; margin: 10px 0; }
+        .status-title { font-size: 24px; font-weight: bold; color: ${statusColor[status] || '#f59e0b'
+    }; margin: 10px 0; }
         .tracking-number { font-size: 20px; font-weight: bold; color: #2563eb; margin: 10px 0; font-family: monospace; }
         .details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0; }
         .detail-section { background-color: #f8fafc; padding: 15px; border-radius: 8px; }
@@ -91,45 +96,39 @@ const generateStatusUpdateEmailHtml = (
           <div class="status-box">
             <div class="status-emoji">${statusEmojis[status] || '📦'}</div>
             <div class="status-title">${newStatus
-              .replace('_', ' ')
-              .toUpperCase()}</div>
+      .replace('_', ' ')
+      .toUpperCase()}</div>
             <div class="tracking-number">${shipmentData.tracking_number}</div>
-            <p>${
-              statusMessages[status] ||
-              'Your shipment status has been updated.'
-            }</p>
-            <a href="${siteUrl}/track?number=${
-    shipmentData.tracking_number
-  }" class="btn">Track Your Package</a>
+            <p>${statusMessages[status] ||
+    'Your shipment status has been updated.'
+    }</p>
+            <a href="${siteUrl}/track?number=${shipmentData.tracking_number
+    }" class="btn">Track Your Package</a>
           </div>
           
           <div class="details-grid">
             <div class="detail-section">
               <div class="detail-title">📦 Package Details</div>
-              <div class="detail-item">Description: ${
-                shipmentData.package_description || 'N/A'
-              }</div>
-              <div class="detail-item">Weight: ${
-                shipmentData.weight || 'N/A'
-              }</div>
+              <div class="detail-item">Description: ${shipmentData.package_description || 'N/A'
+    }</div>
+              <div class="detail-item">Weight: ${shipmentData.weight || 'N/A'
+    }</div>
             </div>
             
             <div class="detail-section">
               <div class="detail-title">📍 Delivery Address</div>
               <div class="detail-item">To: ${shipmentData.receiver_name}</div>
-              <div class="detail-item">Address: ${
-                shipmentData.receiver_address
-              }</div>
+              <div class="detail-item">Address: ${shipmentData.receiver_address
+    }</div>
             </div>
           </div>
           
           <div class="detail-section">
             <div class="detail-title">ℹ️ What's Next?</div>
-            ${
-              newStatus === 'delivered'
-                ? '<div class="detail-item">• Your package has been delivered successfully!</div><div class="detail-item">• Thank you for choosing  Zenfiq Express Service</div>'
-                : '<div class="detail-item">• You will receive further updates as your package progresses</div><div class="detail-item">• Track your package anytime using the link above</div>'
-            }
+            ${newStatus === 'delivered'
+      ? '<div class="detail-item">• Your package has been delivered successfully!</div><div class="detail-item">• Thank you for choosing  Zenfiq Express Service</div>'
+      : '<div class="detail-item">• You will receive further updates as your package progresses</div><div class="detail-item">• Track your package anytime using the link above</div>'
+    }
             <div class="detail-item">• Contact us if you have any questions</div>
           </div>
         </div>
@@ -207,11 +206,12 @@ const handler = async (req: Request): Promise<Response> => {
 
       await client.close()
       console.log('Status update email sent successfully to:', to)
-    } catch (smtpError: any) {
+    } catch (smtpError: unknown) {
+      const errorMessage = smtpError instanceof Error ? smtpError.message : String(smtpError);
       console.error('SMTP error:', smtpError)
       await client.close()
       throw new Error(
-        `Failed to send status update email: ${smtpError.message}`
+        `Failed to send status update email: ${errorMessage}`
       )
     }
 
@@ -227,12 +227,13 @@ const handler = async (req: Request): Promise<Response> => {
         headers: { 'Content-Type': 'application/json', ...corsHeaders },
       }
     )
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
     console.error('Error in send-status-update function:', error)
     return new Response(
       JSON.stringify({
         success: false,
-        error: error.message,
+        error: errorMessage,
       }),
       {
         status: 500,

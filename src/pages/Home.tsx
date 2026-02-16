@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
@@ -52,9 +52,10 @@ const Home = () => {
   ];
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  const nextSlide = () => {
+  const nextSlide = useCallback(() => {
     setCurrentSlide((prev) => (prev + 1) % slides.length);
-  };
+  }, [slides.length]);
+
   const prevSlide = () => {
     setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
   };
@@ -73,6 +74,21 @@ const Home = () => {
     "/images/hero-ship.png"
   ];
   const [currentHeroSlide, setCurrentHeroSlide] = useState(0);
+
+  // --- Air Freight Slider ---
+  const airSlides = [
+    "/images/air-white-1.png",
+    "/images/air-white-2.png",
+    "/images/air-white-3.png",
+    "/images/air-white-4.png",
+    "/images/air-white-5.png",
+    "/images/air-white-6.png",
+    "/images/air-white-7.png",
+    "/images/air-white-8.png",
+    "/images/air-white-9.png",
+    "/images/air-flight.png"
+  ];
+  const [currentAirSlide, setCurrentAirSlide] = useState(0);
 
   // Auto slide functionality
   useEffect(() => {
@@ -93,22 +109,7 @@ const Home = () => {
       clearInterval(heroInterval);
       clearInterval(airInterval);
     };
-  }, []);
-
-  // --- Air Freight Slider ---
-  const airSlides = [
-    "/images/air-white-1.png",
-    "/images/air-white-2.png",
-    "/images/air-white-3.png",
-    "/images/air-white-4.png",
-    "/images/air-white-5.png",
-    "/images/air-white-6.png",
-    "/images/air-white-7.png",
-    "/images/air-white-8.png",
-    "/images/air-white-9.png",
-    "/images/air-flight.png"
-  ];
-  const [currentAirSlide, setCurrentAirSlide] = useState(0);
+  }, [airSlides.length, heroSlides.length, nextSlide]);
 
   return (
     <div className="min-h-screen relative">

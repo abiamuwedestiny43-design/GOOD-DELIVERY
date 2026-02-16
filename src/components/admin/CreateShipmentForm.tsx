@@ -11,9 +11,10 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Plus, ArrowRight, ArrowLeft } from 'lucide-react';
+import { Shipment } from '@/types/shipment';
 
 interface CreateShipmentFormProps {
-  onShipmentCreated: (shipment: any) => void;
+  onShipmentCreated: (shipment: Shipment) => void;
 }
 
 export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProps) => {
@@ -69,21 +70,21 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
   };
 
   const calculateShippingFee = () => {
-  const baseFee = 95; // flat service fee
-  const ratePerKg = 20; // USD per kg (you can adjust this)
-  const weight = formData.weight ? parseFloat(formData.weight) : 0;
+    const baseFee = 95; // flat service fee
+    const ratePerKg = 20; // USD per kg (you can adjust this)
+    const weight = formData.weight ? parseFloat(formData.weight) : 0;
 
-  const serviceMultiplier = {
-    'standard': 1.2,    // no multiplier
-    'express': 1.7,   // +50%
-    'priority': 2.5,    // +100%
-    'overnight': 3.9    // +200%
-  }[formData.service_type] || 1;
+    const serviceMultiplier = {
+      'standard': 1.2,    // no multiplier
+      'express': 1.7,   // +50%
+      'priority': 2.5,    // +100%
+      'overnight': 3.9    // +200%
+    }[formData.service_type] || 1;
 
-  const weightFee = weight * ratePerKg * serviceMultiplier;
+    const weightFee = weight * ratePerKg * serviceMultiplier;
 
-  return baseFee + weightFee;
-};
+    return baseFee + weightFee;
+  };
 
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -202,14 +203,14 @@ export const CreateShipmentForm = ({ onShipmentCreated }: CreateShipmentFormProp
           </html>
         `;
 
-await fetch('http://localhost:3001/api/send-shipment-email', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    to: formData.receiver_email,
-    shipment,
-  }),
-});
+        await fetch('http://localhost:3001/api/send-shipment-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            to: formData.receiver_email,
+            shipment,
+          }),
+        });
         console.log("Email notification sent successfully");
       } catch (emailError) {
         console.error("Failed to send email notification:", emailError);
@@ -249,11 +250,12 @@ await fetch('http://localhost:3001/api/send-shipment-email', {
       });
       setActiveTab('sender');
 
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Full error:', err);
+      const errorMessage = err instanceof Error ? err.message : String(err);
       toast({
         title: 'Error creating shipment',
-        description: err.message,
+        description: errorMessage,
         variant: 'destructive'
       });
     } finally {
