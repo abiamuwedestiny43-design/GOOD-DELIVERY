@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
@@ -45,11 +45,7 @@ export default function ShipmentDetails() {
   const receiptRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
-  useEffect(() => {
-    fetchShipments();
-  }, []);
-
-  const fetchShipments = async () => {
+  const fetchShipments = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from('shipments')
@@ -89,43 +85,49 @@ export default function ShipmentDetails() {
         payment_method: null,
         payment_status: null,
       }));
-      
+
       setShipments(transformedShipments);
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
       toast({
         title: 'Error fetching shipments',
-        description: error.message,
+        description: errorMessage,
         variant: 'destructive',
       });
     } finally {
       setLoading(false);
     }
-  };
+  }, [toast]);
+
+  useEffect(() => {
+    fetchShipments();
+  }, [fetchShipments]);
 
   const generateTrackingNumber = async () => {
     setIsGeneratingTracking(true);
     try {
       const { data, error } = await supabase.rpc('generate_tracking_number');
-      
+
       if (error) {
         throw error;
       }
-      
+
       if (editingShipment) {
         setEditingShipment({
           ...editingShipment,
           tracking_number: data
         });
       }
-      
+
       toast({
         title: 'Tracking number generated',
         description: 'New tracking number has been created.',
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
       toast({
         title: 'Error generating tracking number',
-        description: error.message,
+        description: errorMessage,
         variant: 'destructive',
       });
     } finally {
@@ -195,7 +197,7 @@ export default function ShipmentDetails() {
 
       toast({
         title: 'Shipment updated',
-        description: statusChanged 
+        description: statusChanged
           ? 'Shipment updated and status update email sent to receiver.'
           : 'Shipment details have been updated successfully.',
       });
@@ -203,10 +205,11 @@ export default function ShipmentDetails() {
       setIsEditDialogOpen(false);
       setEditingShipment(null);
       fetchShipments();
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
       toast({
         title: 'Error updating shipment',
-        description: error.message,
+        description: errorMessage,
         variant: 'destructive',
       });
     }
@@ -240,10 +243,11 @@ export default function ShipmentDetails() {
       setDeleteConfirmOpen(false);
       setShipmentToDelete(null);
       fetchShipments();
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
       toast({
         title: 'Error deleting shipment',
-        description: error.message,
+        description: errorMessage,
         variant: 'destructive',
       });
     }
@@ -260,7 +264,7 @@ export default function ShipmentDetails() {
   };
 
   const filteredShipments = shipments.filter(shipment => {
-    const matchesSearch = 
+    const matchesSearch =
       shipment.tracking_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
       shipment.receiver_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       shipment.sender_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -675,7 +679,7 @@ export default function ShipmentDetails() {
               </div>
               <div>
                 <h3 className="font-semibold mb-2">Shipping Information</h3>
-                <p><strong>Status:</strong> 
+                <p><strong>Status:</strong>
                   <Badge variant={getStatusBadgeVariant(selectedShipment.status || 'pending')} className="ml-2">
                     {selectedShipment.status?.replace('_', ' ') || 'pending'}
                   </Badge>

@@ -67,7 +67,7 @@ const Contact = () => {
     {
       icon: Mail,
       title: 'Email',
-      content: 'support@zenfiqexpressdeliveryservice.online',
+      content: 'support@gooddelivery.com',
       description: 'Send us an email anytime'
     },
     {
@@ -80,7 +80,7 @@ const Contact = () => {
       icon: MapPin,
       title: 'Office',
       content: ' 49 Featherstone St, London EC 1Y 8SY United Kingdom',
-      contents: 'Cumhuriyet Caddesi No: 45 Daire 7 Beşiktaş, İstanbul post code 34349 Turkiye.',  
+      contents: 'Cumhuriyet Caddesi No: 45 Daire 7 Beşiktaş, İstanbul post code 34349 Turkiye.',
       description: 'Visit our headquarters'
     },
     {
@@ -280,7 +280,8 @@ const Contact = () => {
                         src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d12035.755533207466!2d29.006207312272352!3d41.04846559151503!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14cab64b55cc46f7%3A0x847a09ab856eefc5!2zWcSxbGTEsXosIDM0MzQ5IEJlxZ9pa3RhxZ8vxLBzdGFuYnVsLCBUw7xya2l5ZQ!5e0!3m2!1sen!2sin!4v1757507186067!5m2!1sen!2sin"
                         width="100%"
                         height="300"
-                        style={{ border: 0 }}
+                        title="Google Maps Location"
+                        className="border-0"
                         allowFullScreen
                         loading="lazy"
                         referrerPolicy="no-referrer-when-downgrade"

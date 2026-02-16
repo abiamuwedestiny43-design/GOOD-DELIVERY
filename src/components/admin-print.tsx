@@ -78,11 +78,12 @@ export const PrintReceiptSection = () => {
         description: 'Ready to print receipt',
       });
 
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error:', err);
+      const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
       toast({
         title: 'Error',
-        description: err.message,
+        description: errorMessage,
         variant: 'destructive',
       });
       setShipment(null);
@@ -93,7 +94,7 @@ export const PrintReceiptSection = () => {
 
   const handleDownloadPDF = async () => {
     if (!shipment) return;
-    
+
     const receiptElement = document.getElementById('receipt-print');
     if (receiptElement) {
       await downloadNodeAsPDF(receiptElement, `receipt_${shipment.tracking_number}.pdf`);
@@ -102,7 +103,7 @@ export const PrintReceiptSection = () => {
 
   const handlePrint = () => {
     if (!shipment) return;
-    
+
     const printWindow = window.open('', '_blank');
     if (printWindow) {
       const receiptElement = document.getElementById('receipt-print');
@@ -130,7 +131,7 @@ export const PrintReceiptSection = () => {
           </html>
         `);
         printWindow.document.close();
-        
+
         printWindow.onload = () => {
           printWindow.focus();
           printWindow.print();
@@ -168,8 +169,8 @@ export const PrintReceiptSection = () => {
                 className="font-mono"
               />
             </div>
-            <Button 
-              onClick={handlePrintReceipt} 
+            <Button
+              onClick={handlePrintReceipt}
               disabled={loading}
               className="bg-emerald-600 hover:bg-emerald-700"
             >
@@ -190,9 +191,9 @@ export const PrintReceiptSection = () => {
                     Status: <span className="capitalize">{shipment.status}</span>
                   </p>
                 </div>
-                
+
                 <div className="flex gap-2">
-                  <Button 
+                  <Button
                     onClick={handleDownloadPDF}
                     variant="outline"
                     size="sm"
@@ -200,7 +201,7 @@ export const PrintReceiptSection = () => {
                   >
                     Download PDF
                   </Button>
-                  <Button 
+                  <Button
                     onClick={handlePrint}
                     size="sm"
                     className="bg-purple-600 hover:bg-purple-700"

@@ -149,11 +149,12 @@ export const UserTrackPage = () => {
         description: 'Tracking information loaded successfully',
       });
 
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Tracking error:', err);
+      const errorMessage = err instanceof Error ? err.message : 'Failed to track shipment';
       toast({
         title: 'Error',
-        description: err.message || 'Failed to track shipment',
+        description: errorMessage,
         variant: 'destructive',
       });
       setShipment(null);

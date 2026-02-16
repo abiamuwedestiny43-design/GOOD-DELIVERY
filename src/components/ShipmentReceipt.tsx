@@ -64,7 +64,7 @@ export const ShipmentReceipt = forwardRef<HTMLDivElement, { shipment: Shipment }
     const totalAmount = (shipment.shipping_fee || 0) + (shipment.insurance_amount || 0);
 
     return (
-      <div ref={ref as any} className="w-full mx-auto bg-white text-gray-800 p-4 font-sans text-sm shadow-lg">
+      <div ref={ref} className="w-full mx-auto bg-white text-gray-800 p-4 font-sans text-sm shadow-lg">
         {/* Header */}
         <div className="text-center border-b border-gray-200 pb-4 mb-4">
           <div className="bg-emerald-600 text-white p-3 -mx-3 -mt-2 mb-3">
@@ -177,7 +177,7 @@ export const ShipmentReceipt = forwardRef<HTMLDivElement, { shipment: Shipment }
           <div className="bg-red-500 text-white p-2 -mx-2 mb-2 rounded">
             <p className="font-bold">THANK YOU FOR YOUR BUSINESS</p>
           </div>
-          <p className="text-gray-600">Support: support@zenfiqexpressdeliveryservice.online</p>
+          <p className="text-gray-600">Support: support@gooddelivery.com</p>
         </div>
       </div>
     );

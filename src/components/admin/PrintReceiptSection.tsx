@@ -11,11 +11,12 @@ import { downloadNodeAsPDF } from '@/lib/pdf';
 import { Search, Download, Printer } from 'lucide-react';
 import { CreateShipmentForm } from './CreateShipmentForm';
 import { ShipmentReceipt } from '../ShipmentReceipt';
+import { Shipment } from '@/types/shipment';
 
 export const PrintReceiptSection = () => {
   const [trackingNumber, setTrackingNumber] = useState('');
   const [loading, setLoading] = useState(false);
-  const [shipment, setShipment] = useState<any>(null);
+  const [shipment, setShipment] = useState<Shipment | null>(null);
   const { toast } = useToast();
   const receiptRef = useRef<HTMLDivElement>(null);
   const [isClient, setIsClient] = useState(false);
@@ -60,10 +61,10 @@ export const PrintReceiptSection = () => {
         .limit(1)
         .single();
 
-      const transformedShipment = {
+      const transformedShipment: Shipment = {
         ...shipmentData,
         current_location: trackingData?.location || 'Not specified'
-      };
+      } as unknown as Shipment;
 
       setShipment(transformedShipment);
       toast({
@@ -71,11 +72,12 @@ export const PrintReceiptSection = () => {
         description: 'Ready to print receipt',
       });
 
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error:', err);
+      const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
       toast({
         title: 'Error',
-        description: err.message,
+        description: errorMessage,
         variant: 'destructive',
       });
       setShipment(null);
@@ -86,7 +88,7 @@ export const PrintReceiptSection = () => {
 
   const handleDownloadPDF = async () => {
     if (!shipment) return;
-    
+
     try {
       // Create a temporary container for PDF generation
       const tempContainer = document.createElement('div');
@@ -130,7 +132,7 @@ export const PrintReceiptSection = () => {
 
   const handlePrint = () => {
     if (!shipment) return;
-    
+
     const printContent = document.getElementById('receipt-print');
     if (!printContent) return;
 
@@ -199,7 +201,7 @@ export const PrintReceiptSection = () => {
   return (
     <div className="space-y-6">
       <CreateShipmentForm onShipmentCreated={setShipment} />
-      
+
       <Card className="w-full">
         <CardHeader className="bg-gradient-to-r from-emerald-600 to-purple-600 text-white">
           <CardTitle className="text-xl">Print Shipment Receipt</CardTitle>
@@ -227,8 +229,8 @@ export const PrintReceiptSection = () => {
                   className="font-mono"
                 />
               </div>
-              <Button 
-                onClick={handlePrintReceipt} 
+              <Button
+                onClick={handlePrintReceipt}
                 disabled={loading}
                 className="bg-emerald-600 hover:bg-emerald-700 gap-2"
               >
@@ -253,9 +255,9 @@ export const PrintReceiptSection = () => {
                       Location: <span className="capitalize">{shipment.current_location}</span>
                     </p>
                   </div>
-                  
+
                   <div className="flex gap-2">
-                    <Button 
+                    <Button
                       onClick={handleDownloadPDF}
                       variant="outline"
                       size="sm"
@@ -264,7 +266,7 @@ export const PrintReceiptSection = () => {
                       <Download className="w-4 h-4" />
                       Download PDF
                     </Button>
-                    <Button 
+                    <Button
                       onClick={handlePrint}
                       size="sm"
                       className="bg-purple-600 hover:bg-purple-700 gap-2"
